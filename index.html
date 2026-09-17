@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBRAHIM Fashion Point</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #111827;
+      --accent: #d97706;
+      --bg: #f9fafb;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --radius: 12px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 70px;
+    }
+    /* Navbar */
+    header {
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      user-select: none;
+      cursor: pointer;
+    }
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--text);
+      cursor: pointer;
+      padding: 6px;
+    }
+    /* Hero Banner */
+    .hero-container {
+      position: relative;
+      margin: 12px 14px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      background: #000;
+    }
+    .hero-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      opacity: 0.88;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      color: #fff;
+    }
+    .hero-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    /* HIDDEN BY DEFAULT FOR CUSTOMERS */
+    .hero-edit-btn {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+
+    /* HIDDEN BY DEFAULT FOR CUSTOMERS (OWNER DASHBOARD) */
+    .admin-bar {
+      display: none;
+      margin: 0 14px 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .admin-bar button {
+      flex: 1 1 calc(50% - 8px);
+      padding: 9px 8px;
+      border: none;
+      background: #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .admin-bar button.delivery-btn {
+      background: #0284c7;
+      color: #ffffff;
+      flex: 1 1 100%;
+      font-size: 0.85rem;
+    }
+    .admin-bar button.lock-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+      flex: 1 1 100%;
+    }
+
+    /* 2 Columns on Mobile / Android */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 0 12px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-img-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 125%;
+      background: #f3f4f6;
+    }
+    .card-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cod-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #10b981;
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .stock-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.62rem;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .card-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: 4px;
+    }
+    .item-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .item-price {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .size-select {
+      width: 100%;
+      padding: 4px;
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      margin-top: 2px;
+    }
+    .order-btn {
+      margin-top: 6px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 7px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .order-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Modals & Drawers */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-sheet {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 18px 18px 0 0;
+      padding: 18px;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .modal-head h3 {
+      font-size: 1.1rem;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+    .form-group input, 
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 9px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      background: #fff;
+    }
+    .confirm-btn {
+      width: 100%;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Location Delivery Hub Styles */
+    .loc-group-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .loc-group-header {
+      background: #e2e8f0;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--primary);
+    }
+    .loc-badge {
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .loc-order-item {
+      padding: 10px 12px;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.78rem;
+    }
+    .loc-order-item:last-child {
+      border-bottom: none;
+    }
+    .order-action-links {
+      margin-top: 6px;
+      display: flex;
+      gap: 12px;
+    }
+    .order-action-links a {
+      color: #0284c7;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 30px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      padding: 20px 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .contact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 6px;
+      background: #f3f4f6;
+      padding: 6px 10px;
+      border-radius: 20px;
+    }
+
+    /* My Orders List */
+    .order-record {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation with Hidden Admin Tap -->
+  <header>
+    <div>
+      <div class="brand-title" id="brandTitle" onclick="handleBrandTap()">IBRAHIM FASHION POINT</div>
+      <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief</div>
+    </div>
+    <button class="menu-btn" onclick="openOrdersModal()" title="Menu">
+      <i class="fa-solid fa-ellipsis-vertical"></i>
+    </button>
+  </header>
+
+  <!-- Hero Banner -->
+  <div class="hero-container">
+    <img id="heroImg" class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="Ibrahim Fashion Banner" />
+    <div class="hero-overlay">
+      <div class="hero-title">New Garment Collection</div>
+      <p style="font-size: 0.72rem; opacity: 0.9;">Best quality clothing & direct COD delivery</p>
+    </div>
+    <!-- Protected Edit Button -->
+    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
+      <i class="fa-solid fa-camera"></i> Change Photo
+    </button>
+    <input type="file" id="heroInput" accept="image/*" style="display:none" onchange="updateHeroImage(event)" />
+  </div>
+
+  <!-- Protected Admin Controls (Visible Only After Secret PIN) -->
+  <div class="admin-bar" id="adminBar">
+    <!-- NEW DELIVERY BUTTON -->
+    <button class="delivery-btn" onclick="openDeliveryDashboard()">
+      <i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub (Grouped by Location)
+    </button>
+    <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add New Garment</button>
+    <button onclick="resetDefaultArticles()"><i class="fa-solid fa-rotate-left"></i> Reset Articles</button>
+    <button class="lock-btn" onclick="lockAdmin()" title="Lock Admin Mode"><i class="fa-solid fa-lock"></i> Lock Admin Mode</button>
+  </div>
+
+  <!-- 2-Per-Row Garments Catalog -->
+  <main>
+    <div class="products-grid" id="productsGrid"></div>
+  </main>
+
+  <!-- Order Checkout Modal with Dropdown Address & Auto-Save -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>Confirm Order</h3>
+        <button class="close-btn" onclick="closeModal('orderModal')">&times;</button>
+      </div>
+      <div id="orderItemSummary" style="font-size:0.85rem; margin-bottom:12px; color:var(--accent); font-weight:600;"></div>
+      
+      <form onsubmit="handleOrderSubmit(event)">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" id="custName" required placeholder="Enter your full name" />
+        </div>
+        
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="custPhone" required placeholder="e.g. 6005757393" />
+        </div>
+
+        <!-- Selected Location Dropdown -->
+        <div class="form-group">
+          <label>Delivery Area / Location *</label>
+          <select id="custArea" required>
+            <option value="" disabled selected>-- Select Your Delivery Area --</option>
+            <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
+            <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
+            <option value="Gulshanabad (Charar-i-Sharief)">Gulshanabad (Charar-i-Sharief)</option>
+            <option value="Nowhar (Charar-i-Sharief)">Nowhar (Charar-i-Sharief)</option>
+            <option value="Trajibal">Trajibal</option>
+            <option value="Chadoora">Chadoora</option>
+            <option value="Nagam">Nagam</option>
+            <option value="Lal Chowk, Srinagar">Lal Chowk, Srinagar</option>
+            <option value="Rajbagh, Srinagar">Rajbagh, Srinagar</option>
+            <option value="Other / Nearby Area">Other / Nearby Area</option>
+          </select>
+        </div>
+
+        <!-- Specific House/Landmark Detail -->
+        <div class="form-group">
+          <label>Street, House No. & Landmark *</label>
+          <input type="text" id="custStreet" required placeholder="e.g. Near Shrine / Lane 2 / House 15" />
+        </div>
+
+        <button type="submit" class="confirm-btn">
+          <i class="fa-brands fa-whatsapp"></i> Confirm Order via WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- My Orders Modal -->
+  <div class="modal-overlay" id="myOrdersModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>My Orders</h3>
+        <button class="close-btn" onclick="closeModal('myOrdersModal')">&times;</button>
+      </div>
+      <div id="ordersListContainer"></div>
+    </div>
+  </div>
+
+  <!-- Delivery Hub Modal (OWNER ONLY - GROUPED BY LOCATION) -->
+  <div class="modal-overlay" id="deliveryModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div>
+          <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Location Delivery Hub</h3>
+          <p style="font-size:0.72rem; color:var(--muted);">All orders automatically grouped by area</p>
+        </div>
+        <button class="close-btn" onclick="closeModal('deliveryModal')">&times;</button>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <button onclick="promptAddManualOrder()" style="flex:1; padding:7px; font-size:0.75rem; border:1px solid #cbd5e1; border-radius:6px; background:#fff; font-weight:600;">
+          <i class="fa-solid fa-plus"></i> Add Manual Order
+        </button>
+        <button onclick="clearCompletedOrders()" style="padding:7px 10px; font-size:0.75rem; border:none; border-radius:6px; background:#fee2e2; color:#b91c1c; font-weight:600;">
+          Clear All
+        </button>
+      </div>
+
+      <div id="deliveryGroupContainer"></div>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal-overlay" id="addProductModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>Upload New Garment</h3>
+        <button class="close-btn" onclick="closeModal('addProductModal')">&times;</button>
+      </div>
+      <form onsubmit="handleNewProduct(event)">
+        <div class="form-group">
+          <label>Garment Name *</label>
+          <input type="text" id="newTitle" required placeholder="e.g. Classic Embroidered Kurti" />
+        </div>
+        <div class="form-group">
+          <label>Price (₹) *</label>
+          <input type="number" id="newPrice" required placeholder="799" />
+        </div>
+        <div class="form-group">
+          <label>Garment Photo *</label>
+          <input type="file" id="newImgFile" accept="image/*" required />
+        </div>
+        <button type="submit" class="confirm-btn" style="background:var(--primary)">Save Garment</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div style="font-weight:700; margin-bottom:8px; color:var(--primary)">IBRAHIM FASHION POINT</div>
+    <div>Malapora, Charar-i-Sharief</div>
+    <div style="margin-top:10px;">
+      <div class="contact-badge">
+        <i class="fa-solid fa-phone"></i>
+        <a href="tel:6005757393">6005757393</a>
+      </div>
+      <div class="contact-badge">
+        <i class="fa-solid fa-envelope"></i>
+        <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a>
+      </div>
+    </div>
+    <p style="margin-top:10px; font-size:0.7rem;">Customer Support Available 10 AM - 8 PM</p>
+  </footer>
+
+  <script>
+    // ==========================================
+    // 1. OWNER PIN PROTECTION SYSTEM
+    // ==========================================
+    const OWNER_PIN = "7573"; 
+    let tapCount = 0;
+    let tapTimer = null;
+
+    function handleBrandTap() {
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => { tapCount = 0; }, 800);
+
+      if (tapCount >= 3) {
+        tapCount = 0;
+        const enteredPin = prompt("Enter Owner PIN to edit website:");
+        if (enteredPin === OWNER_PIN) {
+          sessionStorage.setItem("ifp_admin_auth", "true");
+          checkAdminStatus();
+          alert("Owner Mode Unlocked! Delivery button & garment management enabled.");
+        } else if (enteredPin !== null) {
+          alert("Incorrect PIN.");
+        }
+      }
+    }
+
+    function checkAdminStatus() {
+      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+      document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
+      document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
+    }
+
+    function lockAdmin() {
+      sessionStorage.removeItem("ifp_admin_auth");
+      checkAdminStatus();
+      alert("Admin mode locked. Delivery controls are now hidden.");
+    }
+
+    // ==========================================
+    // 2. STORE DATA & LOGIC
+    // ==========================================
+    const defaultProducts = [
+      { id: 1, name: "Embroidered Pheran Suit", price: 1499, stock: "In Stock", sizes: ["M", "L", "XL"], img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&q=80" },
+      { id: 2, name: "Casual Kurti Set", price: 899, stock: "In Stock", sizes: ["S", "M", "L"], img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80" },
+      { id: 3, name: "Woolen Shawl / Stole", price: 650, stock: "In Stock", sizes: ["Free Size"], img: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=500&q=80" },
+      { id: 4, name: "Party Wear Gown", price: 1999, stock: "Only 2 Left", sizes: ["M", "L"], img: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&q=80" },
+      { id: 5, name: "Printed Cotton Tunic", price: 499, stock: "In Stock", sizes: ["S", "M", "L", "XL"], img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&q=80" },
+      { id: 6, name: "Traditional Silk Suit", price: 2199, stock: "In Stock", sizes: ["Unstitched", "M", "L"], img: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80" }
+    ];
+
+    let products = JSON.parse(localStorage.getItem("ifp_products")) || defaultProducts;
+    let selectedProduct = null;
+
+    const savedHero = localStorage.getItem("ifp_hero_banner");
+    if (savedHero) {
+      document.getElementById("heroImg").src = savedHero;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productsGrid");
+      grid.innerHTML = "";
+      products.forEach(p => {
+        const sizeOptions = p.sizes.map(s => `<option value="${s}">${s}</option>`).join("");
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            <img class="card-img" src="${p.img}" alt="${p.name}" />
+            <span class="cod-tag">COD</span>
+            <span class="stock-badge">${p.stock}</span>
+          </div>
+          <div class="card-body">
+            <div class="item-name">${p.name}</div>
+            <div class="item-price">₹${p.price}</div>
+            <select class="size-select" id="size-${p.id}">
+              ${sizeOptions}
+            </select>
+            <button class="order-btn" onclick="startOrder(${p.id})">
+              <i class="fa-solid fa-bag-shopping"></i> Order
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    function triggerHeroUpload() {
+      document.getElementById("heroInput").click();
+    }
+    function updateHeroImage(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById("heroImg").src = evt.target.result;
+          localStorage.setItem("ifp_hero_banner", evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function openAddProductModal() {
+      document.getElementById("addProductModal").classList.add("active");
+    }
+    function handleNewProduct(e) {
+      e.preventDefault();
+      const title = document.getElementById("newTitle").value;
+      const price = document.getElementById("newPrice").value;
+      const file = document.getElementById("newImgFile").files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const newItem = {
+            id: Date.now(),
+            name: title,
+            price: Number(price),
+            stock: "In Stock",
+            sizes: ["S", "M", "L", "XL"],
+            img: evt.target.result
+          };
+          products.unshift(newItem);
+          localStorage.setItem("ifp_products", JSON.stringify(products));
+          renderProducts();
+          closeModal("addProductModal");
+          e.target.reset();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function resetDefaultArticles() {
+      if (confirm("Reset garments list to default 6 items?")) {
+        products = [...defaultProducts];
+        localStorage.setItem("ifp_products", JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
+    // Order Initiation & Auto-Fill
+    function startOrder(id) {
+      selectedProduct = products.find(item => item.id === id);
+      const sizeEl = document.getElementById(`size-${id}`);
+      selectedProduct.selectedSize = sizeEl ? sizeEl.value : "Standard";
+
+      document.getElementById("orderItemSummary").innerText = 
+        `Item: ${selectedProduct.name} | Size: ${selectedProduct.selectedSize} | Price: ₹${selectedProduct.price} (COD)`;
+      
+      const savedProfile = JSON.parse(localStorage.getItem("ifp_saved_customer"));
+      if (savedProfile) {
+        document.getElementById("custName").value = savedProfile.name || "";
+        document.getElementById("custPhone").value = savedProfile.phone || "";
+        document.getElementById("custArea").value = savedProfile.area || "";
+        document.getElementById("custStreet").value = savedProfile.street || "";
+      }
+
+      document.getElementById("orderModal").classList.add("active");
+    }
+
+    // Handle Order Submission
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const area = document.getElementById("custArea").value;
+      const street = document.getElementById("custStreet").value.trim();
+
+      const fullAddress = `${street}, ${area}`;
+
+      localStorage.setItem("ifp_saved_customer", JSON.stringify({
+        name: name,
+        phone: phone,
+        area: area,
+        street: street
+      }));
+
+      const orderData = {
+        orderId: "IFP-" + Math.floor(1000 + Math.random() * 9000),
+        item: selectedProduct.name,
+        size: selectedProduct.selectedSize,
+        price: selectedProduct.price,
+        customerName: name,
+        customerAddress: fullAddress,
+        customerArea: area,
+        customerStreet: street,
+        customerPhone: phone,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+      orders.unshift(orderData);
+      localStorage.setItem("ifp_orders", JSON.stringify(orders));
+
+      const msg = `*NEW ORDER - IBRAHIM FASHION POINT*\n\n` +
+                  `*Order ID:* ${orderData.orderId}\n` +
+                  `*Product:* ${orderData.item}\n` +
+                  `*Size:* ${orderData.size}\n` +
+                  `*Price:* ₹${orderData.price} (COD)\n\n` +
+                  `*Customer Details:*\n` +
+                  `*Name:* ${orderData.customerName}\n` +
+                  `*Phone:* ${orderData.customerPhone}\n` +
+                  `*Delivery Area:* ${area}\n` +
+                  `*Street / Landmark:* ${street}`;
+
+      const whatsappUrl = `https://wa.me/916005757393?text=${encodeURIComponent(msg)}`;
+
+      closeModal("orderModal");
+      window.open(whatsappUrl, "_blank");
+    }
+
+    function openOrdersModal() {
+      const container = document.getElementById("ordersListContainer");
+      const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px 0;">No previous orders found.</p>`;
+      } else {
+        container.innerHTML = orders.map(o => `
+          <div class="order-record">
+            <div style="font-weight:700; color:var(--primary);">${o.item}</div>
+            <div style="color:var(--muted); font-size:0.75rem;">Size: ${o.size} | ₹${o.price} (COD)</div>
+            <div style="font-size:0.75rem; margin-top:3px;">Ordered on: ${o.date} ${o.time || ''}</div>
+            <div style="font-size:0.72rem; color:var(--accent);">Status: Confirmed via WhatsApp</div>
+          </div>
+        `).join("");
+      }
+      document.getElementById("myOrdersModal").classList.add("active");
+    }
+
+    // ==========================================================
+    // 3. OWNER DELIVERY LOGIC - GROUP ORDERS BY LOCATION
+    // ==========================================================
+    function openDeliveryDashboard() {
+      const container = document.getElementById("deliveryGroupContainer");
+      const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:25px 0;">No delivery orders found yet.</p>`;
+        document.getElementById("deliveryModal").classList.add("active");
+        return;
+      }
+
+      // Grouping orders by area
+      const groups = orders.reduce((acc, curr) => {
+        const area = curr.customerArea || "Uncategorized Area";
+        if (!acc[area]) {
+          acc[area] = [];
+        }
+        acc[area].push(curr);
+        return acc;
+      }, {});
+
+      let html = "";
+      for (const [areaName, areaOrders] of Object.entries(groups)) {
+        html += `
+          <div class="loc-group-card">
+            <div class="loc-group-header">
+              <span><i class="fa-solid fa-location-dot" style="color:#d97706; margin-right:5px;"></i> ${areaName}</span>
+              <span class="loc-badge">${areaOrders.length} Order${areaOrders.length > 1 ? 's' : ''}</span>
+            </div>
+            <div>
+        `;
+
+        areaOrders.forEach(ord => {
+          html += `
+            <div class="loc-order-item">
+              <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                <span style="font-weight:700; color:var(--primary);">${ord.customerName}</span>
+                <span style="font-weight:700; color:var(--accent);">₹${ord.price} (COD)</span>
+              </div>
+              <div><strong>Article:</strong> ${ord.item} (Size: ${ord.size})</div>
+              <div style="color:var(--muted);"><strong>Address:</strong> ${ord.customerStreet || ord.customerAddress}</div>
+              <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${ord.orderId} • ${ord.date} ${ord.time || ''}</div>
+              <div class="order-action-links">
+                <a href="tel:${ord.customerPhone}"><i class="fa-solid fa-phone"></i> Call</a>
+                <a href="https://wa.me/91${ord.customerPhone.replace(/[^0-9]/g, '')}" target="_blank"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      document.getElementById("deliveryModal").classList.add("active");
+    }
+
+    function promptAddManualOrder() {
+      const area = prompt("Enter Area (e.g. Malapora, Chadoora, Trajibal):");
+      if (!area) return;
+      const name = prompt("Customer Name:");
+      const phone = prompt("Phone Number:");
+      const item = prompt("Item Name & Size:");
+      const price = prompt("Total COD Price (₹):");
+      const street = prompt("Exact Address / Landmark:");
+
+      const manualOrder = {
+        orderId: "MAN-" + Math.floor(1000 + Math.random() * 9000),
+        item: item || "Custom Garment",
+        size: "Selected",
+        price: Number(price) || 0,
+        customerName: name || "Customer",
+        customerAddress: `${street}, ${area}`,
+        customerArea: area,
+        customerStreet: street || "",
+        customerPhone: phone || "",
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+      orders.unshift(manualOrder);
+      localStorage.setItem("ifp_orders", JSON.stringify(orders));
+      openDeliveryDashboard();
+    }
+
+    function clearCompletedOrders() {
+      if (confirm("Are you sure you want to clear all current delivery orders? Make sure pending packages are delivered.")) {
+        localStorage.removeItem("ifp_orders");
+        openDeliveryDashboard();
+      }
+    }
+
+    // Initialize Page
+    checkAdminStatus();
+    renderProducts();
+  </script>
+</body>
+</html>
