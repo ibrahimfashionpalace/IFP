@@ -7,14 +7,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     :root {
-      --primary: #111827;
+      --primary: #1e1b4b;
       --accent: #d97706;
-      --bg: #f9fafb;
+      --accent-pink: #e11d48;
+      --bg: #fdf2f8; /* Soft colored ambient background */
       --card-bg: #ffffff;
       --text: #1f2937;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --radius: 12px;
+      --muted: #64748b;
+      --border: #fbcfe8;
+      --radius: 14px;
     }
     * {
       box-sizing: border-box;
@@ -23,57 +24,68 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     }
     body {
-      background-color: var(--bg);
+      background: linear-gradient(180deg, #fdf2f8 0%, #faf5ff 50%, #f0fdf4 100%);
       color: var(--text);
+      min-height: 100vh;
       padding-bottom: 70px;
     }
-    /* Navbar */
+
+    /* Vibrant Colored Navbar */
     header {
-      background: #fff;
+      background: linear-gradient(135deg, #312e81 0%, #4c0519 100%);
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      box-shadow: 0 4px 15px rgba(76, 5, 25, 0.2);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 14px 16px;
+      color: #ffffff;
     }
     .brand-title {
       font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      color: var(--primary);
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      color: #fbbf24;
       user-select: none;
       cursor: pointer;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
     .brand-sub {
       font-size: 0.75rem;
-      color: var(--muted);
+      color: #fbcfe8;
+      margin-top: 2px;
     }
     .menu-btn {
-      background: none;
-      border: none;
-      font-size: 1.25rem;
-      color: var(--text);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 1.2rem;
+      color: #ffffff;
       cursor: pointer;
-      padding: 6px;
+      padding: 8px 12px;
+      border-radius: 50%;
+      transition: background 0.2s;
     }
-    /* Hero Banner */
+    .menu-btn:active {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Colorful First Interface / Hero Banner */
     .hero-container {
       position: relative;
-      margin: 12px 14px;
+      margin: 14px 14px;
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      background: #000;
+      box-shadow: 0 6px 20px rgba(225, 29, 72, 0.18);
+      background: linear-gradient(135deg, #881337 0%, #4c0519 50%, #1e1b4b 100%);
     }
     .hero-img {
       width: 100%;
-      height: 160px;
+      height: 175px;
       object-fit: cover;
       display: block;
-      opacity: 0.88;
+      opacity: 0.85;
     }
     .hero-overlay {
       position: absolute;
@@ -81,85 +93,109 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      padding: 16px;
+      background: linear-gradient(to top, rgba(30, 27, 75, 0.95), rgba(76, 5, 25, 0.4), transparent);
       color: #fff;
     }
+    .hero-tag {
+      display: inline-block;
+      align-self: flex-start;
+      background: #fbbf24;
+      color: #881337;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
     .hero-title {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
     }
 
-    /* HIDDEN BY DEFAULT FOR CUSTOMERS */
+    /* Owner Controls */
     .hero-edit-btn {
       display: none;
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(0,0,0,0.75);
+      color: #fbbf24;
+      border: 1px solid #fbbf24;
       border-radius: 20px;
-      padding: 5px 10px;
+      padding: 6px 12px;
       font-size: 0.72rem;
       cursor: pointer;
+      font-weight: 600;
     }
-
-    /* HIDDEN BY DEFAULT FOR CUSTOMERS (OWNER DASHBOARD) */
     .admin-bar {
       display: none;
-      margin: 0 14px 10px;
+      margin: 0 14px 12px;
       flex-wrap: wrap;
       gap: 8px;
     }
     .admin-bar button {
       flex: 1 1 calc(50% - 8px);
-      padding: 9px 8px;
+      padding: 10px 8px;
       border: none;
-      background: #e5e7eb;
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
       font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text);
+      font-weight: 700;
+      color: var(--primary);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
     .admin-bar button.delivery-btn {
       background: #0284c7;
       color: #ffffff;
+      border: none;
       flex: 1 1 100%;
       font-size: 0.85rem;
+    }
+    .admin-bar button.maintenance-btn {
+      background: #f59e0b;
+      color: #ffffff;
+      border: none;
+      flex: 1 1 100%;
     }
     .admin-bar button.lock-btn {
       background: #fee2e2;
       color: #b91c1c;
+      border: none;
       flex: 1 1 100%;
     }
 
-    /* 2 Columns on Mobile / Android */
+    /* Garment Product Grid */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      padding: 0 12px;
+      gap: 12px;
+      padding: 0 14px;
     }
     .card {
       background: var(--card-bg);
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(244, 114, 182, 0.3);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
     .card-img-wrap {
       position: relative;
       width: 100%;
       padding-top: 125%;
-      background: #f3f4f6;
+      background: #fdf2f8;
     }
     .card-img {
       position: absolute;
@@ -176,71 +212,82 @@
       background: #10b981;
       color: #fff;
       font-size: 0.65rem;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
       font-weight: 700;
     }
     .stock-badge {
       position: absolute;
       top: 6px;
       right: 6px;
-      background: rgba(0,0,0,0.7);
+      background: rgba(17, 24, 39, 0.75);
       color: #fff;
       font-size: 0.62rem;
-      padding: 2px 5px;
-      border-radius: 4px;
+      padding: 3px 6px;
+      border-radius: 6px;
     }
     .card-body {
-      padding: 8px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       flex-grow: 1;
       gap: 4px;
+      background: #ffffff;
     }
     .item-name {
       font-size: 0.85rem;
       font-weight: 700;
       line-height: 1.2;
+      color: #111827;
     }
     .item-price {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 800;
-      color: var(--accent);
+      color: #be123c;
     }
     .size-select {
       width: 100%;
-      padding: 4px;
+      padding: 5px;
       font-size: 0.75rem;
-      border: 1px solid var(--border);
+      border: 1px solid #cbd5e1;
       border-radius: 6px;
       background: #fff;
       margin-top: 2px;
     }
     .order-btn {
       margin-top: 6px;
-      background: var(--primary);
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff;
       border: none;
-      padding: 7px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 5px;
     }
-    .order-btn:active {
-      transform: scale(0.98);
+    .delete-garment-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      padding: 5px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
     }
 
-    /* Modals & Drawers */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
       z-index: 200;
       align-items: flex-end;
       justify-content: center;
@@ -252,9 +299,9 @@
       background: #fff;
       width: 100%;
       max-width: 480px;
-      border-radius: 18px 18px 0 0;
-      padding: 18px;
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -262,16 +309,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 10px;
     }
     .modal-head h3 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
+      color: var(--primary);
     }
     .close-btn {
       background: none;
       border: none;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       cursor: pointer;
+      color: var(--muted);
     }
     .form-group {
       margin-bottom: 10px;
@@ -289,7 +340,7 @@
       width: 100%;
       padding: 9px;
       font-size: 0.85rem;
-      border: 1px solid var(--border);
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
       outline: none;
       background: #fff;
@@ -311,7 +362,38 @@
       margin-top: 8px;
     }
 
-    /* Location Delivery Hub Styles */
+    /* Customer Orders Item Details */
+    .order-record {
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #e11d48;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+    }
+    .order-item-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    .order-detail-line {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .order-status-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #047857;
+      background: #d1fae5;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-top: 6px;
+    }
+
+    /* Location Hub Cards */
     .loc-group-card {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -339,7 +421,7 @@
     }
     .loc-order-item {
       padding: 10px 12px;
-      border-bottom: 1px dashed var(--border);
+      border-bottom: 1px dashed #cbd5e1;
       font-size: 0.78rem;
     }
     .loc-order-item:last-child {
@@ -359,12 +441,73 @@
       gap: 4px;
     }
 
+    /* FULL SCREEN MAINTENANCE OVERLAY */
+    #maintenanceScreen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 50%, #4c0519 100%);
+      color: #ffffff;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    #maintenanceScreen.active {
+      display: flex;
+    }
+    .maint-icon {
+      font-size: 3.5rem;
+      color: #fbbf24;
+      margin-bottom: 16px;
+      animation: pulse 2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .maint-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+    .maint-sub {
+      font-size: 0.95rem;
+      color: #fbcfe8;
+      margin-bottom: 24px;
+      max-width: 320px;
+      line-height: 1.4;
+    }
+    .maint-contact {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 14px 20px;
+      max-width: 320px;
+      width: 100%;
+    }
+    .maint-contact a {
+      color: #fbbf24;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .owner-bypass-link {
+      margin-top: 30px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
     /* Footer */
     footer {
       margin-top: 30px;
-      background: #fff;
+      background: #ffffff;
       border-top: 1px solid var(--border);
-      padding: 20px 16px;
+      padding: 24px 16px;
       text-align: center;
       font-size: 0.8rem;
       color: var(--muted);
@@ -372,92 +515,117 @@
     footer a {
       color: var(--primary);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
     .contact-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       margin: 4px 6px;
-      background: #f3f4f6;
-      padding: 6px 10px;
+      background: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      padding: 6px 12px;
       border-radius: 20px;
-    }
-
-    /* My Orders List */
-    .order-record {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 8px;
-      font-size: 0.8rem;
     }
   </style>
 </head>
 <body>
 
+  <!-- FULL SCREEN MAINTENANCE VIEW -->
+  <div id="maintenanceScreen">
+    <div class="maint-icon"><i class="fa-solid fa-wrench"></i></div>
+    <div class="maint-title">Website Under Maintenance</div>
+    <div class="maint-sub">Inconvenience regretted. We are updating our garment collection and will be back shortly!</div>
+    
+    <div class="maint-contact">
+      <div style="font-size:0.75rem; color:#cbd5e1; margin-bottom:6px;">Need urgent assistance or orders?</div>
+      <div style="margin-bottom:6px;"><i class="fa-solid fa-phone"></i> Call: <a href="tel:6005757393">6005757393</a></div>
+      <div><i class="fa-brands fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/916005757393" target="_blank">Chat with us</a></div>
+    </div>
+
+    <!-- Owner unlock button during maintenance -->
+    <div class="owner-bypass-link" onclick="handleBrandTap()">Owner Login / Access</div>
+  </div>
+
   <!-- Top Navigation with Hidden Admin Tap -->
   <header>
     <div>
       <div class="brand-title" id="brandTitle" onclick="handleBrandTap()">IBRAHIM FASHION POINT</div>
-      <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief</div>
+      <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
     </div>
-    <button class="menu-btn" onclick="openOrdersModal()" title="Menu">
+    <!-- THREE DOTS BUTTON: DIRECTLY OPENS CUSTOMER ORDERS -->
+    <button class="menu-btn" onclick="openOrdersModal()" title="View My Orders">
       <i class="fa-solid fa-ellipsis-vertical"></i>
     </button>
   </header>
 
-  <!-- Hero Banner -->
+  <!-- Colorful First Interface / Hero Showcase -->
   <div class="hero-container">
-    <img id="heroImg" class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="Ibrahim Fashion Banner" />
+    <img id="heroImg" class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="Ibrahim Fashion Point Banner" />
     <div class="hero-overlay">
+      <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
       <div class="hero-title">New Garment Collection</div>
-      <p style="font-size: 0.72rem; opacity: 0.9;">Best quality clothing & direct COD delivery</p>
+      <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
     </div>
-    <!-- Protected Edit Button -->
     <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
       <i class="fa-solid fa-camera"></i> Change Photo
     </button>
     <input type="file" id="heroInput" accept="image/*" style="display:none" onchange="updateHeroImage(event)" />
   </div>
 
-  <!-- Protected Admin Controls (Visible Only After Secret PIN) -->
+  <!-- Protected Admin Bar (Owner Controls) -->
   <div class="admin-bar" id="adminBar">
-    <!-- NEW DELIVERY BUTTON -->
     <button class="delivery-btn" onclick="openDeliveryDashboard()">
       <i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub (Grouped by Location)
     </button>
+    
+    <!-- Maintenance Mode Toggle Button -->
+    <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()">
+      <i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance Mode
+    </button>
+
     <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add New Garment</button>
-    <button onclick="resetDefaultArticles()"><i class="fa-solid fa-rotate-left"></i> Reset Articles</button>
+    <button onclick="clearCatalog()"><i class="fa-solid fa-trash"></i> Delete All Garments</button>
     <button class="lock-btn" onclick="lockAdmin()" title="Lock Admin Mode"><i class="fa-solid fa-lock"></i> Lock Admin Mode</button>
   </div>
 
-  <!-- 2-Per-Row Garments Catalog -->
+  <!-- Garments Catalog Grid -->
   <main>
     <div class="products-grid" id="productsGrid"></div>
   </main>
 
-  <!-- Order Checkout Modal with Dropdown Address & Auto-Save -->
+  <!-- My Orders Modal (Opened via 3 Dots) -->
+  <div class="modal-overlay" id="myOrdersModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div>
+          <h3><i class="fa-solid fa-bag-shopping" style="color:#be123c;"></i> My Orders</h3>
+          <p style="font-size:0.72rem; color:var(--muted);">Details of what you have ordered from our store</p>
+        </div>
+        <button class="close-btn" type="button" onclick="closeModal('myOrdersModal')">&times;</button>
+      </div>
+      <div id="ordersListContainer"></div>
+    </div>
+  </div>
+
+  <!-- Order Checkout Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <h3>Confirm Order</h3>
-        <button class="close-btn" onclick="closeModal('orderModal')">&times;</button>
+        <button class="close-btn" type="button" onclick="closeModal('orderModal')">&times;</button>
       </div>
-      <div id="orderItemSummary" style="font-size:0.85rem; margin-bottom:12px; color:var(--accent); font-weight:600;"></div>
+      <div id="orderItemSummary" style="font-size:0.85rem; margin-bottom:12px; color:#be123c; font-weight:700;"></div>
       
       <form onsubmit="handleOrderSubmit(event)">
         <div class="form-group">
           <label>Your Name *</label>
           <input type="text" id="custName" required placeholder="Enter your full name" />
         </div>
-        
         <div class="form-group">
           <label>Phone Number *</label>
           <input type="tel" id="custPhone" required placeholder="e.g. 6005757393" />
         </div>
-
-        <!-- Selected Location Dropdown -->
         <div class="form-group">
           <label>Delivery Area / Location *</label>
           <select id="custArea" required>
@@ -474,13 +642,10 @@
             <option value="Other / Nearby Area">Other / Nearby Area</option>
           </select>
         </div>
-
-        <!-- Specific House/Landmark Detail -->
         <div class="form-group">
           <label>Street, House No. & Landmark *</label>
-          <input type="text" id="custStreet" required placeholder="e.g. Near Shrine / Lane 2 / House 15" />
+          <input type="text" id="custStreet" required placeholder="e.g. Near Shrine / Lane 2" />
         </div>
-
         <button type="submit" class="confirm-btn">
           <i class="fa-brands fa-whatsapp"></i> Confirm Order via WhatsApp
         </button>
@@ -488,37 +653,24 @@
     </div>
   </div>
 
-  <!-- My Orders Modal -->
-  <div class="modal-overlay" id="myOrdersModal">
-    <div class="modal-sheet">
-      <div class="modal-head">
-        <h3>My Orders</h3>
-        <button class="close-btn" onclick="closeModal('myOrdersModal')">&times;</button>
-      </div>
-      <div id="ordersListContainer"></div>
-    </div>
-  </div>
-
-  <!-- Delivery Hub Modal (OWNER ONLY - GROUPED BY LOCATION) -->
+  <!-- Delivery Hub Modal (Grouped by Location) -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <div>
           <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Location Delivery Hub</h3>
-          <p style="font-size:0.72rem; color:var(--muted);">All orders automatically grouped by area</p>
+          <p style="font-size:0.72rem; color:var(--muted);">All customer orders sorted by area</p>
         </div>
-        <button class="close-btn" onclick="closeModal('deliveryModal')">&times;</button>
+        <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
-
       <div style="display:flex; gap:8px; margin-bottom:12px;">
-        <button onclick="promptAddManualOrder()" style="flex:1; padding:7px; font-size:0.75rem; border:1px solid #cbd5e1; border-radius:6px; background:#fff; font-weight:600;">
+        <button onclick="promptAddManualOrder()" style="flex:1; padding:8px; font-size:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#fff; font-weight:700;">
           <i class="fa-solid fa-plus"></i> Add Manual Order
         </button>
-        <button onclick="clearCompletedOrders()" style="padding:7px 10px; font-size:0.75rem; border:none; border-radius:6px; background:#fee2e2; color:#b91c1c; font-weight:600;">
+        <button onclick="clearCompletedOrders()" style="padding:8px 12px; font-size:0.75rem; border:none; border-radius:8px; background:#fee2e2; color:#b91c1c; font-weight:700;">
           Clear All
         </button>
       </div>
-
       <div id="deliveryGroupContainer"></div>
     </div>
   </div>
@@ -528,46 +680,48 @@
     <div class="modal-sheet">
       <div class="modal-head">
         <h3>Upload New Garment</h3>
-        <button class="close-btn" onclick="closeModal('addProductModal')">&times;</button>
+        <button class="close-btn" type="button" onclick="closeModal('addProductModal')">&times;</button>
       </div>
-      <form onsubmit="handleNewProduct(event)">
+      <form id="newProductForm" onsubmit="handleNewProduct(event)">
         <div class="form-group">
           <label>Garment Name *</label>
-          <input type="text" id="newTitle" required placeholder="e.g. Classic Embroidered Kurti" />
+          <input type="text" id="newTitle" required placeholder="e.g. Kashmiri Embroidered Kurti" />
         </div>
         <div class="form-group">
           <label>Price (₹) *</label>
-          <input type="number" id="newPrice" required placeholder="799" />
+          <input type="number" id="newPrice" required placeholder="899" />
         </div>
         <div class="form-group">
           <label>Garment Photo *</label>
-          <input type="file" id="newImgFile" accept="image/*" required />
+          <input type="file" id="newImgFile" accept="image/png, image/jpeg, image/webp" required />
         </div>
-        <button type="submit" class="confirm-btn" style="background:var(--primary)">Save Garment</button>
+        <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">
+          Save Garment
+        </button>
       </form>
     </div>
   </div>
 
   <!-- Footer -->
   <footer>
-    <div style="font-weight:700; margin-bottom:8px; color:var(--primary)">IBRAHIM FASHION POINT</div>
-    <div>Malapora, Charar-i-Sharief,Budgam</div>
-    <div style="margin-top:10px;">
+    <div style="font-weight:800; font-size:0.9rem; margin-bottom:6px; color:var(--primary)">IBRAHIM FASHION POINT</div>
+    <div>Malapora, Charar-i-Sharief, Budgam</div>
+    <div style="margin-top:12px;">
       <div class="contact-badge">
-        <i class="fa-solid fa-phone"></i>
+        <i class="fa-solid fa-phone" style="color:#be123c;"></i>
         <a href="tel:6005757393">6005757393</a>
       </div>
       <div class="contact-badge">
-        <i class="fa-solid fa-envelope"></i>
-        <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a>
+        <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i>
+        <a href="https://wa.me/916005757393" target="_blank">6005757393</a>
       </div>
     </div>
-    <p style="margin-top:10px; font-size:0.7rem;">Customer Support Available 10 AM - 8 PM</p>
+    <p style="margin-top:10px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10 AM - 8 PM</p>
   </footer>
 
   <script>
     // ==========================================
-    // 1. OWNER PIN PROTECTION SYSTEM
+    // 1. PIN PROTECTION & MAINTENANCE ENGINE
     // ==========================================
     const OWNER_PIN = "21782"; 
     let tapCount = 0;
@@ -580,11 +734,12 @@
 
       if (tapCount >= 3) {
         tapCount = 0;
-        const enteredPin = prompt("Enter Owner PIN to edit website:");
+        const enteredPin = prompt("Enter Owner PIN to unlock editing & controls:");
         if (enteredPin === OWNER_PIN) {
           sessionStorage.setItem("ifp_admin_auth", "true");
           checkAdminStatus();
-          alert("Owner Mode Unlocked! Delivery button & garment management enabled.");
+          checkMaintenanceStatus();
+          alert("Owner Mode Unlocked!");
         } else if (enteredPin !== null) {
           alert("Incorrect PIN.");
         }
@@ -595,19 +750,55 @@
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
+      
+      const isMaint = localStorage.getItem("ifp_maintenance_mode") === "true";
+      const maintBtn = document.getElementById("maintToggleBtn");
+      if (maintBtn) {
+        maintBtn.innerHTML = isMaint 
+          ? `<i class="fa-solid fa-circle-check"></i> Turn Maintenance Mode OFF`
+          : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maintenance Mode ON`;
+        maintBtn.style.background = isMaint ? "#10b981" : "#f59e0b";
+      }
+
+      renderProducts();
     }
 
     function lockAdmin() {
       sessionStorage.removeItem("ifp_admin_auth");
       checkAdminStatus();
-      alert("Admin mode locked. Delivery controls are now hidden.");
+      checkMaintenanceStatus();
+      alert("Admin mode locked.");
+    }
+
+    function toggleMaintenanceMode() {
+      const current = localStorage.getItem("ifp_maintenance_mode") === "true";
+      const nextState = !current;
+      localStorage.setItem("ifp_maintenance_mode", nextState ? "true" : "false");
+      alert(nextState 
+        ? "Maintenance Mode is now ON. Visitors will see the maintenance notice." 
+        : "Maintenance Mode is now OFF. Website is live for all customers!"
+      );
+      checkAdminStatus();
+      checkMaintenanceStatus();
+    }
+
+    function checkMaintenanceStatus() {
+      const isMaint = localStorage.getItem("ifp_maintenance_mode") === "true";
+      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+      const screen = document.getElementById("maintenanceScreen");
+
+      // Show maintenance screen to everyone EXCEPT authenticated owner
+      if (isMaint && !isAuth) {
+        screen.classList.add("active");
+      } else {
+        screen.classList.remove("active");
+      }
     }
 
     // ==========================================
-    // 2. STORE DATA & LOGIC
+    // 2. STORE DATA & STATE
     // ==========================================
     const defaultProducts = [];
-
     let products = JSON.parse(localStorage.getItem("ifp_products")) || defaultProducts;
     let selectedProduct = null;
 
@@ -618,7 +809,20 @@
 
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
+      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       grid.innerHTML = "";
+
+      if (products.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:span 2; text-align:center; padding:40px 14px; background:#fff; border-radius:14px; border:1px dashed #cbd5e1;">
+            <i class="fa-solid fa-shirt" style="font-size:2rem; color:#cbd5e1; margin-bottom:8px;"></i>
+            <div style="font-weight:700; color:var(--primary); font-size:0.9rem;">Catalog is Empty</div>
+            <p style="color:var(--muted); font-size:0.75rem; margin-top:4px;">Tap the title 3 times and enter PIN 21782 to upload garments.</p>
+          </div>
+        `;
+        return;
+      }
+
       products.forEach(p => {
         const sizeOptions = p.sizes.map(s => `<option value="${s}">${s}</option>`).join("");
         const card = document.createElement("div");
@@ -638,10 +842,27 @@
             <button class="order-btn" onclick="startOrder(${p.id})">
               <i class="fa-solid fa-bag-shopping"></i> Order
             </button>
+            ${isAuth ? `<button class="delete-garment-btn" onclick="deleteGarment(${p.id})"><i class="fa-solid fa-trash"></i> Delete</button>` : ''}
           </div>
         `;
         grid.appendChild(card);
       });
+    }
+
+    function deleteGarment(id) {
+      if (confirm("Delete this garment permanently?")) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem("ifp_products", JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
+    function clearCatalog() {
+      if (confirm("Delete ALL uploaded garments from catalog?")) {
+        products = [];
+        localStorage.setItem("ifp_products", JSON.stringify(products));
+        renderProducts();
+      }
     }
 
     function closeModal(id) {
@@ -651,13 +872,31 @@
     function triggerHeroUpload() {
       document.getElementById("heroInput").click();
     }
+
     function updateHeroImage(e) {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          document.getElementById("heroImg").src = evt.target.result;
-          localStorage.setItem("ifp_hero_banner", evt.target.result);
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            const MAX_W = 800;
+            let w = img.width;
+            let h = img.height;
+            if (w > MAX_W) {
+              h = Math.round((h * MAX_W) / w);
+              w = MAX_W;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressed = canvas.toDataURL("image/jpeg", 0.7);
+            document.getElementById("heroImg").src = compressed;
+            localStorage.setItem("ifp_hero_banner", compressed);
+          };
+          img.src = evt.target.result;
         };
         reader.readAsDataURL(file);
       }
@@ -666,42 +905,92 @@
     function openAddProductModal() {
       document.getElementById("addProductModal").classList.add("active");
     }
+
+    // ==========================================
+    // 3. BULLETPROOF UPLOAD WITH RESIZE
+    // ==========================================
     function handleNewProduct(e) {
       e.preventDefault();
-      const title = document.getElementById("newTitle").value;
-      const price = document.getElementById("newPrice").value;
+      const submitBtn = document.getElementById("saveGarmentBtn");
+      const title = document.getElementById("newTitle").value.trim();
+      const price = document.getElementById("newPrice").value.trim();
       const file = document.getElementById("newImgFile").files[0];
 
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const newItem = {
-            id: Date.now(),
-            name: title,
-            price: Number(price),
-            stock: "In Stock",
-            sizes: ["S", "M", "L", "XL"],
-            img: evt.target.result
-          };
-          products.unshift(newItem);
-          localStorage.setItem("ifp_products", JSON.stringify(products));
-          renderProducts();
-          closeModal("addProductModal");
-          e.target.reset();
+      if (!file) {
+        alert("Please pick an image file first.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing & Saving...";
+
+      const reader = new FileReader();
+      reader.onerror = function() {
+        alert("Failed to read image. Try taking a screenshot first.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save Garment";
+      };
+
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onerror = function() {
+          alert("Unsupported image format. Please choose a JPG or PNG.");
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Save Garment";
         };
-        reader.readAsDataURL(file);
-      }
+
+        img.onload = function() {
+          try {
+            const canvas = document.createElement("canvas");
+            const maxDim = 380;
+            let w = img.width;
+            let h = img.height;
+
+            if (w > h && w > maxDim) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else if (h > maxDim) {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+
+            const compressedUrl = canvas.toDataURL("image/jpeg", 0.65);
+
+            const newItem = {
+              id: Date.now(),
+              name: title,
+              price: Number(price),
+              stock: "In Stock",
+              sizes: ["S", "M", "L", "XL"],
+              img: compressedUrl
+            };
+
+            products.unshift(newItem);
+            localStorage.setItem("ifp_products", JSON.stringify(products));
+            renderProducts();
+            closeModal("addProductModal");
+            document.getElementById("newProductForm").reset();
+            alert("Garment uploaded successfully!");
+          } catch (storageErr) {
+            alert("Storage limit reached! Please delete older garments first.");
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Save Garment";
+          }
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
-    function resetDefaultArticles() {
-      if (confirm("Reset garments list to default 6 items?")) {
-        products = [...defaultProducts];
-        localStorage.setItem("ifp_products", JSON.stringify(products));
-        renderProducts();
-      }
-    }
-
-    // Order Initiation & Auto-Fill
+    // ==========================================
+    // 4. ORDERING FLOW
+    // ==========================================
     function startOrder(id) {
       selectedProduct = products.find(item => item.id === id);
       const sizeEl = document.getElementById(`size-${id}`);
@@ -721,14 +1010,12 @@
       document.getElementById("orderModal").classList.add("active");
     }
 
-    // Handle Order Submission
     function handleOrderSubmit(e) {
       e.preventDefault();
       const name = document.getElementById("custName").value.trim();
       const phone = document.getElementById("custPhone").value.trim();
       const area = document.getElementById("custArea").value;
       const street = document.getElementById("custStreet").value.trim();
-
       const fullAddress = `${street}, ${area}`;
 
       localStorage.setItem("ifp_saved_customer", JSON.stringify({
@@ -768,33 +1055,44 @@
                   `*Street / Landmark:* ${street}`;
 
       const whatsappUrl = `https://wa.me/916005757393?text=${encodeURIComponent(msg)}`;
-
       closeModal("orderModal");
       window.open(whatsappUrl, "_blank");
     }
 
+    // ==========================================
+    // 5. THREE DOTS: MY ORDERS DISPLAY
+    // ==========================================
     function openOrdersModal() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
 
       if (orders.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px 0;">No previous orders found.</p>`;
+        container.innerHTML = `
+          <div style="text-align:center; padding:30px 10px; color:var(--muted);">
+            <i class="fa-solid fa-basket-shopping" style="font-size:2.2rem; color:#cbd5e1; margin-bottom:8px;"></i>
+            <div style="font-weight:700; color:var(--primary); font-size:0.9rem;">No Orders Placed Yet</div>
+            <p style="font-size:0.75rem; margin-top:4px;">When you order garments, their complete details will appear here.</p>
+          </div>
+        `;
       } else {
         container.innerHTML = orders.map(o => `
           <div class="order-record">
-            <div style="font-weight:700; color:var(--primary);">${o.item}</div>
-            <div style="color:var(--muted); font-size:0.75rem;">Size: ${o.size} | ₹${o.price} (COD)</div>
-            <div style="font-size:0.75rem; margin-top:3px;">Ordered on: ${o.date} ${o.time || ''}</div>
-            <div style="font-size:0.72rem; color:var(--accent);">Status: Confirmed via WhatsApp</div>
+            <div class="order-item-title">${o.item}</div>
+            <div class="order-detail-line"><strong>Size:</strong> ${o.size} &nbsp;|&nbsp; <strong>Price:</strong> ₹${o.price} (Cash on Delivery)</div>
+            <div class="order-detail-line"><strong>Delivering to:</strong> ${o.customerAddress || o.customerStreet || 'Direct Store Delivery'}</div>
+            <div class="order-detail-line" style="color:#94a3b8; font-size:0.72rem; margin-top:4px;">
+              Order ID: ${o.orderId} • Placed on ${o.date} ${o.time || ''}
+            </div>
+            <div class="order-status-badge"><i class="fa-brands fa-whatsapp"></i> Confirmed via WhatsApp</div>
           </div>
         `).join("");
       }
       document.getElementById("myOrdersModal").classList.add("active");
     }
 
-    // ==========================================================
-    // 3. OWNER DELIVERY LOGIC - GROUP ORDERS BY LOCATION
-    // ==========================================================
+    // ==========================================
+    // 6. OWNER DELIVERY HUB (GROUPED BY AREA)
+    // ==========================================
     function openDeliveryDashboard() {
       const container = document.getElementById("deliveryGroupContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
@@ -805,12 +1103,9 @@
         return;
       }
 
-      // Grouping orders by area
       const groups = orders.reduce((acc, curr) => {
         const area = curr.customerArea || "Uncategorized Area";
-        if (!acc[area]) {
-          acc[area] = [];
-        }
+        if (!acc[area]) acc[area] = [];
         acc[area].push(curr);
         return acc;
       }, {});
@@ -831,9 +1126,9 @@
             <div class="loc-order-item">
               <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
                 <span style="font-weight:700; color:var(--primary);">${ord.customerName}</span>
-                <span style="font-weight:700; color:var(--accent);">₹${ord.price} (COD)</span>
+                <span style="font-weight:700; color:#be123c;">₹${ord.price} (COD)</span>
               </div>
-              <div><strong>Article:</strong> ${ord.item} (Size: ${ord.size})</div>
+              <div><strong>Ordered:</strong> ${ord.item} (Size: ${ord.size})</div>
               <div style="color:var(--muted);"><strong>Address:</strong> ${ord.customerStreet || ord.customerAddress}</div>
               <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${ord.orderId} • ${ord.date} ${ord.time || ''}</div>
               <div class="order-action-links">
@@ -844,10 +1139,7 @@
           `;
         });
 
-        html += `
-            </div>
-          </div>
-        `;
+        html += `</div></div>`;
       }
 
       container.innerHTML = html;
@@ -884,7 +1176,7 @@
     }
 
     function clearCompletedOrders() {
-      if (confirm("Are you sure you want to clear all current delivery orders? Make sure pending packages are delivered.")) {
+      if (confirm("Clear all active delivery records?")) {
         localStorage.removeItem("ifp_orders");
         openDeliveryDashboard();
       }
@@ -892,7 +1184,7 @@
 
     // Initialize Page
     checkAdminStatus();
-    renderProducts();
+    checkMaintenanceStatus();
   </script>
 </body>
 </html>
