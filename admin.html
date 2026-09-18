@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IFP - Owner Dashboard</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #f8f9fa; color: #333; }
+    .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); max-width: 500px; margin: 0 auto 20px; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    button { background: #111; color: white; border: none; font-weight: bold; cursor: pointer; }
+    button:hover { background: #333; }
+    .order-box { border-left: 4px solid #111; padding: 10px; margin: 10px 0; background: #fafafa; }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // --- PASTE YOUR FIREBASE CONFIG KEYS HERE ---
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDhQeckYDOMwNkBDqGFS4_WGeSRtzySSP8",
+  authDomain: "ifp-store.firebaseapp.com",
+  projectId: "ifp-store",
+  storageBucket: "ifp-store.firebasestorage.app",
+  messagingSenderId: "1028441234821",
+  appId: "1:1028441234821:web:4fd360e70e357d510d78ec",
+  measurementId: "G-R4EDL6SCRZ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+    
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Track Login State
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('login-card').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'block';
+        loadDeliveries();
+      } else {
+        document.getElementById('login-card').style.display = 'block';
+        document.getElementById('admin-dashboard').style.display = 'none';
+      }
+    });
+
+    // Login Function
+    window.handleLogin = async () => {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-pass').value;
+      const status = document.getElementById('login-status');
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        status.textContent = "Login Failed: " + err.message;
+        status.style.color = "red";
+      }
+    };
+
+    // Logout Function
+    window.handleLogout = () => signOut(auth);
+
+    // Add Garment
+    window.handleAddGarment = async () => {
+      const title = document.getElementById('garment-name').value;
+      const price = document.getElementById('garment-price').value;
+      const image = document.getElementById('garment-img').value;
+
+      if (!title || !price) {
+        alert("Please enter garment name and price.");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "products"), {
+          title: title,
+          price: Number(price),
+          image: image,
+          createdAt: new Date()
+        });
+        alert("Garment added successfully!");
+        document.getElementById('garment-name').value = '';
+        document.getElementById('garment-price').value = '';
+        document.getElementById('garment-img').value = '';
+      } catch (err) {
+        alert("Error saving item: " + err.message);
+      }
+    };
+
+    // Fetch Deliveries
+    async function loadDeliveries() {
+      const container = document.getElementById('deliveries-container');
+      container.innerHTML = "Loading customer orders...";
+      try {
+        const q = query(collection(db, "deliveries"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          container.innerHTML = "<p>No orders yet.</p>";
+          return;
+        }
+        container.innerHTML = "";
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          container.innerHTML += `
+            <div class="order-box">
+              <p><b>Customer:</b> ${data.name || "N/A"}</p>
+              <p><b>Phone:</b> ${data.phone || "N/A"}</p>
+              <p><b>Address:</b> ${data.address || "N/A"}</p>
+              <p><b>Item Ordered:</b> ${data.item || "N/A"}</p>
+            </div>
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = "Unable to fetch orders: " + err.message;
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Login Area -->
+  <div id="login-card" class="card">
+    <h2>Owner Login</h2>
+    <input type="email" id="login-email" placeholder="Owner Email">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button onclick="handleLogin()">Sign In</button>
+    <p id="login-status"></p>
+  </div>
+
+  <!-- Protected Admin Area -->
+  <div id="admin-dashboard" style="display: none;">
+    <div class="card">
+      <h2>Add New Garment</h2>
+      <input type="text" id="garment-name" placeholder="Garment Name">
+      <input type="number" id="garment-price" placeholder="Price (₹)">
+      <input type="text" id="garment-img" placeholder="Direct Image URL">
+      <button onclick="handleAddGarment()">Publish Garment Live</button>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Customer Deliveries</h2>
+        <button onclick="handleLogout()" style="width: auto; padding: 6px 14px;">Logout</button>
+      </div>
+      <div id="deliveries-container"></div>
+    </div>
+  </div>
+
+</body>
+</html>
