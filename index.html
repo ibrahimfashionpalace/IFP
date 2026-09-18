@@ -119,6 +119,7 @@
       cursor: pointer;
       pointer-events: auto;
       transition: transform 0.15s ease;
+      touch-action: manipulation;
     }
     .brand-logo-badge:active {
       transform: scale(0.92);
@@ -491,7 +492,7 @@
     .modal-overlay.active { display: flex; }
 
     #otpModal { z-index: 300; }
-    #loginModal { z-index: 350; }
+    #loginModal { z-index: 400; align-items: center; }
 
     .modal-sheet {
       background: #fff;
@@ -501,6 +502,10 @@
       padding: 20px;
       max-height: 90vh;
       overflow-y: auto;
+    }
+    #loginModal .modal-sheet {
+      border-radius: 20px;
+      margin: 16px;
     }
     .modal-head {
       display: flex;
@@ -779,7 +784,7 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <div class="brand-logo-badge" id="ifpBadge" onclick="handleBrandTap(event)" title="Click for Menu (Triple-tap for Owner)">IFP</div>
+        <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">IFP</div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
             <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
@@ -1117,30 +1122,40 @@
     let activeHubTab = "active";
     let pendingDeliveryVerification = null;
 
-    // IFP LOGO CLICK / TAP HANDLER (Triple-tap opens Auth Modal)
-    function handleBrandTap(event) {
-      if (event) event.stopPropagation();
+    // --- RELIABLE TRIPLE-TAP EVENT ATTACHMENT ---
+    const badgeEl = document.getElementById("ifpBadge");
+
+    function registerTap(e) {
+      if (e) {
+        e.stopPropagation();
+      }
+
       tapCount++;
       clearTimeout(tapTimer);
 
+      if (tapCount >= 3) {
+        tapCount = 0;
+        closeIfpDropdown();
+        if (navigator.vibrate) navigator.vibrate(60);
+        promptOwnerLogin();
+        return;
+      }
+
       tapTimer = setTimeout(() => {
-        if (tapCount > 0 && tapCount < 3) {
+        if (tapCount === 1) {
           toggleIfpDropdown();
         }
         tapCount = 0;
-      }, 350);
+      }, 700);
+    }
 
-      if (tapCount >= 3) {
-        clearTimeout(tapTimer);
-        tapCount = 0;
-        closeIfpDropdown();
-        promptOwnerLogin();
-      }
+    if (badgeEl) {
+      badgeEl.addEventListener("click", registerTap);
     }
 
     function toggleIfpDropdown() {
       const dropdown = document.getElementById("ifpDropdown");
-      dropdown.classList.toggle("active");
+      if (dropdown) dropdown.classList.toggle("active");
     }
 
     function closeIfpDropdown() {
@@ -1151,18 +1166,32 @@
     document.addEventListener("click", (e) => {
       const dropdown = document.getElementById("ifpDropdown");
       const badge = document.getElementById("ifpBadge");
-      if (dropdown && !badge.contains(e.target) && !dropdown.contains(e.target)) {
+      if (dropdown && badge && !badge.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.remove("active");
       }
     });
 
+    // OPEN OWNER LOGIN
     function promptOwnerLogin() {
       if (window.currentAdminUser) {
-        alert("You are already authenticated as the Owner.");
+        alert("You are already authenticated as the Owner (Aamir Rashid).");
         return;
       }
-      document.getElementById("authErrorMsg").style.display = "none";
-      document.getElementById("loginModal").classList.add("active");
+
+      const modal = document.getElementById("loginModal");
+      const errEl = document.getElementById("authErrorMsg");
+      if (errEl) errEl.style.display = "none";
+
+      if (modal) {
+        modal.classList.add("active");
+      } else {
+        const pass = prompt("Enter Firebase Owner Password for aamir757393@gmail.com:");
+        if (pass && window.firebaseAuthTools) {
+          window.firebaseAuthTools.signInWithEmailAndPassword(window.auth, "aamir757393@gmail.com", pass)
+            .then(() => alert("Owner Mode Unlocked! Welcome back, Aamir."))
+            .catch(err => alert("Access Denied: " + err.message));
+        }
+      }
     }
 
     async function handleOwnerAuth(e) {
@@ -1172,9 +1201,9 @@
       const errorMsg = document.getElementById("authErrorMsg");
       const btn = document.getElementById("authLoginBtn");
 
-      errorMsg.style.display = "none";
+      if (errorMsg) errorMsg.style.display = "none";
       btn.disabled = true;
-      btn.innerText = "Verifying...";
+      btn.innerText = "Signing in...";
 
       try {
         await window.firebaseAuthTools.signInWithEmailAndPassword(window.auth, email, password);
@@ -1182,8 +1211,12 @@
         document.getElementById("ownerLoginForm").reset();
         alert("Owner Mode Unlocked! Welcome back, Aamir.");
       } catch (err) {
-        errorMsg.textContent = "Access Denied: " + err.message;
-        errorMsg.style.display = "block";
+        if (errorMsg) {
+          errorMsg.textContent = "Access Denied: " + err.message;
+          errorMsg.style.display = "block";
+        } else {
+          alert("Access Denied: " + err.message);
+        }
       } finally {
         btn.disabled = false;
         btn.innerText = "Sign In to Admin Hub";
@@ -1194,17 +1227,18 @@
       document.getElementById("ownerModal").classList.add("active");
     }
 
-    // OWNER RESTRICTION
+    // OWNER RESTRICTION CONTROLS
     window.checkAdminStatus = function() {
       const isAuth = !!window.currentAdminUser;
       
-      document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
-      document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
+      const adminBar = document.getElementById("adminBar");
+      if (adminBar) adminBar.style.display = isAuth ? "flex" : "none";
+
+      const heroEditBtn = document.getElementById("heroEditBtn");
+      if (heroEditBtn) heroEditBtn.style.display = isAuth ? "block" : "none";
       
       const deliveryBtn = document.getElementById("headerDeliveryBtn");
-      if (deliveryBtn) {
-        deliveryBtn.style.display = isAuth ? "flex" : "none";
-      }
+      if (deliveryBtn) deliveryBtn.style.display = isAuth ? "flex" : "none";
 
       const maintBtn = document.getElementById("maintToggleBtn");
       if (maintBtn) {
@@ -1227,7 +1261,7 @@
       alert("Owner mode locked. Delivery controls hidden.");
     }
 
-    // CLOUD-SYNCED MAINTENANCE
+    // CLOUD MAINTENANCE
     async function toggleMaintenanceMode() {
       if (!window.firestoreTools) return;
       const { doc, setDoc } = window.firestoreTools;
@@ -1246,7 +1280,7 @@
     window.evaluateMaintenanceScreen = function() {
       const isAuth = !!window.currentAdminUser;
       const screen = document.getElementById("maintenanceScreen");
-      screen.classList.toggle("active", isMaintenanceActive && !isAuth);
+      if (screen) screen.classList.toggle("active", isMaintenanceActive && !isAuth);
     };
 
     // REAL-TIME FIRESTORE LISTENER
@@ -1257,21 +1291,19 @@
       }
       const { collection, onSnapshot, doc } = window.firestoreTools;
 
-      // 1. Maintenance
       onSnapshot(doc(window.db, "site_settings", "maintenance"), (snapshot) => {
         isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
         window.evaluateMaintenanceScreen();
         window.checkAdminStatus();
       });
 
-      // 2. Banner
       onSnapshot(doc(window.db, "site_settings", "banner"), (snapshot) => {
         if (snapshot.exists() && snapshot.data().img) {
-          document.getElementById("heroImg").src = snapshot.data().img;
+          const banner = document.getElementById("heroImg");
+          if (banner) banner.src = snapshot.data().img;
         }
       });
 
-      // 3. Garments
       onSnapshot(collection(window.db, "garments"), (snapshot) => {
         allProducts = snapshot.docs.map(d => {
           const data = d.data();
@@ -1287,11 +1319,11 @@
         renderProducts();
       });
 
-      // 4. Cloud Orders
       onSnapshot(collection(window.db, "orders"), (snapshot) => {
         cloudOrders = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
         updateDeliveryBadge();
-        if (document.getElementById("deliveryModal").classList.contains("active")) {
+        const delModal = document.getElementById("deliveryModal");
+        if (delModal && delModal.classList.contains("active")) {
           renderDeliveryHub();
         }
       });
@@ -1300,9 +1332,8 @@
     function updateDeliveryBadge() {
       const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
       const badge = document.getElementById("activeDeliveryBadge");
-      if (badge) {
-        badge.innerText = activeOrders.length;
-      }
+      if (badge) badge.innerText = activeOrders.length;
+
       const countEl = document.getElementById("activeTabCount");
       if (countEl) countEl.innerText = activeOrders.length;
 
@@ -1311,7 +1342,6 @@
       if (deliveredCountEl) deliveredCountEl.innerText = deliveredOrders.length;
     }
 
-    // COVER PHOTO BANNER EDIT
     function triggerHeroUpload() {
       document.getElementById("heroInput").click();
     }
@@ -1345,7 +1375,6 @@
       reader.readAsDataURL(file);
     }
 
-    // INSTANT SEARCH
     function handleSearch() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
       if (!query) {
@@ -1356,9 +1385,9 @@
       renderProducts();
     }
 
-    // RENDER PRODUCTS
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
+      if (!grid) return;
       const isAuth = !!window.currentAdminUser;
       grid.innerHTML = "";
 
@@ -1387,16 +1416,12 @@
           `</div>`;
         }
 
-        const sizeOptions = (p.sizes && p.sizes.length > 0) 
-          ? p.sizes 
-          : ["S", "M", "L", "XL"];
-
+        const sizeOptions = (p.sizes && p.sizes.length > 0) ? p.sizes : ["S", "M", "L", "XL"];
         const sizeSelectHtml = `
           <select class="size-select" id="size-${p.id}">
             ${sizeOptions.map(sz => `<option value="${sz}">${sz}</option>`).join("")}
           </select>
         `;
-
         const stockCount = (p.stock !== undefined) ? p.stock : 10;
 
         const card = document.createElement("div");
@@ -1426,18 +1451,13 @@
     function swapCardImage(cardId, newSrc, el, currentIdx, total) {
       const mainImg = document.getElementById(`card-img-${cardId}`);
       if (mainImg) mainImg.src = newSrc;
-      
       const badge = document.getElementById(`img-badge-${cardId}`);
-      if (badge && currentIdx && total) {
-        badge.innerText = `${currentIdx} / ${total}`;
-      }
-
+      if (badge && currentIdx && total) badge.innerText = `${currentIdx} / ${total}`;
       const strip = el.parentElement;
       strip.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
       el.classList.add('active');
     }
 
-    // MULTI-IMAGE COMPRESSION
     function compressFile(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1466,7 +1486,6 @@
       });
     }
 
-    // ADD NEW PRODUCT (Owner Only)
     async function handleNewProduct(e) {
       e.preventDefault();
       if (!window.currentAdminUser) {
@@ -1479,12 +1498,10 @@
       const stock = parseInt(document.getElementById("newStock").value.trim(), 10) || 1;
       const rawSizes = document.getElementById("newSizes").value.trim();
       const sizesArray = rawSizes.split(',').map(s => s.trim()).filter(Boolean);
-
-      const fileInput = document.getElementById("newImgFiles");
-      const files = fileInput.files;
+      const files = document.getElementById("newImgFiles").files;
 
       if (!files || files.length === 0) {
-        alert("Please select at least 1 photo of the garment.");
+        alert("Please select at least 1 photo.");
         return;
       }
 
@@ -1513,7 +1530,7 @@
 
         closeModal("addProductModal");
         document.getElementById("newProductForm").reset();
-        alert(`Success! Garment added with ${stock} in stock and custom sizes!`);
+        alert(`Success! Garment added with ${stock} in stock.`);
       } catch (err) {
         alert("Upload failed: " + err.message);
       } finally {
@@ -1524,13 +1541,12 @@
 
     async function deleteGarment(id) {
       if (!window.currentAdminUser) return;
-      if (confirm("Delete this garment permanently for all visitors?")) {
+      if (confirm("Delete this garment permanently?")) {
         const { doc, deleteDoc } = window.firestoreTools;
         await deleteDoc(doc(window.db, "garments", id));
       }
     }
 
-    // ON-SITE ORDERING
     function startOrder(id) {
       selectedProduct = allProducts.find(p => p.id === id);
       const sizeEl = document.getElementById(`size-${id}`);
@@ -1553,7 +1569,6 @@
       const phone = document.getElementById("custPhone").value.trim();
       const area = document.getElementById("custArea").value;
       const street = document.getElementById("custStreet").value.trim();
-
       const productPhoto = (Array.isArray(selectedProduct.images) && selectedProduct.images.length > 0)
         ? selectedProduct.images[0]
         : (selectedProduct.img || "");
@@ -1590,7 +1605,6 @@
 
         closeModal("orderModal");
         document.getElementById("directOrderForm").reset();
-
         document.getElementById("confirmedOrderId").innerText = "Order ID: " + newOrderId;
         document.getElementById("successModal").classList.add("active");
         updateDeliveryBadge();
@@ -1602,11 +1616,8 @@
       }
     }
 
-    // CANCEL ORDER
     async function cancelOrder(orderId) {
-      if (!confirm(`Are you sure you want to cancel Order #${orderId}? It will be removed from both your orders and delivery tracking.`)) {
-        return;
-      }
+      if (!confirm(`Cancel Order #${orderId}?`)) return;
 
       let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
       localOrders = localOrders.filter(o => o.orderId !== orderId);
@@ -1618,19 +1629,18 @@
           const { doc, deleteDoc } = window.firestoreTools;
           await deleteDoc(doc(window.db, "orders", targetOrder.firestoreId));
         }
-        alert("Order cancelled successfully.");
+        alert("Order cancelled.");
       } catch (err) {
-        console.error("Cloud delete error:", err);
+        console.error(err);
       }
 
       openOrdersModal();
       updateDeliveryBadge();
     }
 
-    // DELETE ORDER FROM DELIVERED SECTION (OWNER ONLY)
     async function deleteDeliveredOrder(orderId, firestoreId) {
       if (!window.currentAdminUser) return;
-      if (!confirm(`Permanently delete Delivered Order #${orderId} from records?`)) return;
+      if (!confirm(`Permanently delete Order #${orderId}?`)) return;
 
       try {
         if (window.firestoreTools && firestoreId) {
@@ -1642,29 +1652,20 @@
         localOrders = localOrders.filter(o => o.orderId !== orderId);
         localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
-        alert(`Order #${orderId} deleted permanently.`);
+        alert(`Order #${orderId} deleted.`);
         renderDeliveryHub();
         updateDeliveryBadge();
       } catch (err) {
-        alert("Error deleting order: " + err.message);
+        alert("Error: " + err.message);
       }
     }
 
-    // 4-DIGIT OTP INITIATION
     function initiateDeliveredOtp(orderId) {
       const allKnownOrders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
       const order = allKnownOrders.find(o => o.orderId === orderId);
+      if (!order) return alert("Could not locate order details.");
 
-      if (!order) {
-        alert("Could not locate order details for " + orderId);
-        return;
-      }
-
-      let otp = order.deliveryOtp;
-      if (!otp) {
-        otp = Math.floor(1000 + Math.random() * 9000).toString();
-      }
-
+      let otp = order.deliveryOtp || Math.floor(1000 + Math.random() * 9000).toString();
       pendingDeliveryVerification = {
         firestoreId: order.firestoreId || null,
         orderId: order.orderId,
@@ -1674,33 +1675,26 @@
       document.getElementById("generatedOtpDisplay").innerText = otp;
       document.getElementById("enteredOtpInput").value = "";
 
-      const custName = order.customerName || "Customer";
-      const itemTitle = order.item || "Garment";
-      const messageText = encodeURIComponent(`Hello ${custName}, your Ibrahim Fashion Palace order (${itemTitle}) is out for delivery! Please give this 4-Digit Delivery Verification OTP to the delivery agent: ${otp}`);
-      
+      const msg = encodeURIComponent(`Hello ${order.customerName || "Customer"}, your order (${order.item || "Garment"}) is out for delivery! Verification OTP: ${otp}`);
       const cleanPhone = (order.customerPhone || "").replace(/[^0-9]/g, '');
       const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
       
-      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${messageText}`;
-      document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${messageText}`;
-
+      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${msg}`;
+      document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${msg}`;
       document.getElementById("otpModal").classList.add("active");
     }
 
-    // VERIFY 4-DIGIT OTP
     async function confirmDeliveredWithOtp(e) {
       e.preventDefault();
       if (!pendingDeliveryVerification) return;
 
       const enteredCode = document.getElementById("enteredOtpInput").value.trim();
-
       if (enteredCode !== pendingDeliveryVerification.correctOtp) {
-        alert("❌ Incorrect 4-Digit OTP! Please enter the valid code from the customer.");
+        alert("❌ Incorrect OTP!");
         return;
       }
 
       const { firestoreId, orderId } = pendingDeliveryVerification;
-
       try {
         if (window.firestoreTools && firestoreId) {
           const { doc, updateDoc } = window.firestoreTools;
@@ -1718,48 +1712,41 @@
         localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
         closeModal("otpModal");
-        alert(`✅ Verified! Order #${orderId} has been successfully moved to DELIVERED!`);
-        
+        alert(`✅ Order #${orderId} moved to DELIVERED!`);
         pendingDeliveryVerification = null;
         renderDeliveryHub();
         updateDeliveryBadge();
       } catch (err) {
-        alert("Error updating delivered status: " + err.message);
+        alert("Error: " + err.message);
       }
     }
 
-    // DELIVERY HUB: Tab switching
     function switchDeliveryTab(tab) {
       activeHubTab = tab;
       document.getElementById("tabActiveDeliveriesBtn").classList.toggle("active", tab === "active");
       document.getElementById("tabDeliveredBtn").classList.toggle("active", tab === "delivered");
-      
       document.getElementById("deliveryGroupContainer").style.display = tab === "active" ? "block" : "none";
       document.getElementById("deliveredOrdersContainer").style.display = tab === "delivered" ? "block" : "none";
-      
       renderDeliveryHub();
     }
 
-    // OPEN DELIVERY HUB (Owner Only)
     function openDeliveryDashboard() {
       if (!window.currentAdminUser) {
-        alert("Access Restricted: Only the store owner (Aamir Rashid) can view the Delivery Hub.");
+        alert("Access Restricted: Owner only.");
         return;
       }
       renderDeliveryHub();
       document.getElementById("deliveryModal").classList.add("active");
     }
 
-    // DELIVERY HUB RENDERER
     function renderDeliveryHub() {
       const orders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
       const activeContainer = document.getElementById("deliveryGroupContainer");
       const deliveredContainer = document.getElementById("deliveredOrdersContainer");
 
-      // 1. ACTIVE DELIVERIES
       const activeOrders = orders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
       if (activeOrders.length === 0) {
-        activeContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No pending active deliveries.</p>`;
+        activeContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No pending deliveries.</p>`;
       } else {
         const groups = activeOrders.reduce((acc, curr) => {
           const area = curr.customerArea || "General Area";
@@ -1789,7 +1776,6 @@
                   <div>${o.item} (Size: ${o.size}) • <strong style="color:#047857;">COD</strong></div>
                   <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
                   <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
-                  
                   <button type="button" class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.orderId}')">
                     <i class="fa-solid fa-shield-halved"></i> Delivered (OTP)
                   </button>
@@ -1802,25 +1788,20 @@
         activeContainer.innerHTML = html;
       }
 
-      // 2. DELIVERED SECTION WITH DELETE BUTTON
       const deliveredOrders = orders.filter(o => o.status === "delivered");
       if (deliveredOrders.length === 0) {
         deliveredContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No delivered items yet.</p>`;
       } else {
         deliveredContainer.innerHTML = deliveredOrders.map(o => `
-          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0; position:relative;">
+          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
             ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong style="color:var(--primary);">${o.item}</strong>
                 <span style="color:#10b981; font-weight:800;"><i class="fa-solid fa-circle-check"></i> Delivered</span>
               </div>
-              <div style="font-size:0.75rem; color:var(--muted);">
-                Customer: ${o.customerName} (${o.customerPhone}) • ₹${o.price}
-              </div>
-              <div style="font-size:0.7rem; color:#94a3b8;">
-                Order ID: ${o.orderId} • Area: ${o.customerArea || ''}
-              </div>
+              <div style="font-size:0.75rem; color:var(--muted);">Customer: ${o.customerName} (${o.customerPhone}) • ₹${o.price}</div>
+              <div style="font-size:0.7rem; color:#94a3b8;">Order ID: ${o.orderId} • Area: ${o.customerArea || ''}</div>
               <button class="btn-cancel-action" style="margin-top:6px; font-size:0.7rem; padding:4px 8px; background:#b91c1c;" onclick="deleteDeliveredOrder('${o.orderId}', '${o.firestoreId || ''}')">
                 <i class="fa-solid fa-trash"></i> Delete Delivered Record
               </button>
@@ -1828,17 +1809,14 @@
           </div>
         `).join("");
       }
-
       updateDeliveryBadge();
     }
 
-    // CUSTOMER MY ORDERS MODAL
     function openOrdersModal() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-
       if (orders.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No active orders found on this device.</p>`;
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No active orders found.</p>`;
       } else {
         container.innerHTML = orders.map(o => `
           <div style="display:flex; gap:10px; align-items:center; border-left:4px solid ${o.status === 'delivered' ? '#10b981' : '#e11d48'}; background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; font-size:0.8rem;">
@@ -1850,13 +1828,10 @@
               </div>
               <div style="color:var(--muted);">Size: ${o.size} • COD</div>
               <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">Order ID: ${o.orderId} • Placed: ${o.date} ${o.time || ''}</div>
-              
-              <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="margin-top:6px;">
                 ${o.status === 'delivered' 
                   ? `<span style="color:#10b981; font-weight:800; font-size:0.75rem;"><i class="fa-solid fa-check-double"></i> Delivered</span>` 
-                  : `<button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')">
-                       <i class="fa-solid fa-xmark"></i> Cancel Order
-                     </button>`
+                  : `<button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')"><i class="fa-solid fa-xmark"></i> Cancel Order</button>`
                 }
               </div>
             </div>
@@ -1873,7 +1848,6 @@
       document.getElementById(id).classList.remove("active");
     }
 
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -1882,7 +1856,6 @@
       });
     }
 
-    // INITIALIZATION
     window.checkAdminStatus();
     initCloudSync();
   </script>
