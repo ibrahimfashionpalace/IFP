@@ -733,6 +733,12 @@
     }
     .loc-order-item:last-child { border-bottom: none; }
   </style>
+
+  <!-- App / PWA Support -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#312e81" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
 </head>
 <body>
 
@@ -1793,6 +1799,15 @@
     }
     function closeModal(id) {
       document.getElementById(id).classList.remove("active");
+    }
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('App ready'))
+          .catch((err) => console.log('SW error:', err));
+      });
     }
 
     // INITIALIZATION
