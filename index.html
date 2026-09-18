@@ -16,6 +16,7 @@
       onSnapshot, 
       doc, 
       setDoc,
+      updateDoc,
       deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -31,7 +32,7 @@
 
     const app = initializeApp(firebaseConfig);
     window.db = getFirestore(app);
-    window.firestoreTools = { collection, addDoc, onSnapshot, doc, setDoc, deleteDoc };
+    window.firestoreTools = { collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc };
   </script>
 
   <style>
@@ -68,7 +69,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 10px 14px;
       color: #ffffff;
     }
     .brand-wrap {
@@ -94,25 +95,43 @@
       flex-shrink: 0;
     }
     .brand-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
       color: #fbbf24;
       text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       line-height: 1.2;
     }
     .brand-sub {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: #fbcfe8;
     }
-    .menu-btn {
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn {
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      font-size: 1.2rem;
       color: #ffffff;
       cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 50%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .nav-btn:hover { background: rgba(255, 255, 255, 0.25); }
+    .badge-count {
+      background: #ef4444;
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 800;
     }
 
     .hero-container {
@@ -422,6 +441,81 @@
       margin-top: 8px;
     }
 
+    /* Owner Details Card */
+    .owner-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #4c0519 100%);
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .owner-info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      word-break: break-word;
+    }
+    .owner-info-row a {
+      color: #fbbf24;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Hub Tab Switcher */
+    .hub-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+    .hub-tab-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      background: #f1f5f9;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .hub-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-delivered-action {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .btn-cancel-action {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
     #maintenanceScreen {
       display: none;
       position: fixed;
@@ -531,7 +625,7 @@
       <div style="margin-bottom:6px;"><i class="fa-solid fa-phone"></i> Call: <a href="tel:6005757393">6005757393</a></div>
       <div><i class="fa-brands fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/916005757393" target="_blank">Chat with us</a></div>
     </div>
-    <div class="owner-bypass-link" onclick="handleBrandTap()">Owner Login</div>
+    <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
   <!-- Header with IFP Circular Ring Logo -->
@@ -543,7 +637,18 @@
         <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
       </div>
     </div>
-    <button class="menu-btn" onclick="openOrdersModal()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    <div class="header-actions">
+      <button class="nav-btn" onclick="openOwnerModal()" title="About Owner">
+        <i class="fa-solid fa-user-tie"></i> Owner
+      </button>
+      <button class="nav-btn" onclick="openOrdersModal()" title="My Orders">
+        <i class="fa-solid fa-bag-shopping"></i> My Orders
+      </button>
+      <button class="nav-btn" id="headerDeliveryBtn" onclick="openDeliveryDashboard()" title="Delivery Section">
+        <i class="fa-solid fa-truck"></i>
+        <span id="activeDeliveryBadge" class="badge-count">0</span>
+      </button>
+    </div>
   </header>
 
   <!-- Hero Showcase -->
@@ -582,6 +687,42 @@
   <main>
     <div class="products-grid" id="productsGrid"></div>
   </main>
+
+  <!-- About Owner Modal -->
+  <div class="modal-overlay" id="ownerModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-circle-user" style="color:var(--accent-pink);"></i> About Owner</h3>
+        <button class="close-btn" type="button" onclick="closeModal('ownerModal')">&times;</button>
+      </div>
+      <div class="owner-card">
+        <div style="font-size:1.15rem; font-weight:800; color:#fbbf24; margin-bottom:4px;">Aamir Rashid</div>
+        <div style="font-size:0.75rem; color:#fbcfe8;">Proprietor - IBRAHIM Fashion Point</div>
+        
+        <div style="margin-top:14px; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
+          <div class="owner-info-row">
+            <i class="fa-solid fa-user-check" style="color:#fbbf24; width:18px;"></i>
+            <span><strong>Owner Name:</strong> Aamir Rashid</span>
+          </div>
+          <div class="owner-info-row">
+            <i class="fa-solid fa-phone" style="color:#fbbf24; width:18px;"></i>
+            <span><strong>Owner Contact:</strong> <a href="tel:6005757393">6005757393</a></span>
+          </div>
+          <div class="owner-info-row">
+            <i class="fa-solid fa-envelope" style="color:#fbbf24; width:18px;"></i>
+            <span><strong>Owner Email:</strong> <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a></span>
+          </div>
+          <div class="owner-info-row">
+            <i class="fa-solid fa-location-dot" style="color:#fbbf24; width:18px;"></i>
+            <span><strong>Owner Address:</strong> Malapora, Charar-i-Sharief</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('ownerModal')">
+        Close
+      </button>
+    </div>
+  </div>
 
   <!-- Add Garment Modal (Multiple Photos Supported) -->
   <div class="modal-overlay" id="addProductModal">
@@ -681,21 +822,32 @@
     </div>
   </div>
 
-  <!-- Delivery Hub Modal -->
+  <!-- Delivery Hub Modal (Active & Delivered) -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <div>
           <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Delivery Hub</h3>
-          <p style="font-size:0.72rem; color:var(--muted);">All customer orders grouped by location</p>
+          <p style="font-size:0.72rem; color:var(--muted);">Manage live orders & complete deliveries</p>
         </div>
         <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
+
+      <div class="hub-tabs">
+        <button class="hub-tab-btn active" id="tabActiveDeliveriesBtn" onclick="switchDeliveryTab('active')">
+          Active Deliveries (<span id="activeTabCount">0</span>)
+        </button>
+        <button class="hub-tab-btn" id="tabDeliveredBtn" onclick="switchDeliveryTab('delivered')">
+          Delivered (<span id="deliveredTabCount">0</span>)
+        </button>
+      </div>
+
       <div id="deliveryGroupContainer"></div>
+      <div id="deliveredOrdersContainer" style="display:none;"></div>
     </div>
   </div>
 
-  <!-- My Orders Modal -->
+  <!-- My Orders Modal (With Cancel Button) -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -718,8 +870,8 @@
       <a href="https://wa.me/916005757393" target="_blank" class="contact-badge">
         <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Us
       </a>
-      <a href="mailto:ibrahimfashionpoint@gmail.com" class="contact-badge">
-        <i class="fa-solid fa-envelope" style="color:#0284c7;"></i> Email Support
+      <a href="mailto:aamir757393@gmail.com" class="contact-badge">
+        <i class="fa-solid fa-envelope" style="color:#0284c7;"></i> aamir757393@gmail.com
       </a>
     </div>
     
@@ -735,25 +887,42 @@
     let cloudOrders = [];
     let selectedProduct = null;
     let isMaintenanceActive = false;
+    let activeHubTab = "active";
 
-    // PIN TRIGGER
+    // OWNER PIN TRIGGER (Triple Click on Brand Title)
     function handleBrandTap() {
       tapCount++;
       clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => { tapCount = 0; }, 800);
-
-      if (tapCount >= 3) {
-        tapCount = 0;
-        const enteredPin = prompt("Enter Owner PIN:");
-        if (enteredPin === OWNER_PIN) {
-          sessionStorage.setItem("ifp_admin_auth", "true");
-          checkAdminStatus();
-          evaluateMaintenanceScreen();
-          alert("Owner Mode Unlocked!");
-        } else if (enteredPin !== null) {
-          alert("Incorrect PIN.");
+      tapTimer = setTimeout(() => {
+        // Single or double click opens About Owner modal
+        if (tapCount > 0 && tapCount < 3) {
+          openOwnerModal();
         }
+        tapCount = 0;
+      }, 400);
+
+      // 3 rapid taps unlocks Admin Mode
+      if (tapCount >= 3) {
+        clearTimeout(tapTimer);
+        tapCount = 0;
+        promptOwnerLogin();
       }
+    }
+
+    function promptOwnerLogin() {
+      const enteredPin = prompt("Enter Owner PIN:");
+      if (enteredPin === OWNER_PIN) {
+        sessionStorage.setItem("ifp_admin_auth", "true");
+        checkAdminStatus();
+        evaluateMaintenanceScreen();
+        alert("Owner Mode Unlocked!");
+      } else if (enteredPin !== null) {
+        alert("Incorrect PIN.");
+      }
+    }
+
+    function openOwnerModal() {
+      document.getElementById("ownerModal").classList.add("active");
     }
 
     function checkAdminStatus() {
@@ -832,8 +1001,27 @@
 
       // 4. Listen for cloud orders
       onSnapshot(collection(window.db, "orders"), (snapshot) => {
-        cloudOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        cloudOrders = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+        updateDeliveryBadge();
+        if (document.getElementById("deliveryModal").classList.contains("active")) {
+          renderDeliveryHub();
+        }
       });
+    }
+
+    function updateDeliveryBadge() {
+      const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
+      const badge = document.getElementById("activeDeliveryBadge");
+      if (badge) {
+        badge.innerText = activeOrders.length;
+        badge.style.display = activeOrders.length > 0 ? "inline-block" : "none";
+      }
+      const countEl = document.getElementById("activeTabCount");
+      if (countEl) countEl.innerText = activeOrders.length;
+
+      const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
+      const deliveredCountEl = document.getElementById("deliveredTabCount");
+      if (deliveredCountEl) deliveredCountEl.innerText = deliveredOrders.length;
     }
 
     // COVER PHOTO BANNER EDIT
@@ -1055,6 +1243,7 @@
         customerPhone: phone,
         customerArea: area,
         customerStreet: street,
+        status: "confirmed", // confirmed, delivered, cancelled
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         createdAt: Date.now()
@@ -1062,8 +1251,9 @@
 
       try {
         const { collection, addDoc } = window.firestoreTools;
-        await addDoc(collection(window.db, "orders"), orderData);
+        const docRef = await addDoc(collection(window.db, "orders"), orderData);
 
+        orderData.firestoreId = docRef.id;
         let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
         localOrders.unshift(orderData);
         localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
@@ -1073,6 +1263,7 @@
 
         document.getElementById("confirmedOrderId").innerText = "Order ID: " + newOrderId;
         document.getElementById("successModal").classList.add("active");
+        updateDeliveryBadge();
       } catch (err) {
         alert("Failed to confirm order: " + err.message);
       } finally {
@@ -1081,69 +1272,184 @@
       }
     }
 
-    // DELIVERY HUB (Pulls from Cloud)
-    function openDeliveryDashboard() {
-      const container = document.getElementById("deliveryGroupContainer");
-      const orders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
-
-      if (orders.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No customer orders found yet.</p>`;
-        document.getElementById("deliveryModal").classList.add("active");
+    // CANCEL ORDER: Updates local storage and deletes/updates Firestore record
+    async function cancelOrder(orderId) {
+      if (!confirm(`Are you sure you want to cancel Order #${orderId}? This will remove it from both your orders and the active delivery list.`)) {
         return;
       }
 
-      const groups = orders.reduce((acc, curr) => {
-        const area = curr.customerArea || "General Area";
-        if (!acc[area]) acc[area] = [];
-        acc[area].push(curr);
-        return acc;
-      }, {});
+      // Remove from localStorage
+      let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+      localOrders = localOrders.filter(o => o.orderId !== orderId);
+      localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
-      let html = "";
-      for (const [areaName, areaOrders] of Object.entries(groups)) {
-        html += `
-          <div class="loc-group-card">
-            <div class="loc-group-header">
-              <span><i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> ${areaName}</span>
-              <span>${areaOrders.length} order(s)</span>
-            </div>
-        `;
-        areaOrders.forEach(o => {
-          html += `
-            <div class="loc-order-item">
-              ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
-              <div style="flex:1;">
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="font-weight:700; color:var(--primary);">${o.customerName}</span>
-                  <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
-                </div>
-                <div>${o.item} (Size: ${o.size}) • <strong style="color:#047857;">COD</strong></div>
-                <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
-                <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
-              </div>
-            </div>
-          `;
-        });
-        html += `</div>`;
+      // Remove / Update in Firestore
+      try {
+        const targetOrder = cloudOrders.find(o => o.orderId === orderId);
+        if (targetOrder && targetOrder.firestoreId) {
+          const { doc, deleteDoc } = window.firestoreTools;
+          await deleteDoc(doc(window.db, "orders", targetOrder.firestoreId));
+        }
+        alert("Order cancelled successfully.");
+      } catch (err) {
+        console.error("Cloud delete error:", err);
       }
-      container.innerHTML = html;
+
+      openOrdersModal();
+      updateDeliveryBadge();
+    }
+
+    // MARK AS DELIVERED
+    async function markAsDelivered(firestoreId, orderId) {
+      if (!confirm(`Mark Order #${orderId} as Delivered?`)) return;
+
+      try {
+        if (window.firestoreTools && firestoreId) {
+          const { doc, updateDoc } = window.firestoreTools;
+          await updateDoc(doc(window.db, "orders", firestoreId), {
+            status: "delivered",
+            deliveredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          });
+        }
+
+        // Update in localStorage
+        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+        localOrders = localOrders.map(o => {
+          if (o.orderId === orderId) o.status = "delivered";
+          return o;
+        });
+        localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
+
+        alert(`Order #${orderId} marked as DELIVERED!`);
+        renderDeliveryHub();
+        updateDeliveryBadge();
+      } catch (err) {
+        alert("Error marking as delivered: " + err.message);
+      }
+    }
+
+    // DELIVERY HUB: Tab switching
+    function switchDeliveryTab(tab) {
+      activeHubTab = tab;
+      document.getElementById("tabActiveDeliveriesBtn").classList.toggle("active", tab === "active");
+      document.getElementById("tabDeliveredBtn").classList.toggle("active", tab === "delivered");
+      
+      document.getElementById("deliveryGroupContainer").style.display = tab === "active" ? "block" : "none";
+      document.getElementById("deliveredOrdersContainer").style.display = tab === "delivered" ? "block" : "none";
+      
+      renderDeliveryHub();
+    }
+
+    function openDeliveryDashboard() {
+      renderDeliveryHub();
       document.getElementById("deliveryModal").classList.add("active");
     }
 
-    // CUSTOMER MY ORDERS MODAL
+    // DELIVERY HUB RENDERER
+    function renderDeliveryHub() {
+      const orders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
+      const activeContainer = document.getElementById("deliveryGroupContainer");
+      const deliveredContainer = document.getElementById("deliveredOrdersContainer");
+
+      // 1. ACTIVE DELIVERIES
+      const activeOrders = orders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
+      if (activeOrders.length === 0) {
+        activeContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No pending active deliveries.</p>`;
+      } else {
+        const groups = activeOrders.reduce((acc, curr) => {
+          const area = curr.customerArea || "General Area";
+          if (!acc[area]) acc[area] = [];
+          acc[area].push(curr);
+          return acc;
+        }, {});
+
+        let html = "";
+        for (const [areaName, areaOrders] of Object.entries(groups)) {
+          html += `
+            <div class="loc-group-card">
+              <div class="loc-group-header">
+                <span><i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> ${areaName}</span>
+                <span>${areaOrders.length} order(s)</span>
+              </div>
+          `;
+          areaOrders.forEach(o => {
+            html += `
+              <div class="loc-order-item">
+                ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
+                <div style="flex:1;">
+                  <div style="display:flex; justify-content:space-between;">
+                    <span style="font-weight:700; color:var(--primary);">${o.customerName}</span>
+                    <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
+                  </div>
+                  <div>${o.item} (Size: ${o.size}) • <strong style="color:#047857;">COD</strong></div>
+                  <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
+                  <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
+                  <button class="btn-delivered-action" onclick="markAsDelivered('${o.firestoreId || ''}', '${o.orderId}')">
+                    <i class="fa-solid fa-check"></i> Delivered
+                  </button>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+        }
+        activeContainer.innerHTML = html;
+      }
+
+      // 2. DELIVERED SECTION
+      const deliveredOrders = orders.filter(o => o.status === "delivered");
+      if (deliveredOrders.length === 0) {
+        deliveredContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No delivered items yet.</p>`;
+      } else {
+        deliveredContainer.innerHTML = deliveredOrders.map(o => `
+          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
+            ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between;">
+                <strong style="color:var(--primary);">${o.item}</strong>
+                <span style="color:#10b981; font-weight:800;"><i class="fa-solid fa-circle-check"></i> Delivered</span>
+              </div>
+              <div style="font-size:0.75rem; color:var(--muted);">
+                Customer: ${o.customerName} (${o.customerPhone}) • ₹${o.price}
+              </div>
+              <div style="font-size:0.7rem; color:#94a3b8;">
+                Order ID: ${o.orderId} • Address: ${o.customerArea || ''}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      updateDeliveryBadge();
+    }
+
+    // CUSTOMER MY ORDERS MODAL (Includes Cancel Order action)
     function openOrdersModal() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
 
       if (orders.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No orders found on this device.</p>`;
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No active orders found on this device.</p>`;
       } else {
         container.innerHTML = orders.map(o => `
-          <div style="display:flex; gap:10px; align-items:center; border-left:3px solid #e11d48; background:#f8fafc; padding:10px; margin-bottom:8px; border-radius:6px; font-size:0.8rem;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
-            <div>
-              <strong>${o.item}</strong> (Size: ${o.size}) - ₹${o.price} (COD)<br/>
-              <span style="color:var(--muted);">Order ID: ${o.orderId} • Placed: ${o.date} ${o.time || ''}</span>
+          <div style="display:flex; gap:10px; align-items:center; border-left:4px solid ${o.status === 'delivered' ? '#10b981' : '#e11d48'}; background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; font-size:0.8rem;">
+            ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong>${o.item}</strong>
+                <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
+              </div>
+              <div style="color:var(--muted);">Size: ${o.size} • COD</div>
+              <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">Order ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
+              
+              <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                ${o.status === 'delivered' 
+                  ? `<span style="color:#10b981; font-weight:800; font-size:0.75rem;"><i class="fa-solid fa-check-double"></i> Delivered</span>` 
+                  : `<button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')">
+                       <i class="fa-solid fa-xmark"></i> Cancel Order
+                     </button>`
+                }
+              </div>
             </div>
           </div>
         `).join("");
