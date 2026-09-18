@@ -76,8 +76,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      cursor: pointer;
       user-select: none;
+      position: relative;
+      min-width: 0;
+      flex: 1;
+    }
+    .brand-logo-container {
+      position: relative;
+      flex-shrink: 0;
     }
     .brand-logo-badge {
       width: 42px;
@@ -92,7 +98,58 @@
       color: #ffffff;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
       border: 2px solid #ffffff;
-      flex-shrink: 0;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.15s ease;
+    }
+    .brand-logo-badge:active {
+      transform: scale(0.92);
+    }
+    .ifp-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 0;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      min-width: 175px;
+      z-index: 250;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .ifp-dropdown-menu.active {
+      display: block;
+      animation: fadeInDown 0.2s ease-out;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .ifp-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+      background: #ffffff;
+      transition: background 0.15s ease;
+    }
+    .ifp-dropdown-item:last-child {
+      border-bottom: none;
+    }
+    .ifp-dropdown-item:hover, .ifp-dropdown-item:active {
+      background: #fdf2f8;
+      color: var(--accent-pink);
+    }
+    .brand-text-block {
+      min-width: 0;
+      overflow: hidden;
     }
     .brand-title {
       font-size: 1.05rem;
@@ -101,15 +158,22 @@
       color: #fbbf24;
       text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .brand-sub {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: #fbcfe8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .header-actions {
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-shrink: 0;
     }
     .nav-btn {
       background: rgba(255, 255, 255, 0.15);
@@ -297,6 +361,18 @@
       font-weight: 700;
       z-index: 2;
     }
+    .stock-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(30, 27, 75, 0.85);
+      color: #fbbf24;
+      font-size: 0.62rem;
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-weight: 800;
+      z-index: 2;
+    }
     .img-count-badge {
       position: absolute;
       bottom: 6px;
@@ -400,9 +476,7 @@
     }
     .modal-overlay.active { display: flex; }
 
-    #otpModal {
-      z-index: 300;
-    }
+    #otpModal { z-index: 300; }
 
     .modal-sheet {
       background: #fff;
@@ -630,6 +704,13 @@
       font-weight: 700;
       font-size: 0.78rem;
     }
+    .creator-credit {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent-pink);
+      letter-spacing: 0.5px;
+    }
 
     .loc-group-card {
       background: #f8fafc;
@@ -673,13 +754,25 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Logo (Protected) -->
+  <!-- Header with Clickable IFP Dropdown -->
   <header>
-    <div class="brand-wrap" onclick="handleBrandTap()">
-      <div class="brand-logo-badge">IFP</div>
-      <div>
+    <div class="brand-wrap">
+      <div class="brand-logo-container">
+        <div class="brand-logo-badge" id="ifpBadge" onclick="handleBrandTap(event)" title="Click for Menu">IFP</div>
+        <div class="ifp-dropdown-menu" id="ifpDropdown">
+          <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
+            <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
+          </div>
+          <div class="ifp-dropdown-item" onclick="openOwnerModal(); closeIfpDropdown();">
+            <i class="fa-solid fa-user-tie" style="color:var(--primary);"></i> About Owner
+          </div>
+        </div>
+      </div>
+      <div class="brand-text-block">
         <div class="brand-title">IBRAHIM FASHION POINT</div>
-        <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
+        <div class="brand-sub" title="Malapora, Charar-i-Sharief, Budgam">
+          <i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam
+        </div>
       </div>
     </div>
     <div class="header-actions">
@@ -770,7 +863,7 @@
     </div>
   </div>
 
-  <!-- Add Garment Modal (Multiple Photos Fully Supported) -->
+  <!-- Add Garment Modal (With Stock & Custom Sizes) -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -785,6 +878,17 @@
         <div class="form-group">
           <label>Price (₹) *</label>
           <input type="number" id="newPrice" required placeholder="899" />
+        </div>
+        <div class="form-group">
+          <label>Number of Articles Available (Stock) *</label>
+          <input type="number" id="newStock" required placeholder="e.g. 10" min="1" value="10" />
+        </div>
+        <div class="form-group">
+          <label>Available Sizes (Separated by commas) *</label>
+          <input type="text" id="newSizes" required placeholder="e.g. S, M, L, XL or Free Size" value="S, M, L, XL" />
+          <span style="font-size:0.7rem; color:var(--muted); margin-top:3px; display:block;">
+            💡 Comma-separated sizes will appear as selectable choices for customers.
+          </span>
         </div>
         <div class="form-group">
           <label>Garment Photos (Select multiple from gallery) *</label>
@@ -959,7 +1063,8 @@
       </a>
     </div>
     
-    <p style="margin-top:10px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10:00 AM – 8:00 PM</p>
+    <div class="creator-credit">Created by Aamir</div>
+    <p style="margin-top:8px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10:00 AM – 8:00 PM</p>
   </footer>
 
   <script>
@@ -974,23 +1079,45 @@
     let activeHubTab = "active";
     let pendingDeliveryVerification = null;
 
-    // OWNER PIN TRIGGER (3 rapid taps on IFP logo)
-    function handleBrandTap() {
+    // IFP LOGO CLICK / TAP HANDLER
+    function handleBrandTap(event) {
+      if (event) event.stopPropagation();
       tapCount++;
       clearTimeout(tapTimer);
+
       tapTimer = setTimeout(() => {
         if (tapCount > 0 && tapCount < 3) {
-          openOwnerModal();
+          toggleIfpDropdown();
         }
         tapCount = 0;
-      }, 400);
+      }, 350);
 
       if (tapCount >= 3) {
         clearTimeout(tapTimer);
         tapCount = 0;
+        closeIfpDropdown();
         promptOwnerLogin();
       }
     }
+
+    function toggleIfpDropdown() {
+      const dropdown = document.getElementById("ifpDropdown");
+      dropdown.classList.toggle("active");
+    }
+
+    function closeIfpDropdown() {
+      const dropdown = document.getElementById("ifpDropdown");
+      if (dropdown) dropdown.classList.remove("active");
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      const dropdown = document.getElementById("ifpDropdown");
+      const badge = document.getElementById("ifpBadge");
+      if (dropdown && !badge.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove("active");
+      }
+    });
 
     function promptOwnerLogin() {
       const enteredPin = prompt("Enter Owner PIN:");
@@ -1008,7 +1135,7 @@
       document.getElementById("ownerModal").classList.add("active");
     }
 
-    // STRICT OWNER RESTRICTION
+    // OWNER RESTRICTION
     function checkAdminStatus() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       
@@ -1082,7 +1209,7 @@
         }
       });
 
-      // 3. Garments (Normalize multiple photos)
+      // 3. Garments
       onSnapshot(collection(window.db, "garments"), (snapshot) => {
         allProducts = snapshot.docs.map(d => {
           const data = d.data();
@@ -1167,7 +1294,7 @@
       renderProducts();
     }
 
-    // RENDER PRODUCTS (Supports multiple image strip)
+    // RENDER PRODUCTS
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
@@ -1198,24 +1325,32 @@
           `</div>`;
         }
 
+        const sizeOptions = (p.sizes && p.sizes.length > 0) 
+          ? p.sizes 
+          : ["S", "M", "L", "XL"];
+
+        const sizeSelectHtml = `
+          <select class="size-select" id="size-${p.id}">
+            ${sizeOptions.map(sz => `<option value="${sz}">${sz}</option>`).join("")}
+          </select>
+        `;
+
+        const stockCount = (p.stock !== undefined) ? p.stock : 10;
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
             <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
+            <span class="stock-badge">${stockCount} left</span>
             ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
           </div>
           ${thumbStripHtml}
           <div class="card-body">
             <div class="item-name">${p.name}</div>
             <div class="item-price">₹${p.price}</div>
-            <select class="size-select" id="size-${p.id}">
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-            </select>
+            ${sizeSelectHtml}
             <button class="order-btn" onclick="startOrder('${p.id}')">
               <i class="fa-solid fa-bag-shopping"></i> Order
             </button>
@@ -1240,7 +1375,7 @@
       el.classList.add('active');
     }
 
-    // EFFICIENT MULTI-IMAGE COMPRESSION (Fits within Firestore 1MB limit)
+    // MULTI-IMAGE COMPRESSION
     function compressFile(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1248,7 +1383,7 @@
           const img = new Image();
           img.onload = () => {
             const canvas = document.createElement("canvas");
-            const maxDim = 360; // Optimal for mobile screens while keeping size small
+            const maxDim = 360;
             let w = img.width, h = img.height;
             if (w > h && w > maxDim) {
               h = Math.round((h * maxDim) / w);
@@ -1261,7 +1396,6 @@
             canvas.height = h;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, w, h);
-            // 0.55 JPEG quality ensures small payload
             resolve(canvas.toDataURL("image/jpeg", 0.55));
           };
           img.src = e.target.result;
@@ -1270,11 +1404,16 @@
       });
     }
 
+    // ADD NEW PRODUCT (Supports stock & custom sizes)
     async function handleNewProduct(e) {
       e.preventDefault();
       const submitBtn = document.getElementById("saveGarmentBtn");
       const title = document.getElementById("newTitle").value.trim();
       const price = document.getElementById("newPrice").value.trim();
+      const stock = parseInt(document.getElementById("newStock").value.trim(), 10) || 1;
+      const rawSizes = document.getElementById("newSizes").value.trim();
+      const sizesArray = rawSizes.split(',').map(s => s.trim()).filter(Boolean);
+
       const fileInput = document.getElementById("newImgFiles");
       const files = fileInput.files;
 
@@ -1299,6 +1438,8 @@
         await addDoc(collection(window.db, "garments"), {
           name: title,
           price: Number(price),
+          stock: Number(stock),
+          sizes: sizesArray.length > 0 ? sizesArray : ["S", "M", "L", "XL"],
           img: compressedList[0],
           images: compressedList,
           createdAt: Date.now()
@@ -1306,7 +1447,7 @@
 
         closeModal("addProductModal");
         document.getElementById("newProductForm").reset();
-        alert(`Success! Garment uploaded with all ${compressedList.length} photo(s)!`);
+        alert(`Success! Garment added with ${stock} in stock and custom sizes!`);
       } catch (err) {
         alert("Upload failed: " + err.message);
       } finally {
@@ -1417,6 +1558,28 @@
 
       openOrdersModal();
       updateDeliveryBadge();
+    }
+
+    // DELETE ORDER FROM DELIVERED SECTION (OWNER ONLY)
+    async function deleteDeliveredOrder(orderId, firestoreId) {
+      if (!confirm(`Permanently delete Delivered Order #${orderId} from records?`)) return;
+
+      try {
+        if (window.firestoreTools && firestoreId) {
+          const { doc, deleteDoc } = window.firestoreTools;
+          await deleteDoc(doc(window.db, "orders", firestoreId));
+        }
+
+        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+        localOrders = localOrders.filter(o => o.orderId !== orderId);
+        localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
+
+        alert(`Order #${orderId} deleted permanently.`);
+        renderDeliveryHub();
+        updateDeliveryBadge();
+      } catch (err) {
+        alert("Error deleting order: " + err.message);
+      }
     }
 
     // 4-DIGIT OTP INITIATION
@@ -1572,16 +1735,16 @@
         activeContainer.innerHTML = html;
       }
 
-      // 2. DELIVERED SECTION
+      // 2. DELIVERED SECTION WITH DELETE BUTTON
       const deliveredOrders = orders.filter(o => o.status === "delivered");
       if (deliveredOrders.length === 0) {
         deliveredContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No delivered items yet.</p>`;
       } else {
         deliveredContainer.innerHTML = deliveredOrders.map(o => `
-          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
+          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0; position:relative;">
             ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
-              <div style="display:flex; justify-content:space-between;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong style="color:var(--primary);">${o.item}</strong>
                 <span style="color:#10b981; font-weight:800;"><i class="fa-solid fa-circle-check"></i> Delivered</span>
               </div>
@@ -1591,6 +1754,9 @@
               <div style="font-size:0.7rem; color:#94a3b8;">
                 Order ID: ${o.orderId} • Area: ${o.customerArea || ''}
               </div>
+              <button class="btn-cancel-action" style="margin-top:6px; font-size:0.7rem; padding:4px 8px; background:#b91c1c;" onclick="deleteDeliveredOrder('${o.orderId}', '${o.firestoreId || ''}')">
+                <i class="fa-solid fa-trash"></i> Delete Delivered Record
+              </button>
             </div>
           </div>
         `).join("");
