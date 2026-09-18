@@ -78,7 +78,6 @@
       gap: 10px;
       user-select: none;
       position: relative;
-      min-width: 0;
       flex: 1;
     }
     .brand-logo-container {
@@ -148,8 +147,7 @@
       color: var(--accent-pink);
     }
     .brand-text-block {
-      min-width: 0;
-      overflow: hidden;
+      flex: 1;
     }
     .brand-title {
       font-size: 1.05rem;
@@ -158,9 +156,6 @@
       color: #fbbf24;
       text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .brand-sub {
       font-size: 0.68rem;
@@ -776,12 +771,6 @@
       </div>
     </div>
     <div class="header-actions">
-      <button class="nav-btn" onclick="openOwnerModal()" title="About Owner">
-        <i class="fa-solid fa-user-tie"></i> Owner
-      </button>
-      <button class="nav-btn" onclick="openOrdersModal()" title="My Orders">
-        <i class="fa-solid fa-bag-shopping"></i> My Orders
-      </button>
       <!-- Delivery Icon: OWNER ONLY -->
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()" title="Delivery Section (Owner Only)">
         <i class="fa-solid fa-truck"></i>
