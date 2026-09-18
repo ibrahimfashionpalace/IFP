@@ -385,6 +385,12 @@
       justify-content: center;
     }
     .modal-overlay.active { display: flex; }
+
+    /* OTP modal has higher z-index to appear on top of delivery dashboard */
+    #otpModal {
+      z-index: 300;
+    }
+
     .modal-sheet {
       background: #fff;
       width: 100%;
@@ -491,15 +497,18 @@
       background: #10b981;
       color: white;
       border: none;
-      padding: 6px 12px;
+      padding: 7px 14px;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-top: 6px;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .btn-delivered-action:hover {
+      background: #059669;
     }
     .btn-cancel-action {
       background: #ef4444;
@@ -654,7 +663,7 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Logo (Protected for visitors) -->
+  <!-- Header with IFP Logo (Strictly protected for visitors) -->
   <header>
     <div class="brand-wrap" onclick="handleBrandTap()">
       <div class="brand-logo-badge">IFP</div>
@@ -670,7 +679,7 @@
       <button class="nav-btn" onclick="openOrdersModal()" title="My Orders">
         <i class="fa-solid fa-bag-shopping"></i> My Orders
       </button>
-      <!-- Delivery Icon: STRICTLY HIDDEN FOR REGULAR VISITORS, ONLY VISIBLE TO OWNER -->
+      <!-- Delivery Icon: STRICTLY HIDDEN FOR REGULAR VISITORS, ONLY SHOWN TO OWNER -->
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()" title="Delivery Section (Owner Only)">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
@@ -882,16 +891,16 @@
       </div>
 
       <div class="otp-display-box">
-        <div style="font-size:0.75rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Customer OTP Generated</div>
+        <div style="font-size:0.75rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Generated Customer OTP</div>
         <div class="otp-code" id="generatedOtpDisplay">----</div>
         <p style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">
-          Send this 4-digit code to the customer or have them read it from their phone:
+          Send this 4-digit code to the customer or have them read it to you upon arrival:
         </p>
-        <div style="display:flex; justify-content:center; gap:8px;">
-          <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:6px 12px; font-size:0.75rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+          <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
             <i class="fa-brands fa-whatsapp"></i> Send OTP via WhatsApp
           </a>
-          <a id="otpSmsLink" href="#" class="confirm-btn" style="padding:6px 12px; font-size:0.75rem; background:#0284c7; text-decoration:none; display:inline-flex; width:auto;">
+          <a id="otpSmsLink" href="#" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#0284c7; text-decoration:none; display:inline-flex; width:auto;">
             <i class="fa-solid fa-comment-sms"></i> Send SMS
           </a>
         </div>
@@ -899,11 +908,11 @@
 
       <form id="otpVerifyForm" onsubmit="confirmDeliveredWithOtp(event)">
         <div class="form-group" style="text-align:center;">
-          <label style="font-size:0.85rem; font-weight:700; color:var(--primary);">Enter 4-Digit Customer OTP Below:</label>
+          <label style="font-size:0.85rem; font-weight:700; color:var(--primary);">Enter Customer's 4-Digit OTP:</label>
           <input type="text" id="enteredOtpInput" class="form-group otp-input-field" maxlength="4" placeholder="••••" required pattern="\d{4}" />
         </div>
         <button type="submit" class="confirm-btn" style="background:#10b981;">
-          <i class="fa-solid fa-check"></i> Verify & Mark as Delivered
+          <i class="fa-solid fa-check"></i> Verify & Move to Delivered
         </button>
       </form>
     </div>
@@ -950,7 +959,7 @@
     let selectedProduct = null;
     let isMaintenanceActive = false;
     let activeHubTab = "active";
-    let pendingDeliveryVerification = null; // Stores target order info for OTP check
+    let pendingDeliveryVerification = null;
 
     // OWNER PIN TRIGGER (3 rapid taps on IFP logo)
     function handleBrandTap() {
@@ -992,11 +1001,9 @@
     function checkAdminStatus() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       
-      // Admin elements visible only to owner
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
       
-      // Top header Delivery Icon is strictly HIDDEN unless owner unlocks with PIN
       const deliveryBtn = document.getElementById("headerDeliveryBtn");
       if (deliveryBtn) {
         deliveryBtn.style.display = isAuth ? "flex" : "none";
@@ -1050,28 +1057,28 @@
       }
       const { collection, onSnapshot, doc } = window.firestoreTools;
 
-      // 1. Listen for maintenance mode
+      // 1. Maintenance
       onSnapshot(doc(window.db, "site_settings", "maintenance"), (snapshot) => {
         isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
         evaluateMaintenanceScreen();
         checkAdminStatus();
       });
 
-      // 2. Listen for hero banner
+      // 2. Banner
       onSnapshot(doc(window.db, "site_settings", "banner"), (snapshot) => {
         if (snapshot.exists() && snapshot.data().img) {
           document.getElementById("heroImg").src = snapshot.data().img;
         }
       });
 
-      // 3. Listen for garments
+      // 3. Garments
       onSnapshot(collection(window.db, "garments"), (snapshot) => {
         allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         displayedProducts = [...allProducts];
         renderProducts();
       });
 
-      // 4. Listen for cloud orders
+      // 4. Cloud Orders
       onSnapshot(collection(window.db, "orders"), (snapshot) => {
         cloudOrders = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
         updateDeliveryBadge();
@@ -1302,7 +1309,6 @@
         : (selectedProduct.img || "");
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
-      // Generate standard 4-digit verification OTP
       const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
       const orderData = {
@@ -1317,7 +1323,7 @@
         customerArea: area,
         customerStreet: street,
         deliveryOtp: generatedOtp,
-        status: "confirmed", // confirmed, delivered, cancelled
+        status: "confirmed",
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         createdAt: Date.now()
@@ -1346,18 +1352,16 @@
       }
     }
 
-    // CANCEL ORDER: Updates local storage and deletes cloud record (syncing delivery hub)
+    // CANCEL ORDER: Updates local storage and deletes cloud record
     async function cancelOrder(orderId) {
       if (!confirm(`Are you sure you want to cancel Order #${orderId}? It will be removed from both your orders and delivery tracking.`)) {
         return;
       }
 
-      // Remove from localStorage
       let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
       localOrders = localOrders.filter(o => o.orderId !== orderId);
       localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
-      // Delete from cloud Firestore
       try {
         const targetOrder = cloudOrders.find(o => o.orderId === orderId);
         if (targetOrder && targetOrder.firestoreId) {
@@ -1373,36 +1377,45 @@
       updateDeliveryBadge();
     }
 
-    // 4-DIGIT OTP INITIATION ON CLICKING DELIVERED
-    function initiateDeliveredOtp(firestoreId, orderId, custPhone, custName, itemTitle) {
-      const order = cloudOrders.find(o => o.orderId === orderId);
-      if (!order) return;
+    // 4-DIGIT OTP INITIATION (Bug-Free Lookup by OrderID)
+    function initiateDeliveredOtp(orderId) {
+      // Find the order from cloud or local fallback
+      const allKnownOrders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
+      const order = allKnownOrders.find(o => o.orderId === orderId);
 
-      // Make sure a 4-digit OTP is ready
+      if (!order) {
+        alert("Could not locate order details for " + orderId);
+        return;
+      }
+
+      // Generate or retrieve 4-digit OTP
       let otp = order.deliveryOtp;
       if (!otp) {
         otp = Math.floor(1000 + Math.random() * 9000).toString();
       }
 
       pendingDeliveryVerification = {
-        firestoreId: firestoreId,
-        orderId: orderId,
+        firestoreId: order.firestoreId || null,
+        orderId: order.orderId,
         correctOtp: otp.toString()
       };
 
-      // Display the generated OTP in modal
+      // Display the generated OTP
       document.getElementById("generatedOtpDisplay").innerText = otp;
       document.getElementById("enteredOtpInput").value = "";
 
-      // Construct direct dispatch links for customer
+      // Setup WhatsApp & SMS triggers
+      const custName = order.customerName || "Customer";
+      const itemTitle = order.item || "Garment";
       const messageText = encodeURIComponent(`Hello ${custName}, your Ibrahim Fashion Point order (${itemTitle}) is out for delivery! Please give this 4-Digit Delivery Verification OTP to the delivery agent: ${otp}`);
       
-      const cleanPhone = custPhone.replace(/[^0-9]/g, '');
+      const cleanPhone = (order.customerPhone || "").replace(/[^0-9]/g, '');
       const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+      
       document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${messageText}`;
       document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${messageText}`;
 
-      // Open OTP modal
+      // Open the modal on top
       document.getElementById("otpModal").classList.add("active");
     }
 
@@ -1414,7 +1427,7 @@
       const enteredCode = document.getElementById("enteredOtpInput").value.trim();
 
       if (enteredCode !== pendingDeliveryVerification.correctOtp) {
-        alert("❌ Incorrect 4-Digit OTP! Please obtain the valid code from the customer.");
+        alert("❌ Incorrect 4-Digit OTP! Please enter the valid code from the customer.");
         return;
       }
 
@@ -1444,7 +1457,7 @@
         renderDeliveryHub();
         updateDeliveryBadge();
       } catch (err) {
-        alert("Error saving delivered status: " + err.message);
+        alert("Error updating delivered status: " + err.message);
       }
     }
 
@@ -1511,7 +1524,7 @@
                   <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
                   <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
                   
-                  <button class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.firestoreId || ''}', '${o.orderId}', '${o.customerPhone}', '${o.customerName}', '${o.item}')">
+                  <button type="button" class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.orderId}')">
                     <i class="fa-solid fa-shield-halved"></i> Delivered (OTP)
                   </button>
                 </div>
@@ -1550,7 +1563,7 @@
       updateDeliveryBadge();
     }
 
-    // CUSTOMER MY ORDERS MODAL (Only shows orders placed by this device)
+    // CUSTOMER MY ORDERS MODAL
     function openOrdersModal() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
