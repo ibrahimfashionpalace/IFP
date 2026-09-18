@@ -16,7 +16,7 @@
       onSnapshot, 
       doc, 
       setDoc,
-      updateDoc,
+      updateDoc, 
       deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -297,28 +297,42 @@
       font-weight: 700;
       z-index: 2;
     }
+    .img-count-badge {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(15, 23, 42, 0.75);
+      color: #ffffff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      backdrop-filter: blur(2px);
+      z-index: 2;
+    }
 
     .thumb-strip {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       overflow-x: auto;
-      padding: 4px 6px;
+      padding: 6px 8px;
       background: #f8fafc;
       border-bottom: 1px solid #f1f5f9;
+      scrollbar-width: none;
     }
     .thumb-strip::-webkit-scrollbar { display: none; }
     .thumb-item {
-      width: 34px;
-      height: 34px;
-      border-radius: 4px;
+      width: 42px;
+      height: 42px;
+      border-radius: 6px;
       object-fit: cover;
       cursor: pointer;
-      border: 1px solid #cbd5e1;
+      border: 2px solid #cbd5e1;
       flex-shrink: 0;
     }
     .thumb-item.active {
       border-color: #be123c;
-      box-shadow: 0 0 0 1px #be123c;
+      box-shadow: 0 0 0 2px rgba(190, 18, 60, 0.4);
     }
 
     .card-body {
@@ -386,7 +400,6 @@
     }
     .modal-overlay.active { display: flex; }
 
-    /* OTP modal has higher z-index to appear on top of delivery dashboard */
     #otpModal {
       z-index: 300;
     }
@@ -447,7 +460,6 @@
       margin-top: 8px;
     }
 
-    /* Owner Details Card */
     .owner-card {
       background: linear-gradient(135deg, #1e1b4b 0%, #4c0519 100%);
       color: #ffffff;
@@ -469,7 +481,6 @@
       font-weight: bold;
     }
 
-    /* Hub Tab Switcher */
     .hub-tabs {
       display: flex;
       gap: 8px;
@@ -525,7 +536,6 @@
       margin-top: 6px;
     }
 
-    /* OTP Modal Specific Styles */
     .otp-display-box {
       background: #f8fafc;
       border: 2px dashed #0284c7;
@@ -663,7 +673,7 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Logo (Strictly protected for visitors) -->
+  <!-- Header with IFP Logo (Protected) -->
   <header>
     <div class="brand-wrap" onclick="handleBrandTap()">
       <div class="brand-logo-badge">IFP</div>
@@ -679,7 +689,7 @@
       <button class="nav-btn" onclick="openOrdersModal()" title="My Orders">
         <i class="fa-solid fa-bag-shopping"></i> My Orders
       </button>
-      <!-- Delivery Icon: STRICTLY HIDDEN FOR REGULAR VISITORS, ONLY SHOWN TO OWNER -->
+      <!-- Delivery Icon: OWNER ONLY -->
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()" title="Delivery Section (Owner Only)">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
@@ -760,7 +770,7 @@
     </div>
   </div>
 
-  <!-- Add Garment Modal (Multiple Photos Supported) -->
+  <!-- Add Garment Modal (Multiple Photos Fully Supported) -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -777,8 +787,11 @@
           <input type="number" id="newPrice" required placeholder="899" />
         </div>
         <div class="form-group">
-          <label>Garment Photos (Select 1 or more) *</label>
+          <label>Garment Photos (Select multiple from gallery) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
+          <span style="font-size:0.7rem; color:var(--muted); margin-top:3px; display:block;">
+            💡 You can select 2, 3, or more photos together.
+          </span>
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">
           Save Garment to Live Catalog
@@ -894,7 +907,7 @@
         <div style="font-size:0.75rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Generated Customer OTP</div>
         <div class="otp-code" id="generatedOtpDisplay">----</div>
         <p style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">
-          Send this 4-digit code to the customer or have them read it to you upon arrival:
+          Send this 4-digit code to the customer or have them read it upon arrival:
         </p>
         <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
           <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
@@ -918,7 +931,7 @@
     </div>
   </div>
 
-  <!-- My Orders Modal (Customer's Own Orders on their phone) -->
+  <!-- My Orders Modal -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -966,14 +979,12 @@
       tapCount++;
       clearTimeout(tapTimer);
       tapTimer = setTimeout(() => {
-        // Single or double click opens About Owner modal
         if (tapCount > 0 && tapCount < 3) {
           openOwnerModal();
         }
         tapCount = 0;
       }, 400);
 
-      // 3 rapid taps unlocks Admin Mode
       if (tapCount >= 3) {
         clearTimeout(tapTimer);
         tapCount = 0;
@@ -1071,9 +1082,18 @@
         }
       });
 
-      // 3. Garments
+      // 3. Garments (Normalize multiple photos)
       onSnapshot(collection(window.db, "garments"), (snapshot) => {
-        allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        allProducts = snapshot.docs.map(d => {
+          const data = d.data();
+          let photos = [];
+          if (Array.isArray(data.images) && data.images.length > 0) {
+            photos = data.images;
+          } else if (data.img) {
+            photos = [data.img];
+          }
+          return { id: d.id, ...data, images: photos };
+        });
         displayedProducts = [...allProducts];
         renderProducts();
       });
@@ -1147,7 +1167,7 @@
       renderProducts();
     }
 
-    // RENDER PRODUCTS
+    // RENDER PRODUCTS (Supports multiple image strip)
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
@@ -1165,7 +1185,7 @@
       }
 
       displayedProducts.forEach(p => {
-        const images = Array.isArray(p.images) && p.images.length > 0 ? p.images : [p.img];
+        const images = (p.images && p.images.length > 0) ? p.images : [p.img || ""];
         const activeImg = images[0] || "";
 
         let thumbStripHtml = "";
@@ -1173,7 +1193,7 @@
           thumbStripHtml = `<div class="thumb-strip">` +
             images.map((imgUrl, i) => `
               <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" 
-                   onclick="swapCardImage('${p.id}', '${imgUrl}', this)" />
+                   onclick="swapCardImage('${p.id}', '${imgUrl}', this, ${i + 1}, ${images.length})" />
             `).join("") +
           `</div>`;
         }
@@ -1184,6 +1204,7 @@
           <div class="card-img-wrap">
             <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
+            ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
           </div>
           ${thumbStripHtml}
           <div class="card-body">
@@ -1205,14 +1226,21 @@
       });
     }
 
-    function swapCardImage(cardId, newSrc, el) {
-      document.getElementById(`card-img-${cardId}`).src = newSrc;
+    function swapCardImage(cardId, newSrc, el, currentIdx, total) {
+      const mainImg = document.getElementById(`card-img-${cardId}`);
+      if (mainImg) mainImg.src = newSrc;
+      
+      const badge = document.getElementById(`img-badge-${cardId}`);
+      if (badge && currentIdx && total) {
+        badge.innerText = `${currentIdx} / ${total}`;
+      }
+
       const strip = el.parentElement;
       strip.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
       el.classList.add('active');
     }
 
-    // MULTI-IMAGE UPLOAD
+    // EFFICIENT MULTI-IMAGE COMPRESSION (Fits within Firestore 1MB limit)
     function compressFile(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1220,13 +1248,21 @@
           const img = new Image();
           img.onload = () => {
             const canvas = document.createElement("canvas");
-            const maxDim = 400;
+            const maxDim = 360; // Optimal for mobile screens while keeping size small
             let w = img.width, h = img.height;
-            if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-            canvas.width = w; canvas.height = h;
-            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/jpeg", 0.7));
+            if (w > h && w > maxDim) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else if (h > maxDim) {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            // 0.55 JPEG quality ensures small payload
+            resolve(canvas.toDataURL("image/jpeg", 0.55));
           };
           img.src = e.target.result;
         };
@@ -1239,20 +1275,26 @@
       const submitBtn = document.getElementById("saveGarmentBtn");
       const title = document.getElementById("newTitle").value.trim();
       const price = document.getElementById("newPrice").value.trim();
-      const files = document.getElementById("newImgFiles").files;
+      const fileInput = document.getElementById("newImgFiles");
+      const files = fileInput.files;
 
-      if (!files || files.length === 0) return;
+      if (!files || files.length === 0) {
+        alert("Please select at least 1 photo of the garment.");
+        return;
+      }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = "Compressing & Uploading...";
+      submitBtn.innerText = `Compressing ${files.length} Photo(s)...`;
 
       try {
         const compressedList = [];
         for (let i = 0; i < files.length; i++) {
+          submitBtn.innerText = `Processing photo ${i + 1} of ${files.length}...`;
           const compUrl = await compressFile(files[i]);
           compressedList.push(compUrl);
         }
 
+        submitBtn.innerText = "Saving to Live Catalog...";
         const { collection, addDoc } = window.firestoreTools;
         await addDoc(collection(window.db, "garments"), {
           name: title,
@@ -1264,7 +1306,7 @@
 
         closeModal("addProductModal");
         document.getElementById("newProductForm").reset();
-        alert("Garment uploaded successfully with all photos!");
+        alert(`Success! Garment uploaded with all ${compressedList.length} photo(s)!`);
       } catch (err) {
         alert("Upload failed: " + err.message);
       } finally {
@@ -1352,7 +1394,7 @@
       }
     }
 
-    // CANCEL ORDER: Updates local storage and deletes cloud record
+    // CANCEL ORDER
     async function cancelOrder(orderId) {
       if (!confirm(`Are you sure you want to cancel Order #${orderId}? It will be removed from both your orders and delivery tracking.`)) {
         return;
@@ -1377,9 +1419,8 @@
       updateDeliveryBadge();
     }
 
-    // 4-DIGIT OTP INITIATION (Bug-Free Lookup by OrderID)
+    // 4-DIGIT OTP INITIATION
     function initiateDeliveredOtp(orderId) {
-      // Find the order from cloud or local fallback
       const allKnownOrders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
       const order = allKnownOrders.find(o => o.orderId === orderId);
 
@@ -1388,7 +1429,6 @@
         return;
       }
 
-      // Generate or retrieve 4-digit OTP
       let otp = order.deliveryOtp;
       if (!otp) {
         otp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -1400,11 +1440,9 @@
         correctOtp: otp.toString()
       };
 
-      // Display the generated OTP
       document.getElementById("generatedOtpDisplay").innerText = otp;
       document.getElementById("enteredOtpInput").value = "";
 
-      // Setup WhatsApp & SMS triggers
       const custName = order.customerName || "Customer";
       const itemTitle = order.item || "Garment";
       const messageText = encodeURIComponent(`Hello ${custName}, your Ibrahim Fashion Point order (${itemTitle}) is out for delivery! Please give this 4-Digit Delivery Verification OTP to the delivery agent: ${otp}`);
@@ -1415,11 +1453,10 @@
       document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${messageText}`;
       document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${messageText}`;
 
-      // Open the modal on top
       document.getElementById("otpModal").classList.add("active");
     }
 
-    // VERIFY 4-DIGIT OTP & MOVE TO DELIVERED
+    // VERIFY 4-DIGIT OTP
     async function confirmDeliveredWithOtp(e) {
       e.preventDefault();
       if (!pendingDeliveryVerification) return;
@@ -1442,7 +1479,6 @@
           });
         }
 
-        // Update local copy
         let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
         localOrders = localOrders.map(o => {
           if (o.orderId === orderId) o.status = "delivered";
@@ -1473,7 +1509,7 @@
       renderDeliveryHub();
     }
 
-    // OPEN DELIVERY HUB (Strict Owner Protection)
+    // OPEN DELIVERY HUB (Owner Only)
     function openDeliveryDashboard() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       if (!isAuth) {
