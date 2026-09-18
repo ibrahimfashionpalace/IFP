@@ -5,17 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
+
   <!-- Firebase SDKs -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
       getFirestore, 
       collection, 
       addDoc, 
       onSnapshot, 
       doc, 
-      setDoc,
+      setDoc, 
       updateDoc, 
       deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -31,8 +37,21 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    window.auth = getAuth(app);
     window.db = getFirestore(app);
     window.firestoreTools = { collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc };
+    window.firebaseAuthTools = { signInWithEmailAndPassword, signOut, onAuthStateChanged };
+
+    // Listen for Owner Auth State Changes
+    window.firebaseAuthTools.onAuthStateChanged(window.auth, (user) => {
+      window.currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
+      if (typeof window.checkAdminStatus === "function") {
+        window.checkAdminStatus();
+      }
+      if (typeof window.evaluateMaintenanceScreen === "function") {
+        window.evaluateMaintenanceScreen();
+      }
+    });
   </script>
 
   <style>
@@ -472,6 +491,7 @@
     .modal-overlay.active { display: flex; }
 
     #otpModal { z-index: 300; }
+    #loginModal { z-index: 350; }
 
     .modal-sheet {
       background: #fff;
@@ -759,7 +779,7 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <div class="brand-logo-badge" id="ifpBadge" onclick="handleBrandTap(event)" title="Click for Menu">IFP</div>
+        <div class="brand-logo-badge" id="ifpBadge" onclick="handleBrandTap(event)" title="Click for Menu (Triple-tap for Owner)">IFP</div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
             <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
@@ -821,6 +841,30 @@
   <main>
     <div class="products-grid" id="productsGrid"></div>
   </main>
+
+  <!-- Owner Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> Owner Authentication</h3>
+        <button class="close-btn" type="button" onclick="closeModal('loginModal')">&times;</button>
+      </div>
+      <form id="ownerLoginForm" onsubmit="handleOwnerAuth(event)">
+        <div class="form-group">
+          <label>Registered Owner Email</label>
+          <input type="email" id="authEmail" required value="aamir757393@gmail.com" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" required placeholder="Enter Firebase Password" />
+        </div>
+        <button type="submit" id="authLoginBtn" class="confirm-btn" style="background:var(--primary);">
+          Sign In to Admin Hub
+        </button>
+        <p id="authErrorMsg" style="color:#ef4444; font-size:0.75rem; margin-top:8px; text-align:center; display:none;"></p>
+      </form>
+    </div>
+  </div>
 
   <!-- About Owner Modal -->
   <div class="modal-overlay" id="ownerModal">
@@ -1063,7 +1107,6 @@
   </footer>
 
   <script>
-    const OWNER_PIN = "21782";
     let tapCount = 0;
     let tapTimer = null;
     let allProducts = [];
@@ -1074,7 +1117,7 @@
     let activeHubTab = "active";
     let pendingDeliveryVerification = null;
 
-    // IFP LOGO CLICK / TAP HANDLER
+    // IFP LOGO CLICK / TAP HANDLER (Triple-tap opens Auth Modal)
     function handleBrandTap(event) {
       if (event) event.stopPropagation();
       tapCount++;
@@ -1105,7 +1148,6 @@
       if (dropdown) dropdown.classList.remove("active");
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener("click", (e) => {
       const dropdown = document.getElementById("ifpDropdown");
       const badge = document.getElementById("ifpBadge");
@@ -1115,14 +1157,36 @@
     });
 
     function promptOwnerLogin() {
-      const enteredPin = prompt("Enter Owner PIN:");
-      if (enteredPin === OWNER_PIN) {
-        sessionStorage.setItem("ifp_admin_auth", "true");
-        checkAdminStatus();
-        evaluateMaintenanceScreen();
-        alert("Owner Mode Unlocked! Delivery access granted.");
-      } else if (enteredPin !== null) {
-        alert("Incorrect PIN.");
+      if (window.currentAdminUser) {
+        alert("You are already authenticated as the Owner.");
+        return;
+      }
+      document.getElementById("authErrorMsg").style.display = "none";
+      document.getElementById("loginModal").classList.add("active");
+    }
+
+    async function handleOwnerAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById("authEmail").value.trim();
+      const password = document.getElementById("authPassword").value;
+      const errorMsg = document.getElementById("authErrorMsg");
+      const btn = document.getElementById("authLoginBtn");
+
+      errorMsg.style.display = "none";
+      btn.disabled = true;
+      btn.innerText = "Verifying...";
+
+      try {
+        await window.firebaseAuthTools.signInWithEmailAndPassword(window.auth, email, password);
+        closeModal("loginModal");
+        document.getElementById("ownerLoginForm").reset();
+        alert("Owner Mode Unlocked! Welcome back, Aamir.");
+      } catch (err) {
+        errorMsg.textContent = "Access Denied: " + err.message;
+        errorMsg.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Sign In to Admin Hub";
       }
     }
 
@@ -1131,8 +1195,8 @@
     }
 
     // OWNER RESTRICTION
-    function checkAdminStatus() {
-      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+    window.checkAdminStatus = function() {
+      const isAuth = !!window.currentAdminUser;
       
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
@@ -1151,12 +1215,15 @@
       }
 
       renderProducts();
-    }
+    };
 
-    function lockAdmin() {
-      sessionStorage.removeItem("ifp_admin_auth");
-      checkAdminStatus();
-      evaluateMaintenanceScreen();
+    async function lockAdmin() {
+      if (window.firebaseAuthTools && window.auth) {
+        await window.firebaseAuthTools.signOut(window.auth);
+      }
+      window.currentAdminUser = null;
+      window.checkAdminStatus();
+      window.evaluateMaintenanceScreen();
       alert("Owner mode locked. Delivery controls hidden.");
     }
 
@@ -1176,15 +1243,15 @@
       }
     }
 
-    function evaluateMaintenanceScreen() {
-      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+    window.evaluateMaintenanceScreen = function() {
+      const isAuth = !!window.currentAdminUser;
       const screen = document.getElementById("maintenanceScreen");
       screen.classList.toggle("active", isMaintenanceActive && !isAuth);
-    }
+    };
 
     // REAL-TIME FIRESTORE LISTENER
     function initCloudSync() {
-      if (!window.firestoreTools) {
+      if (!window.firestoreTools || !window.db) {
         setTimeout(initCloudSync, 300);
         return;
       }
@@ -1193,8 +1260,8 @@
       // 1. Maintenance
       onSnapshot(doc(window.db, "site_settings", "maintenance"), (snapshot) => {
         isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
-        evaluateMaintenanceScreen();
-        checkAdminStatus();
+        window.evaluateMaintenanceScreen();
+        window.checkAdminStatus();
       });
 
       // 2. Banner
@@ -1284,7 +1351,7 @@
       if (!query) {
         displayedProducts = [...allProducts];
       } else {
-        displayedProducts = allProducts.filter(p => p.name.toLowerCase().includes(query));
+        displayedProducts = allProducts.filter(p => (p.name || "").toLowerCase().includes(query));
       }
       renderProducts();
     }
@@ -1292,7 +1359,7 @@
     // RENDER PRODUCTS
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
-      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+      const isAuth = !!window.currentAdminUser;
       grid.innerHTML = "";
 
       if (displayedProducts.length === 0) {
@@ -1399,9 +1466,13 @@
       });
     }
 
-    // ADD NEW PRODUCT (Supports stock & custom sizes)
+    // ADD NEW PRODUCT (Owner Only)
     async function handleNewProduct(e) {
       e.preventDefault();
+      if (!window.currentAdminUser) {
+        alert("Only the owner can upload garments.");
+        return;
+      }
       const submitBtn = document.getElementById("saveGarmentBtn");
       const title = document.getElementById("newTitle").value.trim();
       const price = document.getElementById("newPrice").value.trim();
@@ -1452,6 +1523,7 @@
     }
 
     async function deleteGarment(id) {
+      if (!window.currentAdminUser) return;
       if (confirm("Delete this garment permanently for all visitors?")) {
         const { doc, deleteDoc } = window.firestoreTools;
         await deleteDoc(doc(window.db, "garments", id));
@@ -1557,6 +1629,7 @@
 
     // DELETE ORDER FROM DELIVERED SECTION (OWNER ONLY)
     async function deleteDeliveredOrder(orderId, firestoreId) {
+      if (!window.currentAdminUser) return;
       if (!confirm(`Permanently delete Delivered Order #${orderId} from records?`)) return;
 
       try {
@@ -1669,8 +1742,7 @@
 
     // OPEN DELIVERY HUB (Owner Only)
     function openDeliveryDashboard() {
-      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
-      if (!isAuth) {
+      if (!window.currentAdminUser) {
         alert("Access Restricted: Only the store owner (Aamir Rashid) can view the Delivery Hub.");
         return;
       }
@@ -1811,7 +1883,7 @@
     }
 
     // INITIALIZATION
-    checkAdminStatus();
+    window.checkAdminStatus();
     initCloudSync();
   </script>
 </body>
