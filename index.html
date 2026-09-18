@@ -516,6 +516,32 @@
       margin-top: 6px;
     }
 
+    /* OTP Modal Specific Styles */
+    .otp-display-box {
+      background: #f8fafc;
+      border: 2px dashed #0284c7;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .otp-code {
+      font-size: 2rem;
+      letter-spacing: 8px;
+      font-weight: 900;
+      color: #be123c;
+      margin: 6px 0;
+    }
+    .otp-input-field {
+      text-align: center;
+      letter-spacing: 12px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
     #maintenanceScreen {
       display: none;
       position: fixed;
@@ -628,7 +654,7 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Circular Ring Logo -->
+  <!-- Header with IFP Logo (Protected for visitors) -->
   <header>
     <div class="brand-wrap" onclick="handleBrandTap()">
       <div class="brand-logo-badge">IFP</div>
@@ -644,7 +670,8 @@
       <button class="nav-btn" onclick="openOrdersModal()" title="My Orders">
         <i class="fa-solid fa-bag-shopping"></i> My Orders
       </button>
-      <button class="nav-btn" id="headerDeliveryBtn" onclick="openDeliveryDashboard()" title="Delivery Section">
+      <!-- Delivery Icon: STRICTLY HIDDEN FOR REGULAR VISITORS, ONLY VISIBLE TO OWNER -->
+      <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()" title="Delivery Section (Owner Only)">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
       </button>
@@ -671,7 +698,7 @@
     <input type="text" class="search-input" id="searchInput" placeholder="Search garments by name..." oninput="handleSearch()" />
   </div>
 
-  <!-- Protected Admin Bar -->
+  <!-- Protected Admin Bar (Owner Only) -->
   <div class="admin-bar" id="adminBar">
     <button class="delivery-btn" onclick="openDeliveryDashboard()">
       <i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub (Cloud Orders)
@@ -759,7 +786,6 @@
         <button class="close-btn" type="button" onclick="closeModal('orderModal')">&times;</button>
       </div>
 
-      <!-- Price & COD Highlight Card -->
       <div style="background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; padding:12px; margin-bottom:14px;">
         <div id="orderItemTitle" style="font-weight:800; color:var(--primary); font-size:0.95rem;"></div>
         <div id="orderItemSize" style="font-size:0.8rem; color:var(--muted); margin:3px 0;"></div>
@@ -822,13 +848,13 @@
     </div>
   </div>
 
-  <!-- Delivery Hub Modal (Active & Delivered) -->
+  <!-- Delivery Hub Modal (OWNER ONLY) -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <div>
-          <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Delivery Hub</h3>
-          <p style="font-size:0.72rem; color:var(--muted);">Manage live orders & complete deliveries</p>
+          <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Owner Delivery Hub</h3>
+          <p style="font-size:0.72rem; color:var(--muted);">Private delivery control & 4-digit verification OTP</p>
         </div>
         <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
@@ -847,7 +873,43 @@
     </div>
   </div>
 
-  <!-- My Orders Modal (With Cancel Button) -->
+  <!-- 4-DIGIT DELIVERY VERIFICATION OTP MODAL -->
+  <div class="modal-overlay" id="otpModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-shield-halved" style="color:#0284c7;"></i> Delivery OTP Verification</h3>
+        <button class="close-btn" type="button" onclick="closeModal('otpModal')">&times;</button>
+      </div>
+
+      <div class="otp-display-box">
+        <div style="font-size:0.75rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Customer OTP Generated</div>
+        <div class="otp-code" id="generatedOtpDisplay">----</div>
+        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">
+          Send this 4-digit code to the customer or have them read it from their phone:
+        </p>
+        <div style="display:flex; justify-content:center; gap:8px;">
+          <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:6px 12px; font-size:0.75rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
+            <i class="fa-brands fa-whatsapp"></i> Send OTP via WhatsApp
+          </a>
+          <a id="otpSmsLink" href="#" class="confirm-btn" style="padding:6px 12px; font-size:0.75rem; background:#0284c7; text-decoration:none; display:inline-flex; width:auto;">
+            <i class="fa-solid fa-comment-sms"></i> Send SMS
+          </a>
+        </div>
+      </div>
+
+      <form id="otpVerifyForm" onsubmit="confirmDeliveredWithOtp(event)">
+        <div class="form-group" style="text-align:center;">
+          <label style="font-size:0.85rem; font-weight:700; color:var(--primary);">Enter 4-Digit Customer OTP Below:</label>
+          <input type="text" id="enteredOtpInput" class="form-group otp-input-field" maxlength="4" placeholder="••••" required pattern="\d{4}" />
+        </div>
+        <button type="submit" class="confirm-btn" style="background:#10b981;">
+          <i class="fa-solid fa-check"></i> Verify & Mark as Delivered
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- My Orders Modal (Customer's Own Orders on their phone) -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -888,8 +950,9 @@
     let selectedProduct = null;
     let isMaintenanceActive = false;
     let activeHubTab = "active";
+    let pendingDeliveryVerification = null; // Stores target order info for OTP check
 
-    // OWNER PIN TRIGGER (Triple Click on Brand Title)
+    // OWNER PIN TRIGGER (3 rapid taps on IFP logo)
     function handleBrandTap() {
       tapCount++;
       clearTimeout(tapTimer);
@@ -915,7 +978,7 @@
         sessionStorage.setItem("ifp_admin_auth", "true");
         checkAdminStatus();
         evaluateMaintenanceScreen();
-        alert("Owner Mode Unlocked!");
+        alert("Owner Mode Unlocked! Delivery access granted.");
       } else if (enteredPin !== null) {
         alert("Incorrect PIN.");
       }
@@ -925,11 +988,20 @@
       document.getElementById("ownerModal").classList.add("active");
     }
 
+    // STRICT OWNER RESTRICTION
     function checkAdminStatus() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+      
+      // Admin elements visible only to owner
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
       
+      // Top header Delivery Icon is strictly HIDDEN unless owner unlocks with PIN
+      const deliveryBtn = document.getElementById("headerDeliveryBtn");
+      if (deliveryBtn) {
+        deliveryBtn.style.display = isAuth ? "flex" : "none";
+      }
+
       const maintBtn = document.getElementById("maintToggleBtn");
       if (maintBtn) {
         maintBtn.innerHTML = isMaintenanceActive
@@ -945,7 +1017,7 @@
       sessionStorage.removeItem("ifp_admin_auth");
       checkAdminStatus();
       evaluateMaintenanceScreen();
-      alert("Admin mode locked.");
+      alert("Owner mode locked. Delivery controls hidden.");
     }
 
     // CLOUD-SYNCED MAINTENANCE
@@ -1014,7 +1086,6 @@
       const badge = document.getElementById("activeDeliveryBadge");
       if (badge) {
         badge.innerText = activeOrders.length;
-        badge.style.display = activeOrders.length > 0 ? "inline-block" : "none";
       }
       const countEl = document.getElementById("activeTabCount");
       if (countEl) countEl.innerText = activeOrders.length;
@@ -1231,6 +1302,8 @@
         : (selectedProduct.img || "");
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
+      // Generate standard 4-digit verification OTP
+      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
       const orderData = {
         orderId: newOrderId,
@@ -1243,6 +1316,7 @@
         customerPhone: phone,
         customerArea: area,
         customerStreet: street,
+        deliveryOtp: generatedOtp,
         status: "confirmed", // confirmed, delivered, cancelled
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -1272,9 +1346,9 @@
       }
     }
 
-    // CANCEL ORDER: Updates local storage and deletes/updates Firestore record
+    // CANCEL ORDER: Updates local storage and deletes cloud record (syncing delivery hub)
     async function cancelOrder(orderId) {
-      if (!confirm(`Are you sure you want to cancel Order #${orderId}? This will remove it from both your orders and the active delivery list.`)) {
+      if (!confirm(`Are you sure you want to cancel Order #${orderId}? It will be removed from both your orders and delivery tracking.`)) {
         return;
       }
 
@@ -1283,7 +1357,7 @@
       localOrders = localOrders.filter(o => o.orderId !== orderId);
       localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
-      // Remove / Update in Firestore
+      // Delete from cloud Firestore
       try {
         const targetOrder = cloudOrders.find(o => o.orderId === orderId);
         if (targetOrder && targetOrder.firestoreId) {
@@ -1299,9 +1373,52 @@
       updateDeliveryBadge();
     }
 
-    // MARK AS DELIVERED
-    async function markAsDelivered(firestoreId, orderId) {
-      if (!confirm(`Mark Order #${orderId} as Delivered?`)) return;
+    // 4-DIGIT OTP INITIATION ON CLICKING DELIVERED
+    function initiateDeliveredOtp(firestoreId, orderId, custPhone, custName, itemTitle) {
+      const order = cloudOrders.find(o => o.orderId === orderId);
+      if (!order) return;
+
+      // Make sure a 4-digit OTP is ready
+      let otp = order.deliveryOtp;
+      if (!otp) {
+        otp = Math.floor(1000 + Math.random() * 9000).toString();
+      }
+
+      pendingDeliveryVerification = {
+        firestoreId: firestoreId,
+        orderId: orderId,
+        correctOtp: otp.toString()
+      };
+
+      // Display the generated OTP in modal
+      document.getElementById("generatedOtpDisplay").innerText = otp;
+      document.getElementById("enteredOtpInput").value = "";
+
+      // Construct direct dispatch links for customer
+      const messageText = encodeURIComponent(`Hello ${custName}, your Ibrahim Fashion Point order (${itemTitle}) is out for delivery! Please give this 4-Digit Delivery Verification OTP to the delivery agent: ${otp}`);
+      
+      const cleanPhone = custPhone.replace(/[^0-9]/g, '');
+      const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${messageText}`;
+      document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${messageText}`;
+
+      // Open OTP modal
+      document.getElementById("otpModal").classList.add("active");
+    }
+
+    // VERIFY 4-DIGIT OTP & MOVE TO DELIVERED
+    async function confirmDeliveredWithOtp(e) {
+      e.preventDefault();
+      if (!pendingDeliveryVerification) return;
+
+      const enteredCode = document.getElementById("enteredOtpInput").value.trim();
+
+      if (enteredCode !== pendingDeliveryVerification.correctOtp) {
+        alert("❌ Incorrect 4-Digit OTP! Please obtain the valid code from the customer.");
+        return;
+      }
+
+      const { firestoreId, orderId } = pendingDeliveryVerification;
 
       try {
         if (window.firestoreTools && firestoreId) {
@@ -1312,7 +1429,7 @@
           });
         }
 
-        // Update in localStorage
+        // Update local copy
         let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
         localOrders = localOrders.map(o => {
           if (o.orderId === orderId) o.status = "delivered";
@@ -1320,11 +1437,14 @@
         });
         localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
 
-        alert(`Order #${orderId} marked as DELIVERED!`);
+        closeModal("otpModal");
+        alert(`✅ Verified! Order #${orderId} has been successfully moved to DELIVERED!`);
+        
+        pendingDeliveryVerification = null;
         renderDeliveryHub();
         updateDeliveryBadge();
       } catch (err) {
-        alert("Error marking as delivered: " + err.message);
+        alert("Error saving delivered status: " + err.message);
       }
     }
 
@@ -1340,7 +1460,13 @@
       renderDeliveryHub();
     }
 
+    // OPEN DELIVERY HUB (Strict Owner Protection)
     function openDeliveryDashboard() {
+      const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
+      if (!isAuth) {
+        alert("Access Restricted: Only the store owner (Aamir Rashid) can view the Delivery Hub.");
+        return;
+      }
       renderDeliveryHub();
       document.getElementById("deliveryModal").classList.add("active");
     }
@@ -1384,8 +1510,9 @@
                   <div>${o.item} (Size: ${o.size}) • <strong style="color:#047857;">COD</strong></div>
                   <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
                   <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
-                  <button class="btn-delivered-action" onclick="markAsDelivered('${o.firestoreId || ''}', '${o.orderId}')">
-                    <i class="fa-solid fa-check"></i> Delivered
+                  
+                  <button class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.firestoreId || ''}', '${o.orderId}', '${o.customerPhone}', '${o.customerName}', '${o.item}')">
+                    <i class="fa-solid fa-shield-halved"></i> Delivered (OTP)
                   </button>
                 </div>
               </div>
@@ -1413,7 +1540,7 @@
                 Customer: ${o.customerName} (${o.customerPhone}) • ₹${o.price}
               </div>
               <div style="font-size:0.7rem; color:#94a3b8;">
-                Order ID: ${o.orderId} • Address: ${o.customerArea || ''}
+                Order ID: ${o.orderId} • Area: ${o.customerArea || ''}
               </div>
             </div>
           </div>
@@ -1423,7 +1550,7 @@
       updateDeliveryBadge();
     }
 
-    // CUSTOMER MY ORDERS MODAL (Includes Cancel Order action)
+    // CUSTOMER MY ORDERS MODAL (Only shows orders placed by this device)
     function openOrdersModal() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
@@ -1440,7 +1567,7 @@
                 <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
               </div>
               <div style="color:var(--muted);">Size: ${o.size} • COD</div>
-              <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">Order ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
+              <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">Order ID: ${o.orderId} • Placed: ${o.date} ${o.time || ''}</div>
               
               <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
                 ${o.status === 'delivered' 
