@@ -12,6 +12,36 @@
     button:hover { background: #333; }
     .order-box { border-left: 4px solid #111; padding: 10px; margin: 10px 0; background: #fafafa; }
   </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div id="login-card" class="card">
+    <h2>Owner Login</h2>
+    <input type="email" id="login-email" placeholder="Owner Email">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button id="btn-login" type="button">Sign In</button>
+    <p id="login-status" style="font-weight: 500;"></p>
+  </div>
+
+  <!-- Protected Admin Area -->
+  <div id="admin-dashboard" style="display: none;">
+    <div class="card">
+      <h2>Add New Garment</h2>
+      <input type="text" id="garment-name" placeholder="Garment Name">
+      <input type="number" id="garment-price" placeholder="Price (₹)">
+      <input type="text" id="garment-img" placeholder="Direct Image URL">
+      <button id="btn-add-garment" type="button">Publish Garment Live</button>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Customer Deliveries</h2>
+        <button id="btn-logout" type="button" style="width: auto; padding: 6px 14px;">Logout</button>
+      </div>
+      <div id="deliveries-container"></div>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -19,28 +49,6 @@
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     // --- PASTE YOUR FIREBASE CONFIG KEYS HERE ---
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDhQeckYDOMwNkBDqGFS4_WGeSRtzySSP8",
-  authDomain: "ifp-store.firebaseapp.com",
-  projectId: "ifp-store",
-  storageBucket: "ifp-store.firebasestorage.app",
-  messagingSenderId: "1028441234821",
-  appId: "1:1028441234821:web:4fd360e70e357d510d78ec",
-  measurementId: "G-R4EDL6SCRZ"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-    
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -54,39 +62,58 @@ const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Elements
+    const loginCard = document.getElementById('login-card');
+    const adminDashboard = document.getElementById('admin-dashboard');
+    const btnLogin = document.getElementById('btn-login');
+    const btnLogout = document.getElementById('btn-logout');
+    const btnAddGarment = document.getElementById('btn-add-garment');
+    const loginStatus = document.getElementById('login-status');
+
     // Track Login State
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        document.getElementById('login-card').style.display = 'none';
-        document.getElementById('admin-dashboard').style.display = 'block';
+        loginCard.style.display = 'none';
+        adminDashboard.style.display = 'block';
         loadDeliveries();
       } else {
-        document.getElementById('login-card').style.display = 'block';
-        document.getElementById('admin-dashboard').style.display = 'none';
+        loginCard.style.display = 'block';
+        adminDashboard.style.display = 'none';
       }
     });
 
-    // Login Function
-    window.handleLogin = async () => {
-      const email = document.getElementById('login-email').value;
-      const pass = document.getElementById('login-pass').value;
-      const status = document.getElementById('login-status');
+    // Sign In Action
+    btnLogin.addEventListener('click', async () => {
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+
+      if (!email || !pass) {
+        loginStatus.textContent = "Please enter both email and password.";
+        loginStatus.style.color = "red";
+        return;
+      }
+
+      loginStatus.textContent = "Checking credentials...";
+      loginStatus.style.color = "blue";
+
       try {
         await signInWithEmailAndPassword(auth, email, pass);
       } catch (err) {
-        status.textContent = "Login Failed: " + err.message;
-        status.style.color = "red";
+        loginStatus.textContent = "Error: " + err.message;
+        loginStatus.style.color = "red";
       }
-    };
+    });
 
-    // Logout Function
-    window.handleLogout = () => signOut(auth);
+    // Logout Action
+    btnLogout.addEventListener('click', async () => {
+      await signOut(auth);
+    });
 
-    // Add Garment
-    window.handleAddGarment = async () => {
-      const title = document.getElementById('garment-name').value;
-      const price = document.getElementById('garment-price').value;
-      const image = document.getElementById('garment-img').value;
+    // Add Garment Action
+    btnAddGarment.addEventListener('click', async () => {
+      const title = document.getElementById('garment-name').value.trim();
+      const price = document.getElementById('garment-price').value.trim();
+      const image = document.getElementById('garment-img').value.trim();
 
       if (!title || !price) {
         alert("Please enter garment name and price.");
@@ -100,16 +127,16 @@ const analytics = getAnalytics(app);
           image: image,
           createdAt: new Date()
         });
-        alert("Garment added successfully!");
+        alert("Garment published successfully!");
         document.getElementById('garment-name').value = '';
         document.getElementById('garment-price').value = '';
         document.getElementById('garment-img').value = '';
       } catch (err) {
-        alert("Error saving item: " + err.message);
+        alert("Failed to save: " + err.message);
       }
-    };
+    });
 
-    // Fetch Deliveries
+    // Load Deliveries
     async function loadDeliveries() {
       const container = document.getElementById('deliveries-container');
       container.innerHTML = "Loading customer orders...";
@@ -137,36 +164,5 @@ const analytics = getAnalytics(app);
       }
     }
   </script>
-</head>
-<body>
-
-  <!-- Login Area -->
-  <div id="login-card" class="card">
-    <h2>Owner Login</h2>
-    <input type="email" id="login-email" placeholder="Owner Email">
-    <input type="password" id="login-pass" placeholder="Password">
-    <button onclick="handleLogin()">Sign In</button>
-    <p id="login-status"></p>
-  </div>
-
-  <!-- Protected Admin Area -->
-  <div id="admin-dashboard" style="display: none;">
-    <div class="card">
-      <h2>Add New Garment</h2>
-      <input type="text" id="garment-name" placeholder="Garment Name">
-      <input type="number" id="garment-price" placeholder="Price (₹)">
-      <input type="text" id="garment-img" placeholder="Direct Image URL">
-      <button onclick="handleAddGarment()">Publish Garment Live</button>
-    </div>
-
-    <div class="card">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>Customer Deliveries</h2>
-        <button onclick="handleLogout()" style="width: auto; padding: 6px 14px;">Logout</button>
-      </div>
-      <div id="deliveries-container"></div>
-    </div>
-  </div>
-
 </body>
 </html>
