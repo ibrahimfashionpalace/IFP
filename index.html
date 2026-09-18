@@ -15,6 +15,7 @@
       addDoc, 
       onSnapshot, 
       doc, 
+      setDoc,
       deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -30,7 +31,7 @@
 
     const app = initializeApp(firebaseConfig);
     window.db = getFirestore(app);
-    window.firestoreTools = { collection, addDoc, onSnapshot, doc, deleteDoc };
+    window.firestoreTools = { collection, addDoc, onSnapshot, doc, setDoc, deleteDoc };
   </script>
 
   <style>
@@ -57,6 +58,7 @@
       min-height: 100vh;
       padding-bottom: 70px;
     }
+
     header {
       background: linear-gradient(135deg, #312e81 0%, #4c0519 100%);
       position: sticky;
@@ -66,22 +68,43 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      padding: 12px 16px;
       color: #ffffff;
     }
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      color: #fbbf24;
-      user-select: none;
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       cursor: pointer;
+      user-select: none;
+    }
+    /* Colorful IFP Circle Badge */
+    .brand-logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fbbf24, #f43f5e, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border: 2px solid #ffffff;
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      color: #fbbf24;
       text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      line-height: 1.2;
     }
     .brand-sub {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #fbcfe8;
-      margin-top: 2px;
     }
     .menu-btn {
       background: rgba(255, 255, 255, 0.15);
@@ -92,6 +115,8 @@
       padding: 8px 12px;
       border-radius: 50%;
     }
+
+    /* Hero Banner with Edit Button */
     .hero-container {
       position: relative;
       margin: 14px;
@@ -102,10 +127,10 @@
     }
     .hero-img {
       width: 100%;
-      height: 175px;
+      height: 180px;
       object-fit: cover;
       display: block;
-      opacity: 0.85;
+      opacity: 0.9;
     }
     .hero-overlay {
       position: absolute;
@@ -134,6 +159,47 @@
       font-weight: 800;
       color: #ffffff;
     }
+    .hero-edit-btn {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.75);
+      color: #fbbf24;
+      border: 1px solid #fbbf24;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-weight: 700;
+      z-index: 5;
+    }
+
+    /* Search Interface */
+    .search-wrap {
+      margin: 0 14px 14px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border-radius: 25px;
+      border: 1px solid #fbcfe8;
+      background: #ffffff;
+      outline: none;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* Admin Bar */
     .admin-bar {
       display: none;
       margin: 0 14px 12px;
@@ -155,6 +221,13 @@
       justify-content: center;
       gap: 6px;
     }
+    .admin-bar button.delivery-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      flex: 1 1 100%;
+      font-size: 0.85rem;
+    }
     .admin-bar button.maintenance-btn {
       background: #f59e0b;
       color: #ffffff;
@@ -167,6 +240,8 @@
       border: none;
       flex: 1 1 100%;
     }
+
+    /* Products Grid */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -206,17 +281,33 @@
       padding: 3px 6px;
       border-radius: 6px;
       font-weight: 700;
+      z-index: 2;
     }
-    .stock-badge {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      background: rgba(17, 24, 39, 0.75);
-      color: #fff;
-      font-size: 0.62rem;
-      padding: 3px 6px;
-      border-radius: 6px;
+
+    /* Multi-image Scroll Preview */
+    .thumb-strip {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 4px 6px;
+      background: #f8fafc;
+      border-bottom: 1px solid #f1f5f9;
     }
+    .thumb-strip::-webkit-scrollbar { display: none; }
+    .thumb-item {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      flex-shrink: 0;
+    }
+    .thumb-item.active {
+      border-color: #be123c;
+      box-shadow: 0 0 0 1px #be123c;
+    }
+
     .card-body {
       padding: 10px;
       display: flex;
@@ -269,6 +360,8 @@
       cursor: pointer;
       margin-top: 4px;
     }
+
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -335,6 +428,8 @@
       gap: 8px;
       margin-top: 8px;
     }
+
+    /* Maintenance Screen */
     #maintenanceScreen {
       display: none;
       position: fixed;
@@ -368,6 +463,8 @@
       cursor: pointer;
       text-decoration: underline;
     }
+
+    /* Customer Care & Footer */
     footer {
       margin-top: 30px;
       background: #ffffff;
@@ -377,53 +474,110 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
+    .footer-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+    .contact-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0 10px;
+    }
     .contact-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin: 4px 6px;
       background: #fdf2f8;
       border: 1px solid #fbcfe8;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: 20px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.78rem;
     }
+
+    /* Location Hub Cards */
+    .loc-group-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .loc-group-header {
+      background: #e2e8f0;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--primary);
+    }
+    .loc-order-item {
+      padding: 8px 12px;
+      border-bottom: 1px dashed #cbd5e1;
+      font-size: 0.78rem;
+    }
+    .loc-order-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
 
-  <!-- Maintenance View -->
+  <!-- Full Screen Maintenance Mode View -->
   <div id="maintenanceScreen">
     <div class="maint-icon"><i class="fa-solid fa-wrench"></i></div>
     <div class="maint-title">Website Under Maintenance</div>
     <div class="maint-sub">Inconvenience regretted. We are updating our garment collection and will be back shortly!</div>
     <div class="maint-contact">
-      <div style="font-size:0.75rem; color:#cbd5e1; margin-bottom:6px;">Need urgent assistance?</div>
+      <div style="font-size:0.75rem; color:#cbd5e1; margin-bottom:6px;">Need urgent assistance or orders?</div>
+      <div style="margin-bottom:6px;"><i class="fa-solid fa-phone"></i> Call: <a href="tel:6005757393">6005757393</a></div>
       <div><i class="fa-brands fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/916005757393" target="_blank">Chat with us</a></div>
     </div>
     <div class="owner-bypass-link" onclick="handleBrandTap()">Owner Login</div>
   </div>
 
-  <!-- Header -->
+  <!-- Header with IFP Circular Ring Logo -->
   <header>
-    <div>
-      <div class="brand-title" id="brandTitle" onclick="handleBrandTap()">IBRAHIM FASHION POINT</div>
-      <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
+    <div class="brand-wrap" onclick="handleBrandTap()">
+      <div class="brand-logo-badge">IFP</div>
+      <div>
+        <div class="brand-title">IBRAHIM FASHION POINT</div>
+        <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
+      </div>
     </div>
     <button class="menu-btn" onclick="openOrdersModal()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero Section with Editable Cover Photo -->
   <div class="hero-container">
     <img id="heroImg" class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="Banner" />
     <div class="hero-overlay">
       <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
       <div class="hero-title">New Garment Collection</div>
-      <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Cash on Delivery Available</p>
+      <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
     </div>
+    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
+      <i class="fa-solid fa-camera"></i> Change Banner
+    </button>
+    <input type="file" id="heroInput" accept="image/*" style="display:none" onchange="updateHeroImage(event)" />
   </div>
 
-  <!-- Admin Bar -->
+  <!-- Instant Search Bar -->
+  <div class="search-wrap">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search garments by name..." oninput="handleSearch()" />
+  </div>
+
+  <!-- Protected Admin Bar -->
   <div class="admin-bar" id="adminBar">
+    <button class="delivery-btn" onclick="openDeliveryDashboard()">
+      <i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub (Grouped by Location)
+    </button>
     <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()">
       <i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance Mode
     </button>
@@ -436,7 +590,7 @@
     <div class="products-grid" id="productsGrid"></div>
   </main>
 
-  <!-- Add Product Modal -->
+  <!-- Add Garment Modal (Multiple Images Supported) -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -453,14 +607,38 @@
           <input type="number" id="newPrice" required placeholder="899" />
         </div>
         <div class="form-group">
-          <label>Choose 1 Garment Photo *</label>
-          <!-- Opens system picker: strictly isolated to the one picture you choose -->
-          <input type="file" id="newImgFile" accept="image/*" required />
+          <label>Garment Photos (Select 1 or more) *</label>
+          <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">
           Save Garment to Live Catalog
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Delivery Hub Modal -->
+  <div class="modal-overlay" id="deliveryModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div>
+          <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Delivery Hub</h3>
+          <p style="font-size:0.72rem; color:var(--muted);">All customer orders grouped by location</p>
+        </div>
+        <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
+      </div>
+      <div id="deliveryGroupContainer"></div>
+    </div>
+  </div>
+
+  <!-- My Orders Modal -->
+  <div class="modal-overlay" id="myOrdersModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-bag-shopping" style="color:#be123c;"></i> My Orders</h3>
+        <button class="close-btn" type="button" onclick="closeModal('myOrdersModal')">&times;</button>
+      </div>
+      <div id="ordersListContainer"></div>
     </div>
   </div>
 
@@ -479,31 +657,62 @@
         </div>
         <div class="form-group">
           <label>Phone Number *</label>
-          <input type="tel" id="custPhone" required placeholder="Phone Number" />
+          <input type="tel" id="custPhone" required placeholder="e.g. 6005757393" />
         </div>
         <div class="form-group">
-          <label>Address / Landmark *</label>
-          <input type="text" id="custStreet" required placeholder="House number / Street / Area" />
+          <label>Delivery Area *</label>
+          <select id="custArea" required>
+            <option value="" disabled selected>-- Select Your Delivery Area --</option>
+            <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
+            <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
+            <option value="Gulshanabad (Charar-i-Sharief)">Gulshanabad (Charar-i-Sharief)</option>
+            <option value="Nowhar (Charar-i-Sharief)">Nowhar (Charar-i-Sharief)</option>
+            <option value="Trajibal">Trajibal</option>
+            <option value="Chadoora">Chadoora</option>
+            <option value="Nagam">Nagam</option>
+            <option value="Srinagar">Srinagar</option>
+            <option value="Other Area">Other Area</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Street / Landmark *</label>
+          <input type="text" id="custStreet" required placeholder="House number / Landmark" />
         </div>
         <button type="submit" class="confirm-btn">
-          <i class="fa-brands fa-whatsapp"></i> Order via WhatsApp
+          <i class="fa-brands fa-whatsapp"></i> Confirm Order via WhatsApp
         </button>
       </form>
     </div>
   </div>
 
+  <!-- Customer Care & Contact Footer -->
   <footer>
-    <div style="font-weight:800; font-size:0.9rem; margin-bottom:6px; color:var(--primary)">IBRAHIM FASHION POINT</div>
-    <div>Malapora, Charar-i-Sharief, Budgam</div>
+    <div class="footer-title">IBRAHIM FASHION POINT</div>
+    <div>Malapora, Charar-i-Sharief, Budgam, J&K</div>
+    
+    <div class="contact-container">
+      <a href="tel:6005757393" class="contact-badge">
+        <i class="fa-solid fa-phone" style="color:#be123c;"></i> +91 6005757393
+      </a>
+      <a href="https://wa.me/916005757393" target="_blank" class="contact-badge">
+        <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Us
+      </a>
+      <a href="mailto:ibrahimfashionpoint@gmail.com" class="contact-badge">
+        <i class="fa-solid fa-envelope" style="color:#0284c7;"></i> Email Support
+      </a>
+    </div>
+    
+    <p style="margin-top:10px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10:00 AM – 8:00 PM</p>
   </footer>
 
   <script>
-    // New private PIN (change if desired)
-    const OWNER_PIN = "74921"; 
+    const OWNER_PIN = "74921";
     let tapCount = 0;
     let tapTimer = null;
-    let products = [];
+    let allProducts = [];
+    let displayedProducts = [];
     let selectedProduct = null;
+    let isMaintenanceActive = false;
 
     function handleBrandTap() {
       tapCount++;
@@ -516,7 +725,7 @@
         if (enteredPin === OWNER_PIN) {
           sessionStorage.setItem("ifp_admin_auth", "true");
           checkAdminStatus();
-          checkMaintenanceStatus();
+          evaluateMaintenanceScreen();
           alert("Owner Mode Unlocked!");
         } else if (enteredPin !== null) {
           alert("Incorrect PIN.");
@@ -527,67 +736,166 @@
     function checkAdminStatus() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
+      document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
+      
+      const maintBtn = document.getElementById("maintToggleBtn");
+      if (maintBtn) {
+        maintBtn.innerHTML = isMaintenanceActive
+          ? `<i class="fa-solid fa-circle-check"></i> Turn Maintenance Mode OFF`
+          : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maintenance Mode ON`;
+        maintBtn.style.background = isMaintenanceActive ? "#10b981" : "#f59e0b";
+      }
+
       renderProducts();
     }
 
     function lockAdmin() {
       sessionStorage.removeItem("ifp_admin_auth");
       checkAdminStatus();
-      alert("Admin locked.");
+      evaluateMaintenanceScreen();
+      alert("Admin mode locked.");
     }
 
-    function toggleMaintenanceMode() {
-      const current = localStorage.getItem("ifp_maint") === "true";
-      localStorage.setItem("ifp_maint", (!current).toString());
-      checkMaintenanceStatus();
+    // CLOUD-SYNCED MAINTENANCE MODE
+    async function toggleMaintenanceMode() {
+      if (!window.firestoreTools) return;
+      const { doc, setDoc } = window.firestoreTools;
+      const nextState = !isMaintenanceActive;
+      try {
+        await setDoc(doc(window.db, "site_settings", "maintenance"), { active: nextState });
+        alert(nextState 
+          ? "Maintenance Mode is now ON for all visitors!" 
+          : "Maintenance Mode is now OFF. Site is live!"
+        );
+      } catch (err) {
+        alert("Error updating maintenance mode: " + err.message);
+      }
     }
 
-    function checkMaintenanceStatus() {
-      const isMaint = localStorage.getItem("ifp_maint") === "true";
+    function evaluateMaintenanceScreen() {
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       const screen = document.getElementById("maintenanceScreen");
-      screen.classList.toggle("active", isMaint && !isAuth);
+      screen.classList.toggle("active", isMaintenanceActive && !isAuth);
     }
 
-    // CLOUD SYNC: Real-time listener for Firestore collection
-    function initCloudCatalog() {
+    // CLOUD INITIALIZATION
+    function initCloudSync() {
       if (!window.firestoreTools) {
-        setTimeout(initCloudCatalog, 300);
+        setTimeout(initCloudSync, 300);
         return;
       }
-      const { collection, onSnapshot } = window.firestoreTools;
+      const { collection, onSnapshot, doc } = window.firestoreTools;
+
+      // 1. Sync Maintenance Mode
+      onSnapshot(doc(window.db, "site_settings", "maintenance"), (snapshot) => {
+        if (snapshot.exists()) {
+          isMaintenanceActive = snapshot.data().active === true;
+        } else {
+          isMaintenanceActive = false;
+        }
+        evaluateMaintenanceScreen();
+        checkAdminStatus();
+      });
+
+      // 2. Sync Hero Banner
+      onSnapshot(doc(window.db, "site_settings", "banner"), (snapshot) => {
+        if (snapshot.exists() && snapshot.data().img) {
+          document.getElementById("heroImg").src = snapshot.data().img;
+        }
+      });
+
+      // 3. Sync Garments
       onSnapshot(collection(window.db, "garments"), (snapshot) => {
-        products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allProducts = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        displayedProducts = [...allProducts];
         renderProducts();
       });
     }
 
+    // EDIT COVER BANNER
+    function triggerHeroUpload() {
+      document.getElementById("heroInput").click();
+    }
+
+    function updateHeroImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement("canvas");
+          const MAX_W = 800;
+          let w = img.width, h = img.height;
+          if (w > MAX_W) { h = Math.round((h * MAX_W) / w); w = MAX_W; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          const compressed = canvas.toDataURL("image/jpeg", 0.7);
+
+          try {
+            const { doc, setDoc } = window.firestoreTools;
+            await setDoc(doc(window.db, "site_settings", "banner"), { img: compressed });
+            alert("Hero banner updated in cloud successfully!");
+          } catch (err) {
+            alert("Error updating banner: " + err.message);
+          }
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // SEARCH
+    function handleSearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      if (!query) {
+        displayedProducts = [...allProducts];
+      } else {
+        displayedProducts = allProducts.filter(p => p.name.toLowerCase().includes(query));
+      }
+      renderProducts();
+    }
+
+    // RENDER PRODUCTS
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       const isAuth = sessionStorage.getItem("ifp_admin_auth") === "true";
       grid.innerHTML = "";
 
-      if (products.length === 0) {
-        // Safe, clean customer display
+      if (displayedProducts.length === 0) {
         grid.innerHTML = `
           <div style="grid-column:span 2; text-align:center; padding:40px 14px; background:#fff; border-radius:14px;">
             <i class="fa-solid fa-shirt" style="font-size:2rem; color:#cbd5e1; margin-bottom:8px;"></i>
-            <div style="font-weight:700; color:var(--primary);">New Collection Coming Soon</div>
-            <p style="color:var(--muted); font-size:0.75rem; margin-top:4px;">We are updating our stock. Please check back shortly!</p>
+            <div style="font-weight:700; color:var(--primary);">No garments found</div>
+            <p style="color:var(--muted); font-size:0.75rem; margin-top:4px;">Try searching for something else or check back soon!</p>
           </div>
         `;
         return;
       }
 
-      products.forEach(p => {
+      displayedProducts.forEach(p => {
+        const images = Array.isArray(p.images) ? p.images : [p.img];
+        const activeImg = images[0] || "";
+
+        let thumbStripHtml = "";
+        if (images.length > 1) {
+          thumbStripHtml = `<div class="thumb-strip">` +
+            images.map((imgUrl, i) => `
+              <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" 
+                   onclick="swapCardImage('${p.id}', '${imgUrl}', this)" />
+            `).join("") +
+          `</div>`;
+        }
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" src="${p.img}" alt="${p.name}" />
+            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
-            <span class="stock-badge">In Stock</span>
           </div>
+          ${thumbStripHtml}
           <div class="card-body">
             <div class="item-name">${p.name}</div>
             <div class="item-price">₹${p.price}</div>
@@ -607,61 +915,185 @@
       });
     }
 
-    // CLOUD UPLOAD: Processes ONLY the single image chosen from the picker
-    function handleNewProduct(e) {
+    function swapCardImage(cardId, newSrc, el) {
+      document.getElementById(`card-img-${cardId}`).src = newSrc;
+      const strip = el.parentElement;
+      strip.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // MULTI-IMAGE UPLOAD TO CLOUD
+    function compressFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const maxDim = 400;
+            let w = img.width, h = img.height;
+            if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", 0.7));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleNewProduct(e) {
       e.preventDefault();
       const submitBtn = document.getElementById("saveGarmentBtn");
       const title = document.getElementById("newTitle").value.trim();
       const price = document.getElementById("newPrice").value.trim();
-      const file = document.getElementById("newImgFile").files[0];
+      const files = document.getElementById("newImgFiles").files;
 
-      if (!file) return;
+      if (!files || files.length === 0) return;
 
       submitBtn.disabled = true;
-      submitBtn.innerText = "Uploading to Cloud...";
+      submitBtn.innerText = "Compressing & Uploading...";
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement("canvas");
-          const maxDim = 400;
-          let w = img.width, h = img.height;
-          if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-          else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-          canvas.width = w; canvas.height = h;
-          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-          const compressedUrl = canvas.toDataURL("image/jpeg", 0.7);
+      try {
+        const compressedList = [];
+        for (let i = 0; i < files.length; i++) {
+          const compUrl = await compressFile(files[i]);
+          compressedList.push(compUrl);
+        }
 
-          try {
-            const { collection, addDoc } = window.firestoreTools;
-            await addDoc(collection(window.db, "garments"), {
-              name: title,
-              price: Number(price),
-              img: compressedUrl,
-              createdAt: Date.now()
-            });
+        const { collection, addDoc } = window.firestoreTools;
+        await addDoc(collection(window.db, "garments"), {
+          name: title,
+          price: Number(price),
+          img: compressedList[0],
+          images: compressedList,
+          createdAt: Date.now()
+        });
 
-            closeModal("addProductModal");
-            document.getElementById("newProductForm").reset();
-            alert("Garment uploaded to cloud successfully! Everyone can see it now.");
-          } catch (err) {
-            alert("Upload error: " + err.message);
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Save Garment to Live Catalog";
-          }
-        };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+        closeModal("addProductModal");
+        document.getElementById("newProductForm").reset();
+        alert("Garment uploaded successfully with all photos!");
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save Garment to Live Catalog";
+      }
     }
 
     async function deleteGarment(id) {
-      if (confirm("Delete this garment permanently from everyone's catalog?")) {
+      if (confirm("Delete this garment permanently for all visitors?")) {
         const { doc, deleteDoc } = window.firestoreTools;
         await deleteDoc(doc(window.db, "garments", id));
       }
+    }
+
+    // ORDERING & LOCATION HUB
+    function startOrder(id) {
+      selectedProduct = allProducts.find(p => p.id === id);
+      const sizeEl = document.getElementById(`size-${id}`);
+      selectedProduct.selectedSize = sizeEl ? sizeEl.value : "Standard";
+      document.getElementById("orderItemSummary").innerText = `${selectedProduct.name} (Size: ${selectedProduct.selectedSize}) - ₹${selectedProduct.price} (COD)`;
+      document.getElementById("orderModal").classList.add("active");
+    }
+
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const area = document.getElementById("custArea").value;
+      const street = document.getElementById("custStreet").value.trim();
+
+      const orderData = {
+        orderId: "IFP-" + Math.floor(1000 + Math.random() * 9000),
+        item: selectedProduct.name,
+        size: selectedProduct.selectedSize,
+        price: selectedProduct.price,
+        customerName: name,
+        customerPhone: phone,
+        customerArea: area,
+        customerStreet: street,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      let orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+      orders.unshift(orderData);
+      localStorage.setItem("ifp_orders", JSON.stringify(orders));
+
+      const msg = `*NEW ORDER - IBRAHIM FASHION POINT*\n\n` +
+                  `*Order ID:* ${orderData.orderId}\n` +
+                  `*Product:* ${orderData.item}\n` +
+                  `*Size:* ${orderData.size}\n` +
+                  `*Price:* ₹${orderData.price} (COD)\n\n` +
+                  `*Customer Details:*\n` +
+                  `*Name:* ${name}\n` +
+                  `*Phone:* ${phone}\n` +
+                  `*Delivery Area:* ${area}\n` +
+                  `*Street / Landmark:* ${street}`;
+
+      closeModal("orderModal");
+      window.open(`https://wa.me/916005757393?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function openDeliveryDashboard() {
+      const container = document.getElementById("deliveryGroupContainer");
+      const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No delivery records placed on this device yet.</p>`;
+        document.getElementById("deliveryModal").classList.add("active");
+        return;
+      }
+
+      const groups = orders.reduce((acc, curr) => {
+        const area = curr.customerArea || "General Area";
+        if (!acc[area]) acc[area] = [];
+        acc[area].push(curr);
+        return acc;
+      }, {});
+
+      let html = "";
+      for (const [areaName, areaOrders] of Object.entries(groups)) {
+        html += `
+          <div class="loc-group-card">
+            <div class="loc-group-header">
+              <span><i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> ${areaName}</span>
+              <span>${areaOrders.length} item(s)</span>
+            </div>
+        `;
+        areaOrders.forEach(o => {
+          html += `
+            <div class="loc-order-item">
+              <div style="font-weight:700; color:var(--primary);">${o.customerName} (₹${o.price})</div>
+              <div>${o.item} • Size: ${o.size}</div>
+              <div style="color:var(--muted);">${o.customerStreet} • Ph: ${o.customerPhone}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+      container.innerHTML = html;
+      document.getElementById("deliveryModal").classList.add("active");
+    }
+
+    function openOrdersModal() {
+      const container = document.getElementById("ordersListContainer");
+      const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+
+      if (orders.length === 0) {
+        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No orders found on this device.</p>`;
+      } else {
+        container.innerHTML = orders.map(o => `
+          <div style="border-left:3px solid #e11d48; background:#f8fafc; padding:10px; margin-bottom:8px; border-radius:6px; font-size:0.8rem;">
+            <strong>${o.item}</strong> (Size: ${o.size}) - ₹${o.price}<br/>
+            <span style="color:var(--muted);">Placed: ${o.date} ${o.time}</span>
+          </div>
+        `).join("");
+      }
+      document.getElementById("myOrdersModal").classList.add("active");
     }
 
     function openAddProductModal() {
@@ -671,36 +1103,9 @@
       document.getElementById(id).classList.remove("active");
     }
 
-    function startOrder(id) {
-      selectedProduct = products.find(p => p.id === id);
-      const sizeEl = document.getElementById(`size-${id}`);
-      selectedProduct.selectedSize = sizeEl ? sizeEl.value : "Standard";
-      document.getElementById("orderItemSummary").innerText = `${selectedProduct.name} (Size: ${selectedProduct.selectedSize}) - ₹${selectedProduct.price}`;
-      document.getElementById("orderModal").classList.add("active");
-    }
-
-    function handleOrderSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById("custName").value;
-      const phone = document.getElementById("custPhone").value;
-      const address = document.getElementById("custStreet").value;
-
-      const msg = `*NEW ORDER - IBRAHIM FASHION POINT*\n\n` +
-                  `*Product:* ${selectedProduct.name}\n` +
-                  `*Size:* ${selectedProduct.selectedSize}\n` +
-                  `*Price:* ₹${selectedProduct.price}\n` +
-                  `*Customer Name:* ${name}\n` +
-                  `*Phone:* ${phone}\n` +
-                  `*Address:* ${address}`;
-
-      window.open(`https://wa.me/916005757393?text=${encodeURIComponent(msg)}`, "_blank");
-      closeModal("orderModal");
-    }
-
-    // Initialize
+    // Start cloud sync
     checkAdminStatus();
-    checkMaintenanceStatus();
-    initCloudCatalog();
+    initCloudSync();
   </script>
 </body>
 </html>
