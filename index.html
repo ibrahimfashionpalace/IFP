@@ -63,7 +63,6 @@
       flex-shrink: 0;
     }
     
-    /* Perfect Circular IFP Badge without square/white borders */
     .brand-logo-badge {
       width: 50px;
       height: 50px;
@@ -119,7 +118,6 @@
       animation: fadeInDown 0.2s ease-out;
     }
 
-    /* Top-Right Menu Styling */
     .right-menu-container {
       position: relative;
     }
@@ -140,7 +138,7 @@
       display: block;
       animation: fadeInDown 0.2s ease-out;
     }
-    .more-options-item {
+    .more-options-item, .ifp-dropdown-item {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -154,10 +152,11 @@
       background: #ffffff;
       transition: background 0.15s ease;
     }
-    .more-options-item:last-child {
+    .more-options-item:last-child, .ifp-dropdown-item:last-child {
       border-bottom: none;
     }
-    .more-options-item:hover, .more-options-item:active {
+    .more-options-item:hover, .more-options-item:active,
+    .ifp-dropdown-item:hover, .ifp-dropdown-item:active {
       background: #fdf2f8;
       color: var(--accent-pink);
     }
@@ -165,27 +164,6 @@
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    .ifp-dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 14px;
-      color: var(--primary);
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      border-bottom: 1px solid #f1f5f9;
-      background: #ffffff;
-      transition: background 0.15s ease;
-    }
-    .ifp-dropdown-item:last-child {
-      border-bottom: none;
-    }
-    .ifp-dropdown-item:hover, .ifp-dropdown-item:active {
-      background: #fdf2f8;
-      color: var(--accent-pink);
     }
     .brand-text-block {
       flex: 1;
@@ -234,7 +212,6 @@
       font-weight: 800;
     }
 
-    /* === SCROLLABLE MULTI-IMAGE BANNER === */
     .hero-container {
       position: relative;
       margin: 14px;
@@ -297,7 +274,6 @@
       color: #ffffff;
     }
     
-    /* Navigation arrows */
     .banner-nav-btn {
       position: absolute;
       top: 50%;
@@ -323,7 +299,6 @@
     .banner-nav-prev { left: 8px; }
     .banner-nav-next { right: 8px; }
 
-    /* Indicator Dots */
     .banner-dots {
       position: absolute;
       bottom: 8px;
@@ -870,7 +845,7 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Dropdown & Top Right 3-Dots Menu -->
+  <!-- Header -->
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
@@ -899,7 +874,6 @@
         <span id="activeDeliveryBadge" class="badge-count">0</span>
       </button>
 
-      <!-- 3-Dots Menu Button -->
       <div class="right-menu-container">
         <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)" title="Menu Options" aria-label="More Options">
           <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.1rem;"></i>
@@ -913,7 +887,7 @@
     </div>
   </header>
 
-  <!-- Multi-Image Swipeable Banner Showcase -->
+  <!-- Banner Container -->
   <div class="hero-container" id="heroBannerContainer">
     <button class="banner-nav-btn banner-nav-prev" onclick="scrollBanner(-1)" aria-label="Previous Banner">
       <i class="fa-solid fa-chevron-left"></i>
@@ -964,7 +938,7 @@
     <div class="products-grid" id="productsGrid"></div>
   </main>
 
-  <!-- Owner Login Modal -->
+  <!-- Modals -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -988,7 +962,6 @@
     </div>
   </div>
 
-  <!-- About Owner Modal -->
   <div class="modal-overlay" id="ownerModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1024,7 +997,6 @@
     </div>
   </div>
 
-  <!-- Add Garment Modal -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1047,9 +1019,6 @@
         <div class="form-group">
           <label>Available Sizes (Separated by commas) *</label>
           <input type="text" id="newSizes" required placeholder="e.g. S, M, L, XL or Free Size" value="S, M, L, XL" />
-          <span style="font-size:0.7rem; color:var(--muted); margin-top:3px; display:block;">
-            Comma-separated sizes appear as selectable choices.
-          </span>
         </div>
         <div class="form-group">
           <label>Garment Photos (Select multiple from gallery) *</label>
@@ -1062,7 +1031,6 @@
     </div>
   </div>
 
-  <!-- Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1114,7 +1082,6 @@
     </div>
   </div>
 
-  <!-- Congratulations Modal -->
   <div class="modal-overlay" id="successModal">
     <div class="modal-sheet" style="text-align:center; padding:30px 20px;">
       <div style="font-size:3.5rem; color:#10b981; margin-bottom:10px;">
@@ -1132,7 +1099,6 @@
     </div>
   </div>
 
-  <!-- Delivery Hub Modal -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1157,7 +1123,6 @@
     </div>
   </div>
 
-  <!-- OTP Modal -->
   <div class="modal-overlay" id="otpModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1193,7 +1158,6 @@
     </div>
   </div>
 
-  <!-- My Orders Modal -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1204,7 +1168,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-title">IBRAHIM FASHION PALACE</div>
     <div>Malapora, Charar-i-Sharief, Budgam, J&K</div>
@@ -1225,7 +1188,6 @@
     <p style="margin-top:8px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10:00 AM – 8:00 PM</p>
   </footer>
 
-  <!-- Modular Script Block -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -1277,7 +1239,6 @@
       evaluateMaintenanceScreen();
     });
 
-    // --- BANNER TRACK & CONTROLS ---
     window.scrollBanner = function(direction) {
       const track = document.getElementById("bannerTrack");
       if (track) {
@@ -1314,7 +1275,6 @@
       };
     }
 
-    // --- Top-Right 3-Dots Menu Handlers ---
     window.toggleMoreMenu = function(e) {
       if (e) e.stopPropagation();
       const menu = document.getElementById("moreMenu");
@@ -1476,7 +1436,7 @@
         isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
         evaluateMaintenanceScreen();
         checkAdminStatus();
-      });
+      }, (err) => console.warn("Settings sync notice:", err.message));
 
       onSnapshot(doc(db, "site_settings", "banner"), (snapshot) => {
         if (snapshot.exists()) {
@@ -1487,7 +1447,7 @@
             renderBannerSlides([data.img]);
           }
         }
-      });
+      }, (err) => console.warn("Banner sync notice:", err.message));
 
       onSnapshot(collection(db, "garments"), (snapshot) => {
         allProducts = snapshot.docs.map(d => {
@@ -1502,6 +1462,9 @@
         });
         displayedProducts = [...allProducts];
         renderProducts();
+      }, (err) => {
+        console.error("Garments read permission check:", err.message);
+        renderProducts();
       });
 
       onSnapshot(collection(db, "orders"), (snapshot) => {
@@ -1511,7 +1474,7 @@
         if (delModal && delModal.classList.contains("active")) {
           renderDeliveryHub();
         }
-      });
+      }, (err) => console.warn("Orders sync notice:", err.message));
     }
 
     function updateDeliveryBadge() {
@@ -1531,7 +1494,6 @@
       document.getElementById("heroInput").click();
     };
 
-    // Fast image compression helper (forces WebP for minimal footprint)
     function compressFile(file, maxDim = 450, quality = 0.6) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -1574,7 +1536,7 @@
         }
 
         await setDoc(doc(db, "site_settings", "banner"), { 
-          banners: bannerList,
+          banners: bannerList, 
           img: bannerList[0] 
         });
 
@@ -1622,7 +1584,7 @@
           thumbStripHtml = `<div class="thumb-strip">` +
             images.map((imgUrl, i) => `
               <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" 
-                   loading="lazy" decoding="async"
+                   loading="lazy" decoding="async" 
                    onclick="swapCardImage('${p.id}', '${imgUrl}', this, ${i + 1}, ${images.length})" />
             `).join("") +
           `</div>`;
@@ -1731,6 +1693,7 @@
 
     window.startOrder = function(id) {
       selectedProduct = allProducts.find(p => p.id === id);
+      if (!selectedProduct) return;
       const sizeEl = document.getElementById(`size-${id}`);
       selectedProduct.selectedSize = sizeEl ? sizeEl.value : "Standard";
 
@@ -1778,8 +1741,8 @@
 
       try {
         const docRef = await addDoc(collection(db, "orders"), orderData);
-
         orderData.firestoreId = docRef.id;
+
         let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
         localOrders.unshift(orderData);
         localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
@@ -2026,14 +1989,6 @@
     window.closeModal = function(id) {
       document.getElementById(id).classList.remove("active");
     };
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('App ready'))
-          .catch((err) => console.log('SW error:', err));
-      });
-    }
 
     checkAdminStatus();
     initCloudSync();
