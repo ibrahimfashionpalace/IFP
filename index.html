@@ -63,7 +63,6 @@
       flex-shrink: 0;
     }
     
-    /* Enlarged badge container */
     .brand-logo-badge {
       width: 56px;
       height: 56px;
@@ -84,7 +83,6 @@
       overflow: hidden;
     }
 
-    /* Scales the image slightly to crop out the white corners from icon.png */
     .brand-logo-badge img {
       width: 100%;
       height: 100%;
@@ -186,17 +184,36 @@
       font-weight: 800;
     }
 
+    /* === SCROLLABLE MULTI-IMAGE BANNER === */
     .hero-container {
       position: relative;
       margin: 14px;
       border-radius: var(--radius);
       overflow: hidden;
       box-shadow: 0 6px 20px rgba(225, 29, 72, 0.18);
-      background: linear-gradient(135deg, #881337 0%, #4c0519 50%, #1e1b4b 100%);
+      background: #1e1b4b;
+    }
+    .banner-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .banner-track::-webkit-scrollbar {
+      display: none;
+    }
+    .banner-slide {
+      flex: 0 0 100%;
+      position: relative;
+      scroll-snap-align: start;
+      height: 190px;
+      background: #1e1b4b;
     }
     .hero-img {
       width: 100%;
-      height: 180px;
+      height: 100%;
       object-fit: cover;
       display: block;
       opacity: 0.9;
@@ -208,8 +225,9 @@
       flex-direction: column;
       justify-content: flex-end;
       padding: 16px;
-      background: linear-gradient(to top, rgba(30, 27, 75, 0.95), rgba(76, 5, 25, 0.4), transparent);
+      background: linear-gradient(to top, rgba(30, 27, 75, 0.92) 10%, rgba(76, 5, 25, 0.4) 60%, transparent 100%);
       color: #fff;
+      pointer-events: none;
     }
     .hero-tag {
       display: inline-block;
@@ -224,10 +242,60 @@
       text-transform: uppercase;
     }
     .hero-title {
-      font-size: 1.2rem;
+      font-size: 1.18rem;
       font-weight: 800;
       color: #ffffff;
     }
+    
+    /* Navigation arrows */
+    .banner-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15, 23, 42, 0.6);
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      z-index: 10;
+      backdrop-filter: blur(2px);
+      transition: background 0.2s ease;
+    }
+    .banner-nav-btn:hover {
+      background: rgba(225, 29, 72, 0.85);
+    }
+    .banner-nav-prev { left: 8px; }
+    .banner-nav-next { right: 8px; }
+
+    /* Indicator Dots */
+    .banner-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 10;
+    }
+    .banner-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+    }
+    .banner-dot.active {
+      background: #fbbf24;
+      width: 18px;
+      border-radius: 10px;
+    }
+
     .hero-edit-btn {
       display: none;
       position: absolute;
@@ -241,7 +309,7 @@
       font-size: 0.72rem;
       cursor: pointer;
       font-weight: 700;
-      z-index: 5;
+      z-index: 15;
     }
 
     .search-wrap {
@@ -327,7 +395,7 @@
       position: relative;
       width: 100%;
       padding-top: 125%;
-      background: #fdf2f8;
+      background: #f8fafc;
     }
     .card-img {
       position: absolute;
@@ -756,7 +824,6 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <!-- Brand Logo Badge displaying only the circular portion -->
         <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">
           <img src="icon.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
         </div>
@@ -784,18 +851,32 @@
     </div>
   </header>
 
-  <!-- Hero Showcase -->
-  <div class="hero-container">
-    <img id="heroImg" class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80" alt="Banner" />
-    <div class="hero-overlay">
-      <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
-      <div class="hero-title">New Garment Collection</div>
-      <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
-    </div>
-    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
-      <i class="fa-solid fa-camera"></i> Change Banner
+  <!-- Multi-Image Swipeable Banner Showcase -->
+  <div class="hero-container" id="heroBannerContainer">
+    <button class="banner-nav-btn banner-nav-prev" onclick="scrollBanner(-1)" aria-label="Previous Banner">
+      <i class="fa-solid fa-chevron-left"></i>
     </button>
-    <input type="file" id="heroInput" accept="image/*" style="display:none" onchange="updateHeroImage(event)" />
+    <button class="banner-nav-btn banner-nav-next" onclick="scrollBanner(1)" aria-label="Next Banner">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+    <div class="banner-track" id="bannerTrack">
+      <div class="banner-slide">
+        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" loading="eager" />
+        <div class="hero-overlay">
+          <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
+          <div class="hero-title">New Garment Collection</div>
+          <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner-dots" id="bannerDots"></div>
+
+    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
+      <i class="fa-solid fa-camera"></i> Change Banners
+    </button>
+    <input type="file" id="heroInput" accept="image/*" multiple style="display:none" onchange="updateHeroImages(event)" />
   </div>
 
   <!-- Search Bar -->
@@ -1126,12 +1207,50 @@
     let activeHubTab = "active";
     let pendingDeliveryVerification = null;
     let currentAdminUser = null;
+    let bannerImagesList = ["https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75"];
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
       checkAdminStatus();
       evaluateMaintenanceScreen();
     });
+
+    // --- BANNER TRACK & CONTROLS ---
+    window.scrollBanner = function(direction) {
+      const track = document.getElementById("bannerTrack");
+      if (track) {
+        track.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
+      }
+    };
+
+    function renderBannerSlides(banners) {
+      const track = document.getElementById("bannerTrack");
+      const dotsContainer = document.getElementById("bannerDots");
+      if (!track || !dotsContainer) return;
+
+      bannerImagesList = (Array.isArray(banners) && banners.length > 0) ? banners : bannerImagesList;
+
+      track.innerHTML = bannerImagesList.map((imgUrl, idx) => `
+        <div class="banner-slide">
+          <img class="hero-img" src="${imgUrl}" alt="Banner ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async" />
+          <div class="hero-overlay">
+            <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
+            <div class="hero-title">New Garment Collection</div>
+            <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
+          </div>
+        </div>
+      `).join("");
+
+      dotsContainer.innerHTML = bannerImagesList.map((_, idx) => `
+        <div class="banner-dot ${idx === 0 ? 'active' : ''}"></div>
+      `).join("");
+
+      track.onscroll = () => {
+        const slideIndex = Math.round(track.scrollLeft / track.clientWidth);
+        const dots = dotsContainer.querySelectorAll(".banner-dot");
+        dots.forEach((dot, i) => dot.classList.toggle("active", i === slideIndex));
+      };
+    }
 
     const badgeEl = document.getElementById("ifpBadge");
     if (badgeEl) {
@@ -1280,9 +1399,13 @@
       });
 
       onSnapshot(doc(db, "site_settings", "banner"), (snapshot) => {
-        if (snapshot.exists() && snapshot.data().img) {
-          const banner = document.getElementById("heroImg");
-          if (banner) banner.src = snapshot.data().img;
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          if (Array.isArray(data.banners) && data.banners.length > 0) {
+            renderBannerSlides(data.banners);
+          } else if (data.img) {
+            renderBannerSlides([data.img]);
+          }
         }
       });
 
@@ -1328,32 +1451,61 @@
       document.getElementById("heroInput").click();
     };
 
-    window.updateHeroImage = function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = async function() {
-          const canvas = document.createElement("canvas");
-          const MAX_W = 800;
-          let w = img.width, h = img.height;
-          if (w > MAX_W) { h = Math.round((h * MAX_W) / w); w = MAX_W; }
-          canvas.width = w; canvas.height = h;
-          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-          const compressed = canvas.toDataURL("image/jpeg", 0.7);
-
-          try {
-            await setDoc(doc(db, "site_settings", "banner"), { img: compressed });
-            alert("Hero banner updated in cloud successfully!");
-          } catch (err) {
-            alert("Error updating banner: " + err.message);
-          }
+    // Fast image compression helper (forces WebP for minimal footprint)
+    function compressFile(file, maxDim = 450, quality = 0.6) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let w = img.width, h = img.height;
+            if (w > h && w > maxDim) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else if (h > maxDim) {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            // Default to webp; fallback to jpeg if unsupported
+            resolve(canvas.toDataURL("image/webp", quality) || canvas.toDataURL("image/jpeg", quality));
+          };
+          img.src = e.target.result;
         };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.updateHeroImages = async function(e) {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      const editBtn = document.getElementById("heroEditBtn");
+      editBtn.innerText = "Compressing Banners...";
+
+      try {
+        const bannerList = [];
+        for (let i = 0; i < files.length; i++) {
+          // Keep banner dimensions wider but lightweight
+          const comp = await compressFile(files[i], 900, 0.7);
+          bannerList.push(comp);
+        }
+
+        await setDoc(doc(db, "site_settings", "banner"), { 
+          banners: bannerList,
+          img: bannerList[0] 
+        });
+
+        alert("Hero banners updated successfully!");
+      } catch (err) {
+        alert("Error uploading banners: " + err.message);
+      } finally {
+        editBtn.innerHTML = `<i class="fa-solid fa-camera"></i> Change Banners`;
+      }
     };
 
     window.handleSearch = function() {
@@ -1383,7 +1535,7 @@
         return;
       }
 
-      displayedProducts.forEach(p => {
+      displayedProducts.forEach((p, index) => {
         const images = (p.images && p.images.length > 0) ? p.images : [p.img || ""];
         const activeImg = images[0] || "";
 
@@ -1392,6 +1544,7 @@
           thumbStripHtml = `<div class="thumb-strip">` +
             images.map((imgUrl, i) => `
               <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" 
+                   loading="lazy" decoding="async"
                    onclick="swapCardImage('${p.id}', '${imgUrl}', this, ${i + 1}, ${images.length})" />
             `).join("") +
           `</div>`;
@@ -1409,7 +1562,7 @@
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
+            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="${index < 2 ? 'eager' : 'lazy'}" decoding="async" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge">${stockCount} left</span>
             ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
@@ -1439,34 +1592,6 @@
       el.classList.add('active');
     };
 
-    function compressFile(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement("canvas");
-            const maxDim = 360;
-            let w = img.width, h = img.height;
-            if (w > h && w > maxDim) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else if (h > maxDim) {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/jpeg", 0.55));
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
     window.handleNewProduct = async function(e) {
       e.preventDefault();
       if (!currentAdminUser) {
@@ -1493,7 +1618,7 @@
         const compressedList = [];
         for (let i = 0; i < files.length; i++) {
           submitBtn.innerText = `Processing photo ${i + 1} of ${files.length}...`;
-          const compUrl = await compressFile(files[i]);
+          const compUrl = await compressFile(files[i], 450, 0.6);
           compressedList.push(compUrl);
         }
 
@@ -1742,7 +1867,7 @@
           areaOrders.forEach(o => {
             html += `
               <div class="loc-order-item">
-                ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
+                ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
                 <div style="flex:1;">
                   <div style="display:flex; justify-content:space-between;">
                     <span style="font-weight:700; color:var(--primary);">${o.customerName}</span>
@@ -1769,7 +1894,7 @@
       } else {
         deliveredContainer.innerHTML = deliveredOrders.map(o => `
           <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
+            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong style="color:var(--primary);">${o.item}</strong>
@@ -1795,7 +1920,7 @@
       } else {
         container.innerHTML = orders.map(o => `
           <div style="display:flex; gap:10px; align-items:center; border-left:4px solid ${o.status === 'delivered' ? '#10b981' : '#e11d48'}; background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; font-size:0.8rem;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
+            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong>${o.item}</strong>
