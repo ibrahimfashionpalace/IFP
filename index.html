@@ -63,20 +63,20 @@
       flex-shrink: 0;
     }
     
-    /* Box-filling App Icon */
+    /* Perfect Circular IFP Badge without square/white borders */
     .brand-logo-badge {
-      width: 54px;
-      height: 54px;
-      border-radius: 10px;
-      background: #000000;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
       font-size: 1rem;
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-      border: 1.5px solid #fbbf24;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border: none;
       cursor: pointer;
       pointer-events: auto;
       transition: transform 0.15s ease;
@@ -92,7 +92,9 @@
       max-height: 100% !important;
       object-fit: cover;
       display: block;
-      border-radius: 8px;
+      border-radius: 50%;
+      border: none;
+      outline: none;
       transform: none !important;
     }
     .brand-logo-badge:active {
@@ -116,6 +118,50 @@
       display: block;
       animation: fadeInDown 0.2s ease-out;
     }
+
+    /* Top-Right Menu Styling */
+    .right-menu-container {
+      position: relative;
+    }
+    .more-options-menu {
+      display: none;
+      position: absolute;
+      top: 42px;
+      right: 0;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      min-width: 160px;
+      z-index: 250;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+    .more-options-menu.active {
+      display: block;
+      animation: fadeInDown 0.2s ease-out;
+    }
+    .more-options-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+      background: #ffffff;
+      transition: background 0.15s ease;
+    }
+    .more-options-item:last-child {
+      border-bottom: none;
+    }
+    .more-options-item:hover, .more-options-item:active {
+      background: #fdf2f8;
+      color: var(--accent-pink);
+    }
+
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -824,7 +870,7 @@
     <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
-  <!-- Header with IFP Dropdown -->
+  <!-- Header with IFP Dropdown & Top Right 3-Dots Menu -->
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
@@ -852,6 +898,18 @@
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
       </button>
+
+      <!-- 3-Dots Menu Button -->
+      <div class="right-menu-container">
+        <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)" title="Menu Options" aria-label="More Options">
+          <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.1rem;"></i>
+        </button>
+        <div class="more-options-menu" id="moreMenu">
+          <div class="more-options-item" onclick="openOrdersModal(); closeMoreMenu();">
+            <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> Orders
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -1256,6 +1314,18 @@
       };
     }
 
+    // --- Top-Right 3-Dots Menu Handlers ---
+    window.toggleMoreMenu = function(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById("moreMenu");
+      if (menu) menu.classList.toggle("active");
+    };
+
+    window.closeMoreMenu = function() {
+      const menu = document.getElementById("moreMenu");
+      if (menu) menu.classList.remove("active");
+    };
+
     const badgeEl = document.getElementById("ifpBadge");
     if (badgeEl) {
       badgeEl.addEventListener("click", (e) => {
@@ -1295,6 +1365,12 @@
       const badge = document.getElementById("ifpBadge");
       if (dropdown && badge && !badge.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.remove("active");
+      }
+
+      const moreMenu = document.getElementById("moreMenu");
+      const moreBtn = document.getElementById("moreBtn");
+      if (moreMenu && moreBtn && !moreBtn.contains(e.target) && !moreMenu.contains(e.target)) {
+        moreMenu.classList.remove("active");
       }
     });
 
