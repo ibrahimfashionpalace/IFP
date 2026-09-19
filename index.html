@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
+  
+  <!-- Browser Tab Favicon & Apple Touch Icon -->
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="shortcut icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
@@ -72,6 +78,14 @@
       pointer-events: auto;
       transition: transform 0.15s ease;
       touch-action: manipulation;
+      overflow: hidden;
+    }
+    .brand-logo-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
     }
     .brand-logo-badge:active {
       transform: scale(0.92);
@@ -735,7 +749,10 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">IFP</div>
+        <!-- Brand Logo Badge updated with icon image -->
+        <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">
+          <img src="icon.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
+        </div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
             <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
