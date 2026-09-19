@@ -14,13 +14,13 @@
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "192x192 512x512",
+      "sizes": "200x200 550x550",
       "type": "image/png",
       "purpose": "any"
     },
     {
       "src": "icon.png",
-      "sizes": "192x192 512x512",
+      "sizes": "200x200 550x550",
       "type": "image/png",
       "purpose": "maskable"
     }
