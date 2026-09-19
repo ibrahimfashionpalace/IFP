@@ -1,12 +1,16 @@
 {
   "name": "Ibrahim Fashion Palace",
   "short_name": "IFP",
+  "id": "/IFP/",
   "start_url": "/IFP/",
   "scope": "/IFP/",
   "display": "standalone",
   "background_color": "#1e1b4b",
   "theme_color": "#312e81",
   "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "navigate-new"
+  },
   "icons": [
     {
       "src": "icon.png",
