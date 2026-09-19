@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
   
-  <!-- Browser Tab Favicon & Apple Touch Icon -->
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="shortcut icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
+  <!-- Browser Tab Favicon & Apple Touch Icon (High-Res) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="icon.png" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -52,7 +53,7 @@
     .brand-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       user-select: none;
       position: relative;
       flex: 1;
@@ -62,17 +63,17 @@
       flex-shrink: 0;
     }
     .brand-logo-badge {
-      width: 42px;
-      height: 42px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: linear-gradient(135deg, #fbbf24, #f43f5e, #8b5cf6);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.95rem;
+      font-size: 1.1rem;
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
       border: 2px solid #ffffff;
       cursor: pointer;
       pointer-events: auto;
@@ -93,7 +94,7 @@
     .ifp-dropdown-menu {
       display: none;
       position: absolute;
-      top: 50px;
+      top: 62px;
       left: 0;
       background: #ffffff;
       border-radius: 12px;
@@ -749,7 +750,7 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <!-- Brand Logo Badge updated with icon image -->
+        <!-- Brand Logo Badge with updated size -->
         <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">
           <img src="icon.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
         </div>
