@@ -1,38 +1,38 @@
-const CACHE_NAME = 'ifp-cache-v1';
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.png'
-];
+const CACHE_NAME = 'ifp-cache-v2';
 
+// 1. Install without hard failure if an asset fails
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
+// 2. Clean old caches on activation
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
     }).then(() => self.clients.claim())
   );
 });
 
+// 3. Network-first: Always try the live web first, never break live Firebase/site
 self.addEventListener('fetch', (event) => {
-  // Pass network requests through, fall back to cache if offline
+  // Only handle GET requests and skip Firebase/external APIs
+  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    fetch(event.request)
+      .then((response) => {
+        // Clone and store valid responses dynamically
+        if (response && response.status === 200) {
+          const resClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
