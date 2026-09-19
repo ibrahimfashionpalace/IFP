@@ -63,10 +63,11 @@
       flex-shrink: 0;
     }
     
+    /* Box-filling App Icon */
     .brand-logo-badge {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
       background: #000000;
       display: flex;
       align-items: center;
@@ -74,22 +75,25 @@
       font-weight: 900;
       font-size: 1rem;
       color: #ffffff;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
-      border: 2px solid #fbbf24;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid #fbbf24;
       cursor: pointer;
       pointer-events: auto;
       transition: transform 0.15s ease;
       touch-action: manipulation;
       overflow: hidden;
+      padding: 0;
     }
 
     .brand-logo-badge img {
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
       object-fit: cover;
       display: block;
-      border-radius: 50%;
-      transform: scale(1.15);
+      border-radius: 8px;
+      transform: none !important;
     }
     .brand-logo-badge:active {
       transform: scale(0.92);
@@ -98,7 +102,7 @@
     .ifp-dropdown-menu {
       display: none;
       position: absolute;
-      top: 64px;
+      top: 60px;
       left: 0;
       background: #ffffff;
       border-radius: 12px;
@@ -1471,7 +1475,6 @@
             canvas.height = h;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, w, h);
-            // Default to webp; fallback to jpeg if unsupported
             resolve(canvas.toDataURL("image/webp", quality) || canvas.toDataURL("image/jpeg", quality));
           };
           img.src = e.target.result;
@@ -1490,7 +1493,6 @@
       try {
         const bannerList = [];
         for (let i = 0; i < files.length; i++) {
-          // Keep banner dimensions wider but lightweight
           const comp = await compressFile(files[i], 900, 0.7);
           bannerList.push(comp);
         }
