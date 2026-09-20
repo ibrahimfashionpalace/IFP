@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
   
+  <!-- Instant Icon Preload -->
+  <link rel="preload" as="image" href="./icon.png" fetchpriority="high" />
+
   <!-- Browser Tab Favicon & Apple Touch Icon -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icon.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="icon.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="icon.png" />
-  <link rel="apple-touch-icon" sizes="512x512" href="icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="./icon.png" />
 
   <!-- PWA Manifest & Mobile Capability Tags -->
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#312e81" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -852,7 +855,16 @@
     <div class="brand-wrap">
       <div class="brand-logo-container">
         <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">
-          <img src="icon.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
+          <img 
+            src="./icon.png" 
+            alt="IFP" 
+            width="50" 
+            height="50" 
+            loading="eager" 
+            fetchpriority="high" 
+            decoding="sync" 
+            onerror="this.style.display='none'; this.parentElement.innerText='IFP';" 
+          />
         </div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
@@ -2001,7 +2013,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
           .then((registration) => {
             console.log('IFP ServiceWorker registered with scope:', registration.scope);
           })
