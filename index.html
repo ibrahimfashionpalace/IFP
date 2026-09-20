@@ -1718,7 +1718,7 @@ async function uploadImageToStorage(file, folder = "garments") {
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="${index < 4 ? 'eager' : 'lazy'}" decoding="async" />
+            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="lazy" decoding="async" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge">${stockCount} left</span>
             ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
