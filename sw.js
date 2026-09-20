@@ -1,6 +1,5 @@
-const CACHE_NAME = 'ifp-cache-v4';
+const CACHE_NAME = 'ifp-cache-v5';
 
-// Core assets to pre-cache immediately for PWA installability
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -9,7 +8,6 @@ const PRECACHE_ASSETS = [
   './icon-512.png'
 ];
 
-// 1. Install & Pre-cache App Shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -21,7 +19,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 2. Clean old caches on activation
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -32,31 +29,21 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. Network-First Strategy for internal pages, bypass external/Firebase
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests and skip Firebase / external CDNs
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
     return;
   }
 
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const resClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
         }
         return networkResponse;
-      })
-      .catch(async () => {
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      })
+      });
+    })
   );
 });
