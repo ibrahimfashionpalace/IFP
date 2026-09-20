@@ -3,7 +3,7 @@
   "short_name": "IFP",
   "description": "Exclusive traditional & modern garments at Malapora, Charar-i-Sharief",
   "id": "./",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
