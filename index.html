@@ -1574,7 +1574,28 @@ import {
     reader.readAsDataURL(file);
   });
 }
+async function uploadImageToStorage(file, folder = "garments") {
+  const compressedBlob = await compressFile(file, 900, 0.72);
 
+  const safeName = file.name
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .replace(/\.[^/.]+$/, "");
+
+  const uniqueName =
+    `${Date.now()}_${Math.random().toString(36).substring(2, 8)}_${safeName}.jpg`;
+
+  const storageRef = ref(
+    storage,
+    `${folder}/${uniqueName}`
+  );
+
+  await uploadBytes(storageRef, compressedBlob, {
+    contentType: "image/jpeg",
+    cacheControl: "public,max-age=31536000,immutable"
+  });
+
+  return await getDownloadURL(storageRef);
+}
     window.updateHeroImages = async function(e) {
       const files = e.target.files;
       if (!files || files.length === 0) return;
