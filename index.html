@@ -1708,63 +1708,110 @@ async function uploadImageToStorage(file, folder = "garments") {
     };
 
     window.handleNewProduct = async function(e) {
-      e.preventDefault();
-      if (!currentAdminUser) {
-        alert("Only the owner can upload garments.");
-        return;
-      }
-      const submitBtn = document.getElementById("saveGarmentBtn");
-      const title = document.getElementById("newTitle").value.trim();
-      const price = document.getElementById("newPrice").value.trim();
-      const stock = parseInt(document.getElementById("newStock").value.trim(), 10) || 1;
-      const rawSizes = document.getElementById("newSizes").value.trim();
-      const sizesArray = rawSizes.split(',').map(s => s.trim()).filter(Boolean);
-      const files = document.getElementById("newImgFiles").files;
+  e.preventDefault();
 
-      if (!files || files.length === 0) {
-        alert("Please select at least 1 photo.");
-        return;
-      }
+  if (!currentAdminUser) {
+    alert("Only the owner can upload garments.");
+    return;
+  }
 
-      submitBtn.disabled = true;
-      submitBtn.innerText = `Compressing ${files.length} Photo(s)...`;
+  const submitBtn = document.getElementById("saveGarmentBtn");
 
-      try {
-        const compressedList = [];
-        for (let i = 0; i < files.length; i++) {
-          submitBtn.innerText = `Processing photo ${i + 1} of ${files.length}...`;
-          const compUrl = await compressFile(files[i], 400, 0.5);
-          compressedList.push(compUrl);
-        }
+  const title = document.getElementById("newTitle").value.trim();
+  const price = document.getElementById("newPrice").value.trim();
 
-        submitBtn.innerText = "Saving to Live Catalog...";
-        await addDoc(collection(db, "garments"), {
-          name: title,
-          price: Number(price),
-          stock: Number(stock),
-          sizes: sizesArray.length > 0 ? sizesArray : ["S", "M", "L", "XL"],
-          img: compressedList[0],
-          images: compressedList,
-          createdAt: Date.now()
-        });
+  const stock =
+    parseInt(
+      document.getElementById("newStock").value.trim(),
+      10
+    ) || 1;
 
-        closeModal("addProductModal");
-        document.getElementById("newProductForm").reset();
-        alert(`Success! Garment added with ${stock} in stock.`);
-      } catch (err) {
-        alert("Upload failed: " + err.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Save Garment to Live Catalog";
-      }
-    };
+  const rawSizes =
+    document.getElementById("newSizes").value.trim();
 
-    window.deleteGarment = async function(id) {
-      if (!currentAdminUser) return;
-      if (confirm("Delete this garment permanently?")) {
-        await deleteDoc(doc(db, "garments", id));
-      }
-    };
+  const sizesArray = rawSizes
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const files =
+    document.getElementById("newImgFiles").files;
+
+  if (!files || files.length === 0) {
+    alert("Please select at least 1 photo.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+
+  try {
+    const uploadedUrls = [];
+
+    for (let i = 0; i < files.length; i++) {
+      submitBtn.innerText =
+        `Uploading photo ${i + 1} of ${files.length}...`;
+
+      const imageUrl =
+        await uploadImageToStorage(
+          files[i],
+          "garments"
+        );
+
+      uploadedUrls.push(imageUrl);
+    }
+
+    if (uploadedUrls.length === 0) {
+      throw new Error("No images were uploaded.");
+    }
+
+    submitBtn.innerText =
+      "Saving to Live Catalog...";
+
+    await addDoc(collection(db, "garments"), {
+      name: title,
+      price: Number(price),
+      stock: Number(stock),
+
+      sizes:
+        sizesArray.length > 0
+          ? sizesArray
+          : ["S", "M", "L", "XL"],
+
+      /*
+       * New system:
+       * Only URLs are stored in Firestore.
+       * The actual image files are in Firebase Storage.
+       */
+      img: uploadedUrls[0],
+      images: uploadedUrls,
+
+      createdAt: Date.now()
+    });
+
+    closeModal("addProductModal");
+
+    document
+      .getElementById("newProductForm")
+      .reset();
+
+    alert(
+      `Success! Garment added with ${stock} in stock.`
+    );
+
+  } catch (err) {
+    console.error("Garment upload error:", err);
+
+    alert(
+      "Upload failed: " + err.message
+    );
+
+  } finally {
+    submitBtn.disabled = false;
+
+    submitBtn.innerText =
+      "Save Garment to Live Catalog";
+  }
+};
 
     window.startOrder = function(id) {
       selectedProduct = allProducts.find(p => p.id === id);
