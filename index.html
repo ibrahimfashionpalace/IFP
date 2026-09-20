@@ -908,7 +908,7 @@
 
     <div class="banner-track" id="bannerTrack">
       <div class="banner-slide">
-        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" loading="eager" />
+        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" loading="eager" decoding="async" />
         <div class="hero-overlay">
           <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
           <div class="hero-title">New Garment Collection</div>
@@ -1613,7 +1613,7 @@
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="${index < 2 ? 'eager' : 'lazy'}" decoding="async" />
+            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="${index < 4 ? 'eager' : 'lazy'}" decoding="async" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge">${stockCount} left</span>
             ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
@@ -1754,7 +1754,6 @@
         const docRef = await addDoc(collection(db, "orders"), orderData);
         orderData.firestoreId = docRef.id;
 
-        // Save safely into localStorage WITHOUT multi-megabyte base64 strings
         try {
           const lightweightLocalOrder = { ...orderData, photoUrl: "" };
           let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
@@ -1926,7 +1925,7 @@
           areaOrders.forEach(o => {
             html += `
               <div class="loc-order-item">
-                ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
+                ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
                 <div style="flex:1;">
                   <div style="display:flex; justify-content:space-between;">
                     <span style="font-weight:700; color:var(--primary);">${o.customerName}</span>
@@ -1953,7 +1952,7 @@
       } else {
         deliveredContainer.innerHTML = deliveredOrders.map(o => `
           <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
+            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong style="color:var(--primary);">${o.item}</strong>
@@ -1979,7 +1978,7 @@
       } else {
         container.innerHTML = orders.map(o => `
           <div style="display:flex; gap:10px; align-items:center; border-left:4px solid ${o.status === 'delivered' ? '#10b981' : '#e11d48'}; background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; font-size:0.8rem;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
+            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
             <div style="flex:1;">
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong>${o.item}</strong>
@@ -2012,18 +2011,13 @@
     initCloudSync();
   </script>
 
-  <!-- Auto-Clean & Unregister Stuck Workers -->
+  <!-- PWA Service Worker Registration -->
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for (let registration of registrations) {
-          registration.unregister();
-        }
-      });
-    }
-    if ('caches' in window) {
-      caches.keys().then(function(names) {
-        for (let name of names) caches.delete(name);
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('IFP PWA Worker Active:', reg.scope))
+          .catch(err => console.error('PWA Worker Registration error:', err));
       });
     }
   </script>
