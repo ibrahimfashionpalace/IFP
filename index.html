@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
   
-  <!-- Instant Icon Preload -->
-  <link rel="preload" as="image" href="./icon.png" fetchpriority="high" />
-
   <!-- Browser Tab Favicon & Apple Touch Icon -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icon.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icon.png" />
@@ -861,8 +858,7 @@
             width="50" 
             height="50" 
             loading="eager" 
-            fetchpriority="high" 
-            decoding="sync" 
+            decoding="async" 
             onerror="this.style.display='none'; this.parentElement.innerText='IFP';" 
           />
         </div>
@@ -1509,7 +1505,7 @@
       document.getElementById("heroInput").click();
     };
 
-    function compressFile(file, maxDim = 450, quality = 0.6) {
+    function compressFile(file, maxDim = 400, quality = 0.5) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -1528,7 +1524,7 @@
             canvas.height = h;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/webp", quality) || canvas.toDataURL("image/jpeg", quality));
+            resolve(canvas.toDataURL("image/jpeg", quality));
           };
           img.src = e.target.result;
         };
@@ -1546,7 +1542,7 @@
       try {
         const bannerList = [];
         for (let i = 0; i < files.length; i++) {
-          const comp = await compressFile(files[i], 900, 0.7);
+          const comp = await compressFile(files[i], 700, 0.6);
           bannerList.push(comp);
         }
 
@@ -1673,7 +1669,7 @@
         const compressedList = [];
         for (let i = 0; i < files.length; i++) {
           submitBtn.innerText = `Processing photo ${i + 1} of ${files.length}...`;
-          const compUrl = await compressFile(files[i], 450, 0.6);
+          const compUrl = await compressFile(files[i], 400, 0.5);
           compressedList.push(compUrl);
         }
 
@@ -1758,9 +1754,16 @@
         const docRef = await addDoc(collection(db, "orders"), orderData);
         orderData.firestoreId = docRef.id;
 
-        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-        localOrders.unshift(orderData);
-        localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
+        // Save safely into localStorage WITHOUT multi-megabyte base64 strings
+        try {
+          const lightweightLocalOrder = { ...orderData, photoUrl: "" };
+          let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+          localOrders.unshift(lightweightLocalOrder);
+          if (localOrders.length > 20) localOrders = localOrders.slice(0, 20);
+          localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
+        } catch (storageErr) {
+          console.warn("Storage warning:", storageErr);
+        }
 
         closeModal("orderModal");
         document.getElementById("directOrderForm").reset();
@@ -2009,17 +2012,18 @@
     initCloudSync();
   </script>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- Auto-Clean & Unregister Stuck Workers -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-          .then((registration) => {
-            console.log('IFP ServiceWorker registered with scope:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('IFP ServiceWorker registration failed:', error);
-          });
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (let name of names) caches.delete(name);
       });
     }
   </script>
