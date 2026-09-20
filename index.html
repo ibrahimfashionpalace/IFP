@@ -1597,31 +1597,72 @@ async function uploadImageToStorage(file, folder = "garments") {
   return await getDownloadURL(storageRef);
 }
     window.updateHeroImages = async function(e) {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
+  const files = e.target.files;
 
-      const editBtn = document.getElementById("heroEditBtn");
-      editBtn.innerText = "Compressing Banners...";
+  if (!files || files.length === 0) {
+    return;
+  }
 
-      try {
-        const bannerList = [];
-        for (let i = 0; i < files.length; i++) {
-          const comp = await compressFile(files[i], 700, 0.6);
-          bannerList.push(comp);
-        }
+  const editBtn =
+    document.getElementById("heroEditBtn");
 
-        await setDoc(doc(db, "site_settings", "banner"), { 
-          banners: bannerList, 
-          img: bannerList[0] 
-        });
+  editBtn.innerText =
+    "Uploading Banners...";
 
-        alert("Hero banners updated successfully!");
-      } catch (err) {
-        alert("Error uploading banners: " + err.message);
-      } finally {
-        editBtn.innerHTML = `<i class="fa-solid fa-camera"></i> Change Banners`;
+  try {
+    const bannerList = [];
+
+    for (let i = 0; i < files.length; i++) {
+      editBtn.innerText =
+        `Uploading banner ${i + 1} of ${files.length}...`;
+
+      const imageUrl =
+        await uploadImageToStorage(
+          files[i],
+          "banners"
+        );
+
+      bannerList.push(imageUrl);
+    }
+
+    if (bannerList.length === 0) {
+      throw new Error("No banners were uploaded.");
+    }
+
+    /*
+     * Firestore now stores only the URLs.
+     */
+    await setDoc(
+      doc(db, "site_settings", "banner"),
+      {
+        banners: bannerList,
+        img: bannerList[0],
+        updatedAt: Date.now()
       }
-    };
+    );
+
+    alert(
+      "Hero banners updated successfully!"
+    );
+
+  } catch (err) {
+    console.error(
+      "Banner upload error:",
+      err
+    );
+
+    alert(
+      "Error uploading banners: " +
+      err.message
+    );
+
+  } finally {
+    editBtn.innerHTML =
+      `<i class="fa-solid fa-camera"></i> Change Banners`;
+
+    e.target.value = "";
+  }
+};
 
     window.handleSearch = function() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
