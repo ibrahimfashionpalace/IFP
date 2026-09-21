@@ -1335,7 +1335,7 @@
             const cleanItem = (o.item || 'Garment').trim();
             
             // Clean, operator-safe wording that bypasses SIM-level commercial/DLT spam filters
-            const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM Fashion Palace is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
+            const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
             const encodedMessage = encodeURIComponent(textForMessage);
 
             const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
