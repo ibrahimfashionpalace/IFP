@@ -720,7 +720,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDS-bo_pHFSE6-cRInZmIMNNZNS5DnQ5QI",
@@ -1028,6 +1028,8 @@
       grid.innerHTML = "";
       displayedProducts.forEach((p) => {
         const img = (p.images && p.images[0]) || "";
+        const currentStock = Number(p.stock) || 0;
+        const isOutOfStock = currentStock <= 0;
         
         let sizesList = ["Standard"];
         if (Array.isArray(p.sizes) && p.sizes.length > 0) {
@@ -1049,23 +1051,28 @@
           <div class="card-img-wrap">
             <img class="card-img" src="${img}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
-            <span class="stock-badge">${p.stock || 0} in stock</span>
+            <span class="stock-badge" style="${isOutOfStock ? 'background:#ef4444; color:#fff;' : ''}">
+              ${isOutOfStock ? 'Out of Stock' : (currentStock + ' in stock')}
+            </span>
           </div>
           <div class="card-body">
             <div class="item-name">${p.name}</div>
             <div class="item-price">₹${p.price}</div>
             
             <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Size:</label>
-            <select class="variant-select" id="sizeSelect_${p.id}">
+            <select class="variant-select" id="sizeSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
               ${sizesList.map(s => `<option value="${s}">${s}</option>`).join("")}
             </select>
 
             <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Color:</label>
-            <select class="variant-select" id="colorSelect_${p.id}">
+            <select class="variant-select" id="colorSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
               ${colorsList.map(c => `<option value="${c}">${c}</option>`).join("")}
             </select>
 
-            <button class="order-btn" onclick="startOrder('${p.id}')">Place Order</button>
+            <button class="order-btn" style="${isOutOfStock ? 'background:#94a3b8; cursor:not-allowed;' : ''}" 
+              ${isOutOfStock ? 'disabled' : `onclick="startOrder('${p.id}')"`}>
+              ${isOutOfStock ? 'Sold Out' : 'Place Order'}
+            </button>
             ${currentAdminUser ? `<button class="delete-garment-btn" onclick="deleteGarment('${p.id}')">Delete</button>` : ''}
           </div>
         `;
@@ -1132,6 +1139,13 @@
 
       try {
         await addDoc(collection(db, "orders"), newOrder);
+
+        // Deduct 1 article from stock automatically in Firestore
+        if (activeOrderData.id) {
+          await updateDoc(doc(db, "garments", activeOrderData.id), {
+            stock: increment(-1)
+          });
+        }
 
         // Save order to customer's device for "My Orders"
         const existing = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
