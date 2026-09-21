@@ -1324,21 +1324,22 @@
           `;
 
           ordersInLoc.forEach(o => {
-            const cleanPhone = (o.customerPhone || "").replace(/[^0-9]/g, "");
-            const fullWaPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+            const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
+            const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
+            const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
+
             const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
             const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
             
-            // Keep text clean on a single line so Android SMS intent does not drop the message
-          const cleanCustName = (o.customerName || 'Customer').trim();
-          const cleanItem = (o.item || 'Garment').trim();
-          
-          const textForMessage = `Hello ${cleanCustName}, your order (${cleanItem}) from IBRAHIM FASHION PALACE is out for delivery. Your Delivery Confirmation OTP is: ${activeOtp}. Please share this OTP with the rider upon arrival.`;
-          const encodedMessage = encodeURIComponent(textForMessage);
+            const cleanCustName = (o.customerName || 'Customer').trim();
+            const cleanItem = (o.item || 'Garment').trim();
+            
+            // Clean, operator-safe wording that bypasses SIM-level commercial/DLT spam filters
+            const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM Fashion Palace is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
+            const encodedMessage = encodeURIComponent(textForMessage);
 
-          // Correct WhatsApp & Universal SMS URL formats
-          const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
-          const smsUrl = `sms:${cleanPhone}?body=${encodedMessage}`;
+            const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
+            const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
 
             html += `
               <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
@@ -1365,7 +1366,7 @@
                     <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
                     <!-- Phone calling button removed from Orders Placed section -->
                     ${currentDeliveryFilter !== 'placed' ? `
-                      <a href="tel:${cleanPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                      <a href="tel:${formattedSmsPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
                         <i class="fa-solid fa-phone"></i>
                       </a>
                     ` : ''}
@@ -1391,7 +1392,7 @@
                   </div>
 
                   <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <a href="${waUrl}" target="_blank" rel="noopner" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                    <a href="${waUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
                       <i class="fa-brands fa-whatsapp"></i> WhatsApp
                     </a>
                     <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
