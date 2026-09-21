@@ -1,32 +1,21 @@
 {
   "name": "IBRAHIM Fashion Palace",
   "short_name": "IFP",
-  "description": "Exclusive traditional & modern garments at Malapora, Charar-i-Sharief",
-  "id": "/IFP/",
-  "start_url": "https://ibrahimfashionpalace.github.io/IFP/index.html",
-  "scope": "https://ibrahimfashionpalace.github.io/IFP/",
+  "start_url": "/IFP/",
+  "scope": "/IFP/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#1e1b4b",
   "theme_color": "#312e81",
   "icons": [
     {
-      "src": "https://ibrahimfashionpalace.github.io/IFP/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "https://ibrahimfashionpalace.github.io/IFP/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "https://ibrahimfashionpalace.github.io/IFP/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
     }
   ]
 }
