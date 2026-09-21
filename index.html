@@ -1195,62 +1195,86 @@
       if (listToDisplay.length === 0) {
         html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No ${currentDeliveryFilter} orders.</p>`;
       } else {
-        html += listToDisplay.map(o => `
-          <div style="padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:10px; background:#fff;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <div>
-                <strong style="color:var(--primary); font-size:0.95rem;">${o.customerName}</strong>
-                <span style="font-size:0.75rem; color:var(--muted); display:block;">Order: #${o.orderId}</span>
-              </div>
-              <strong style="color:#be123c; font-size:1rem;">₹${o.price}</strong>
-            </div>
+        html += listToDisplay.map(o => {
+          const cleanPhone = (o.customerPhone || "").replace(/[^0-9]/g, "");
+          const fullWaPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+          const msgText = encodeURIComponent(`Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${o.otp || 'N/A'}\n\nPlease share this code with the delivery partner upon arrival.`);
+          
+          const waUrl = `https://wa.me/${fullWaPhone}?text=${msgText}`;
+          const smsUrl = `sms:${cleanPhone}?body=${msgText}`;
 
-            <div style="font-size:0.8rem; color:#334155; margin:6px 0;">
-              <b>${o.item}</b> (${o.size} / ${o.color})<br>
-              <i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i> ${o.customerStreet}, ${o.customerArea}<br>
-              <i class="fa-solid fa-phone" style="color:var(--accent);"></i> ${o.customerPhone}
-            </div>
-
-            ${currentDeliveryFilter === 'pending' ? `
-              <button style="width:100%; margin-top:8px; background:#0284c7; color:#fff; border:none; padding:9px; border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;" onclick="initiateDelivery('${o.firestoreId}', '${o.customerPhone}', '${o.otp || ''}', '${o.item}', '${o.customerName}')">
-                <i class="fa-solid fa-paper-plane"></i> Deliver (Send OTP)
-              </button>
-            ` : `
-              <div style="font-size:0.75rem; color:#10b981; font-weight:700; margin-top:6px;">
-                <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+          return `
+            <div style="padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:10px; background:#fff;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <strong style="color:var(--primary); font-size:0.95rem;">${o.customerName}</strong>
+                  <span style="font-size:0.75rem; color:var(--muted); display:block;">Order: #${o.orderId}</span>
+                </div>
+                <strong style="color:#be123c; font-size:1rem;">₹${o.price}</strong>
               </div>
-            `}
-          </div>
-        `).join("");
+
+              <div style="font-size:0.8rem; color:#334155; margin:6px 0;">
+                <b>${o.item}</b> (${o.size || 'Standard'} / ${o.color || 'Standard'})<br>
+                <i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i> ${o.customerStreet}, ${o.customerArea}<br>
+                <i class="fa-solid fa-phone" style="color:var(--accent);"></i> ${o.customerPhone}
+              </div>
+
+              ${currentDeliveryFilter === 'pending' ? `
+                <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:8px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.75rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
+                  <span style="font-size:1.05rem; font-weight:900; letter-spacing:2px; color:var(--primary);">${o.otp || '----'}</span>
+                </div>
+
+                <div style="display:flex; gap:6px; margin-bottom:8px;">
+                  <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; font-weight:700;">
+                    <i class="fa-brands fa-whatsapp"></i> Send WhatsApp
+                  </a>
+                  <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; font-weight:700;">
+                    <i class="fa-solid fa-comment-sms"></i> Send SMS
+                  </a>
+                </div>
+
+                <div style="display:flex; gap:6px;">
+                  <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.82rem;" />
+                  <button style="background:#10b981; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
+                    Verify &amp; Deliver
+                  </button>
+                </div>
+              ` : `
+                <div style="font-size:0.75rem; color:#10b981; font-weight:700; margin-top:6px;">
+                  <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+                </div>
+              `}
+            </div>
+          `;
+        }).join("");
       }
 
       container.innerHTML = html;
       document.getElementById("deliveryModal").classList.add("active");
     };
 
-    window.initiateDelivery = async (firestoreId, phone, realOtp, itemName, custName) => {
-      const cleanPhone = phone.replace(/[^0-9]/g, "");
-      const fullPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
-      const message = encodeURIComponent(`Hello ${custName},\nYour delivery partner is at your doorstep with your order (${itemName}) from IBRAHIM Fashion Palace.\n\nYour Delivery Confirmation OTP is: ${realOtp}\n\nPlease share this OTP with the rider to receive your parcel.`);
+    window.verifyCustomerOtp = async (firestoreId) => {
+      const inputEl = document.getElementById(`otpInput_${firestoreId}`);
+      const enteredOtp = inputEl ? inputEl.value.trim() : "";
       
-      window.open(`https://wa.me/${fullPhone}?text=${message}`, "_blank");
+      if (!enteredOtp) {
+        return alert("Please enter the OTP.");
+      }
 
-      setTimeout(async () => {
-        const enteredOtp = prompt(`Enter the 4-digit OTP provided by ${custName} to confirm delivery:`);
-        
-        if (!enteredOtp) return;
+      const targetOrder = cloudOrders.find(o => o.firestoreId === firestoreId);
+      if (!targetOrder) return alert("Order not found.");
 
-        if (enteredOtp.trim() === String(realOtp).trim()) {
-          await updateDoc(doc(db, "orders", firestoreId), { 
-            status: "delivered",
-            deliveredAt: Date.now()
-          });
-          alert("OTP Verified! Order moved to 'Delivered Orders'.");
-          openDeliveryDashboard();
-        } else {
-          alert("Incorrect OTP! Delivery not completed.");
-        }
-      }, 800);
+      if (String(targetOrder.otp).trim() === enteredOtp) {
+        await updateDoc(doc(db, "orders", firestoreId), { 
+          status: "delivered",
+          deliveredAt: Date.now()
+        });
+        alert("OTP Verified! Order moved to Delivered Orders.");
+        openDeliveryDashboard();
+      } else {
+        alert("Incorrect OTP! Delivery could not be confirmed.");
+      }
     };
 
     // My Orders handler
