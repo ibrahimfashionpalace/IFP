@@ -1131,12 +1131,14 @@
   </script>
 
   <!-- Service Worker Registration Guard -->
-  <script>
-    if ('serviceWorker' in navigator && window.isSecureContext) {
-      try {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      } catch (e) {}
-    }
-  </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
 </body>
 </html>
