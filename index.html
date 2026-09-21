@@ -746,7 +746,7 @@
     let tapCount = 0;
     let tapTimer = null;
     let bannerInterval = null;
-    let currentDeliveryFilter = "pending";
+    let currentDeliveryFilter = "placed"; // Sequence: 'placed' -> 'pending' -> 'delivered'
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
@@ -1101,6 +1101,7 @@
         id: product.id,
         name: product.name,
         price: product.price,
+        image: (product.images && product.images[0]) || "",
         selectedSize: size,
         selectedColor: color
       };
@@ -1130,6 +1131,7 @@
         orderId: newOrderId,
         otp: generatedOtp,
         item: activeOrderData.name,
+        image: activeOrderData.image || "",
         size: activeOrderData.selectedSize,
         color: activeOrderData.selectedColor,
         price: Number(activeOrderData.price),
@@ -1137,7 +1139,7 @@
         customerPhone: document.getElementById("custPhone").value.trim(),
         customerArea: document.getElementById("custArea").value,
         customerStreet: document.getElementById("custStreet").value.trim(),
-        status: "confirmed",
+        status: "placed", // Starts in 'Orders Placed'
         createdAt: Date.now()
       };
 
@@ -1187,94 +1189,142 @@
       }
     };
 
+    window.moveToPending = async (firestoreId) => {
+      await updateDoc(doc(db, "orders", firestoreId), { status: "pending" });
+      openDeliveryDashboard();
+    };
+
     window.openDeliveryDashboard = () => {
       const container = document.getElementById("deliveryGroupContainer");
       if (!container) return;
 
-      const pendingOrders = cloudOrders.filter(o => o.status !== "delivered");
+      // Filter into the 3 exact stages
+      const placedOrders = cloudOrders.filter(o => o.status === "placed" || (!o.status && o.status !== "delivered") || o.status === "confirmed");
+      const pendingOrders = cloudOrders.filter(o => o.status === "pending");
       const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
 
       let html = `
-        <div style="display:flex; gap:8px; margin-bottom:14px;">
-          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:8px; border-radius:8px; border:none; font-weight:700; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
+        <div style="display:flex; gap:6px; margin-bottom:14px;">
+          <button onclick="setDeliveryTab('placed')" style="flex:1; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.75rem; cursor:pointer; background:${currentDeliveryFilter === 'placed' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'placed' ? '#fff' : 'var(--text)'};">
+            Orders Placed (${placedOrders.length})
+          </button>
+          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.75rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
             Pending (${pendingOrders.length})
           </button>
-          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:8px; border-radius:8px; border:none; font-weight:700; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
+          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.75rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
             Delivered Orders (${deliveredOrders.length})
           </button>
         </div>
       `;
 
-      const listToDisplay = currentDeliveryFilter === "pending" ? pendingOrders : deliveredOrders;
+      let listToDisplay = [];
+      if (currentDeliveryFilter === "placed") listToDisplay = placedOrders;
+      else if (currentDeliveryFilter === "pending") listToDisplay = pendingOrders;
+      else listToDisplay = deliveredOrders;
 
       if (listToDisplay.length === 0) {
-        html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No ${currentDeliveryFilter} orders.</p>`;
+        html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No orders in this section.</p>`;
       } else {
-        html += listToDisplay.map(o => {
-          const cleanPhone = (o.customerPhone || "").replace(/[^0-9]/g, "");
-          const fullWaPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
-          const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
-          
-          const rawMessage = `Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${activeOtp}\n\nPlease share this code with the delivery partner upon arrival.`;
-          const msgText = encodeURIComponent(rawMessage);
-          
-          const waUrl = `https://wa.me/${fullWaPhone}?text=${msgText}`;
-          const smsUrl = `sms:${cleanPhone}?&body=${msgText}`;
+        // Group orders by location
+        const groupedByLocation = {};
+        listToDisplay.forEach(o => {
+          const area = o.customerArea || "Other Location";
+          if (!groupedByLocation[area]) groupedByLocation[area] = [];
+          groupedByLocation[area].push(o);
+        });
 
-          return `
-            <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
-              <!-- Compact 1-2 line order header with side call button -->
-              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                <div style="flex:1; min-width:0;">
-                  <div style="font-size:0.88rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${o.customerName} <span style="font-size:0.75rem; font-weight:600; color:var(--muted);">(${o.customerPhone || 'No Phone'})</span>
-                  </div>
-                  <div style="font-size:0.76rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
-                    <b>${o.item}</b> (${o.size || 'Std'}) • <span style="color:var(--accent-pink); font-weight:700;">${o.customerArea || 'Area'}</span>
-                  </div>
-                </div>
-
-                <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                  <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
-                  <a href="tel:${cleanPhone}" style="width:34px; height:34px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.85rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
-                    <i class="fa-solid fa-phone"></i>
-                  </a>
-                </div>
+        // Render each location section
+        Object.keys(groupedByLocation).sort().forEach(locationName => {
+          const ordersInLoc = groupedByLocation[locationName];
+          html += `
+            <div style="margin-bottom:14px;">
+              <div style="font-size:0.82rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:5px 10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
+                <span style="font-size:0.72rem; background:var(--primary); color:#fff; padding:2px 7px; border-radius:10px;">${ordersInLoc.length}</span>
               </div>
+          `;
 
-              ${currentDeliveryFilter === 'pending' ? `
-                <!-- Masked OTP with Eye Toggle -->
-                <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
-                    <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+          ordersInLoc.forEach(o => {
+            const cleanPhone = (o.customerPhone || "").replace(/[^0-9]/g, "");
+            const fullWaPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+            const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
+            const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
+            
+            const rawMessage = `Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${activeOtp}\n\nPlease share this code with the delivery partner upon arrival.`;
+            const msgText = encodeURIComponent(rawMessage);
+            
+            const waUrl = `https://wa.me/${fullWaPhone}?text=${msgText}`;
+            const smsUrl = `sms:${cleanPhone}?&body=${msgText}`;
+
+            html += `
+              <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
+                <!-- 1-2 line order header with picture and call button -->
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #cbd5e1;" />
+                  
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:0.86rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${o.customerName} <span style="font-size:0.75rem; font-weight:600; color:var(--muted);">(${o.customerPhone || 'No Phone'})</span>
+                    </div>
+                    <div style="font-size:0.76rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
+                      <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
+                    </div>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                    <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
+                    <a href="tel:${cleanPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                      <i class="fa-solid fa-phone"></i>
+                    </a>
                   </div>
                 </div>
 
-                <div style="display:flex; gap:6px; margin-bottom:8px;">
-                  <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
-                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                  </a>
-                  <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
-                    <i class="fa-solid fa-comment-sms"></i> SMS
-                  </a>
-                </div>
+                ${currentDeliveryFilter === 'placed' ? `
+                  <div style="margin-top:8px; display:flex; gap:6px;">
+                    <button style="width:100%; background:var(--primary); color:#fff; border:none; padding:8px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
+                      <i class="fa-solid fa-box-archive"></i> Accept / Dispatch to Pending
+                    </button>
+                  </div>
+                ` : ''}
 
-                <div style="display:flex; gap:6px;">
-                  <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
-                  <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
-                    Verify &amp; Deliver
-                  </button>
-                </div>
-              ` : `
-                <div style="font-size:0.72rem; color:#10b981; font-weight:700; margin-top:6px;">
-                  <i class="fa-solid fa-circle-check"></i> Delivered Successfully
-                </div>
-              `}
-            </div>
-          `;
-        }).join("");
+                ${currentDeliveryFilter === 'pending' ? `
+                  <!-- Masked OTP with Eye Toggle -->
+                  <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
+                      <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; gap:6px; margin-bottom:8px;">
+                    <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                      <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                      <i class="fa-solid fa-comment-sms"></i> SMS
+                    </a>
+                  </div>
+
+                  <div style="display:flex; gap:6px;">
+                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
+                    <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
+                      Verify &amp; Deliver
+                    </button>
+                  </div>
+                ` : ''}
+
+                ${currentDeliveryFilter === 'delivered' ? `
+                  <div style="font-size:0.72rem; color:#10b981; font-weight:700; margin-top:6px;">
+                    <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          });
+
+          html += `</div>`;
+        });
       }
 
       container.innerHTML = html;
