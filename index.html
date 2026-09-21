@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png" />
   <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png" />
 
-  <link rel="manifest" href="./manifest.json" crossorigin="use-credentials" />
+  <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#312e81" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -42,7 +42,6 @@
       min-height: 100vh;
       padding-bottom: 70px;
     }
-
     header {
       background: linear-gradient(135deg, #312e81 0%, #4c0519 100%);
       position: sticky;
@@ -81,25 +80,17 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
       border: none;
       cursor: pointer;
-      pointer-events: auto;
-      transition: transform 0.15s ease;
-      touch-action: manipulation;
       overflow: hidden;
       padding: 0;
     }
     .brand-logo-badge img {
       width: 100% !important;
       height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
       object-fit: cover;
       display: block;
       border-radius: 50%;
-      border: none;
-      outline: none;
     }
     .brand-logo-badge:active { transform: scale(0.92); }
-
     .ifp-dropdown-menu {
       display: none;
       position: absolute;
@@ -113,8 +104,7 @@
       overflow: hidden;
       border: 1px solid #cbd5e1;
     }
-    .ifp-dropdown-menu.active { display: block; animation: fadeInDown 0.2s ease-out; }
-
+    .ifp-dropdown-menu.active { display: block; }
     .right-menu-container { position: relative; }
     .more-options-menu {
       display: none;
@@ -129,7 +119,7 @@
       overflow: hidden;
       border: 1px solid #cbd5e1;
     }
-    .more-options-menu.active { display: block; animation: fadeInDown 0.2s ease-out; }
+    .more-options-menu.active { display: block; }
     .more-options-item, .ifp-dropdown-item {
       display: flex;
       align-items: center;
@@ -143,20 +133,12 @@
       border-bottom: 1px solid #f1f5f9;
       background: #ffffff;
     }
-    .more-options-item:last-child, .ifp-dropdown-item:last-child { border-bottom: none; }
-    .more-options-item:hover, .ifp-dropdown-item:hover { background: #fdf2f8; color: var(--accent-pink); }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
     .brand-text-block { flex: 1; }
     .brand-title {
       font-size: 1.08rem;
       font-weight: 900;
       letter-spacing: 0.5px;
       color: #fbbf24;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
       line-height: 1.2;
     }
     .brand-sub {
@@ -193,7 +175,6 @@
       border-radius: 10px;
       font-weight: 800;
     }
-
     .hero-container {
       position: relative;
       margin: 14px;
@@ -207,7 +188,6 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
     .banner-track::-webkit-scrollbar { display: none; }
@@ -223,7 +203,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      opacity: 0.9;
     }
     .hero-overlay {
       position: absolute;
@@ -234,10 +213,8 @@
       padding: 16px;
       background: linear-gradient(to top, rgba(30, 27, 75, 0.92) 10%, rgba(76, 5, 25, 0.4) 60%, transparent 100%);
       color: #fff;
-      pointer-events: none;
     }
     .hero-tag {
-      display: inline-block;
       align-self: flex-start;
       background: #fbbf24;
       color: #881337;
@@ -246,62 +223,8 @@
       padding: 3px 8px;
       border-radius: 20px;
       margin-bottom: 6px;
-      text-transform: uppercase;
     }
     .hero-title { font-size: 1.18rem; font-weight: 800; color: #ffffff; }
-    .banner-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(15, 23, 42, 0.6);
-      color: #fff;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      z-index: 10;
-    }
-    .banner-nav-prev { left: 8px; }
-    .banner-nav-next { right: 8px; }
-    .banner-dots {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      z-index: 10;
-    }
-    .banner-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.4);
-      transition: all 0.2s ease;
-    }
-    .banner-dot.active { background: #fbbf24; width: 18px; border-radius: 10px; }
-
-    .hero-edit-btn {
-      display: none;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.75);
-      color: #fbbf24;
-      border: 1px solid #fbbf24;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      font-weight: 700;
-      z-index: 15;
-    }
-
     .search-wrap { margin: 0 14px 14px; position: relative; }
     .search-input {
       width: 100%;
@@ -320,7 +243,6 @@
       color: var(--muted);
       font-size: 0.9rem;
     }
-
     .admin-bar {
       display: none;
       margin: 0 14px 12px;
@@ -337,15 +259,10 @@
       font-weight: 700;
       color: var(--primary);
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
-    .admin-bar button.delivery-btn { background: #0284c7; color: #ffffff; border: none; flex: 1 1 100%; }
-    .admin-bar button.maintenance-btn { background: #f59e0b; color: #ffffff; border: none; flex: 1 1 100%; }
+    .admin-bar button.delivery-btn { background: #0284c7; color: #fff; border: none; flex: 1 1 100%; }
+    .admin-bar button.maintenance-btn { background: #f59e0b; color: #fff; border: none; flex: 1 1 100%; }
     .admin-bar button.lock-btn { background: #fee2e2; color: #b91c1c; border: none; flex: 1 1 100%; }
-
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -359,7 +276,6 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
     .card-img-wrap {
       position: relative;
@@ -385,7 +301,6 @@
       padding: 3px 6px;
       border-radius: 6px;
       font-weight: 700;
-      z-index: 2;
     }
     .stock-badge {
       position: absolute;
@@ -397,29 +312,7 @@
       padding: 3px 6px;
       border-radius: 6px;
       font-weight: 800;
-      z-index: 2;
     }
-    .thumb-strip {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 6px 8px;
-      background: #f8fafc;
-      border-bottom: 1px solid #f1f5f9;
-      scrollbar-width: none;
-    }
-    .thumb-strip::-webkit-scrollbar { display: none; }
-    .thumb-item {
-      width: 42px;
-      height: 42px;
-      border-radius: 6px;
-      object-fit: cover;
-      cursor: pointer;
-      border: 2px solid #cbd5e1;
-      flex-shrink: 0;
-    }
-    .thumb-item.active { border-color: #be123c; }
-
     .card-body {
       padding: 10px;
       display: flex;
@@ -447,10 +340,6 @@
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
     }
     .delete-garment-btn {
       background: #fee2e2;
@@ -463,21 +352,16 @@
       cursor: pointer;
       margin-top: 4px;
     }
-
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(3px);
       z-index: 200;
       align-items: flex-end;
       justify-content: center;
     }
     .modal-overlay.active { display: flex; }
-    #otpModal { z-index: 300; }
-    #loginModal { z-index: 400; align-items: center; }
-
     .modal-sheet {
       background: #fff;
       width: 100%;
@@ -487,7 +371,6 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    #loginModal .modal-sheet { border-radius: 20px; margin: 16px; }
     .modal-head {
       display: flex;
       justify-content: space-between;
@@ -516,97 +399,8 @@
       font-weight: 700;
       border-radius: 8px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
       margin-top: 8px;
     }
-
-    .owner-card {
-      background: linear-gradient(135deg, #1e1b4b 0%, #4c0519 100%);
-      color: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-    .owner-info-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
-      font-size: 0.85rem;
-    }
-    .owner-info-row a { color: #fbbf24; text-decoration: none; font-weight: bold; }
-
-    .hub-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 8px;
-    }
-    .hub-tab-btn {
-      flex: 1;
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      background: #f1f5f9;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-    .hub-tab-btn.active { background: var(--primary); color: #ffffff; }
-
-    .btn-delivered-action {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .btn-cancel-action {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 6px;
-    }
-
-    .otp-display-box {
-      background: #f8fafc;
-      border: 2px dashed #0284c7;
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .otp-code { font-size: 2rem; letter-spacing: 8px; font-weight: 900; color: #be123c; margin: 6px 0; }
-    .otp-input-field {
-      text-align: center;
-      letter-spacing: 12px;
-      font-size: 1.5rem;
-      font-weight: 800;
-      max-width: 200px;
-      margin: 0 auto;
-      display: block;
-    }
-
     #maintenanceScreen {
       display: none;
       position: fixed;
@@ -621,26 +415,6 @@
       text-align: center;
     }
     #maintenanceScreen.active { display: flex; }
-    .maint-icon { font-size: 3.5rem; color: #fbbf24; margin-bottom: 16px; }
-    .maint-title { font-size: 1.45rem; font-weight: 800; margin-bottom: 8px; }
-    .maint-sub { font-size: 0.95rem; color: #fbcfe8; margin-bottom: 24px; max-width: 320px; }
-    .maint-contact {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      padding: 14px 20px;
-      max-width: 320px;
-      width: 100%;
-    }
-    .maint-contact a { color: #fbbf24; text-decoration: none; font-weight: 700; }
-    .owner-bypass-link {
-      margin-top: 30px;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
     footer {
       margin-top: 30px;
       background: #ffffff;
@@ -650,94 +424,37 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
-    .footer-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; color: var(--primary); }
-    .contact-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin: 14px 0 10px;
-    }
-    .contact-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #fdf2f8;
-      border: 1px solid #fbcfe8;
-      padding: 8px 14px;
-      border-radius: 20px;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 0.78rem;
-    }
-    .creator-credit {
-      margin-top: 14px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: var(--accent-pink);
-      letter-spacing: 0.5px;
-    }
-    .loc-group-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
-    .loc-group-header {
-      background: #e2e8f0;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: var(--primary);
-    }
-    .loc-order-item { padding: 10px 12px; border-bottom: 1px dashed #cbd5e1; font-size: 0.78rem; display: flex; gap: 10px; align-items: center; }
-    .loc-order-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
 
-  <!-- Instant Maintenance Guard -->
-  <script>
-    if (localStorage.getItem('ifp_maint_active') === 'true' && !localStorage.getItem('ifp_is_admin')) {
-      document.write(`
-        <div id="tempMaintScreen" style="position:fixed;inset:0;z-index:999999;background:#1e1b4b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
-          <h2 style="color:#fbbf24;margin-bottom:10px;">Website Under Maintenance</h2>
-          <p style="color:#fbcfe8;font-size:0.9rem;">We are updating catalog items. Back shortly!</p>
-        </div>
-      `);
-    }
-  </script>
-
   <!-- Maintenance Mode Screen -->
   <div id="maintenanceScreen">
-    <div class="maint-icon"><i class="fa-solid fa-wrench"></i></div>
-    <div class="maint-title">Website Under Maintenance</div>
-    <div class="maint-sub">Inconvenience regretted. We are updating our garment collection and will be back shortly!</div>
-    <div class="maint-contact">
-      <div style="font-size:0.75rem; color:#cbd5e1; margin-bottom:6px;">Need urgent assistance?</div>
-      <div style="margin-bottom:6px;"><i class="fa-solid fa-phone"></i> Call: <a href="tel:6005757393">6005757393</a></div>
-      <div><i class="fa-brands fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/916005757393" target="_blank">Chat with us</a></div>
-    </div>
-    <div class="owner-bypass-link" onclick="promptOwnerLogin()">Owner Login</div>
+    <div style="font-size:3rem; color:#fbbf24; margin-bottom:12px;"><i class="fa-solid fa-wrench"></i></div>
+    <div style="font-size:1.3rem; font-weight:800; margin-bottom:8px;">Website Under Maintenance</div>
+    <div style="font-size:0.9rem; color:#fbcfe8; margin-bottom:20px;">Updating our garment collection. Back shortly!</div>
+    <div style="font-size:0.75rem; text-decoration:underline; cursor:pointer;" onclick="promptOwnerLogin()">Owner Login</div>
   </div>
 
   <!-- Header -->
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <div class="brand-logo-badge" id="ifpBadge" title="Triple-tap for Owner">
-          <img src="./icon-192.png" alt="IFP" width="50" height="50" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
+        <div class="brand-logo-badge" id="ifpBadge">
+          <img src="./icon-192.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
         </div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
             <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
           </div>
-          <div class="ifp-dropdown-item" onclick="openOwnerModal(); closeIfpDropdown();">
+          <div class="ifp-dropdown-item" onclick="alert('Owner: Aamir Rashid\nContact: 6005757393'); closeIfpDropdown();">
             <i class="fa-solid fa-user-tie" style="color:var(--primary);"></i> About Owner
           </div>
         </div>
       </div>
       <div class="brand-text-block">
         <div class="brand-title">IBRAHIM FASHION PALACE</div>
-        <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
+        <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief</div>
       </div>
     </div>
     <div class="header-actions">
@@ -747,7 +464,7 @@
       </button>
       <div class="right-menu-container">
         <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)">
-          <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.1rem;"></i>
+          <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
         <div class="more-options-menu" id="moreMenu">
           <div class="more-options-item" onclick="openOrdersModal(); closeMoreMenu();">
@@ -758,23 +475,18 @@
     </div>
   </header>
 
-  <!-- Banner Container -->
-  <div class="hero-container" id="heroBannerContainer">
-    <button class="banner-nav-btn banner-nav-prev" onclick="scrollBanner(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-    <button class="banner-nav-btn banner-nav-next" onclick="scrollBanner(1)"><i class="fa-solid fa-chevron-right"></i></button>
+  <!-- Banner -->
+  <div class="hero-container">
     <div class="banner-track" id="bannerTrack">
       <div class="banner-slide">
-        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" />
+        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner" />
         <div class="hero-overlay">
-          <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
+          <span class="hero-tag">Exclusive Fashion</span>
           <div class="hero-title">New Garment Collection</div>
-          <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
+          <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional & modern wear • Cash on Delivery</p>
         </div>
       </div>
     </div>
-    <div class="banner-dots" id="bannerDots"></div>
-    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()"><i class="fa-solid fa-camera"></i> Change Banners</button>
-    <input type="file" id="heroInput" accept="image/*" multiple style="display:none" onchange="updateHeroImages(event)" />
   </div>
 
   <!-- Search -->
@@ -786,224 +498,128 @@
   <!-- Admin Bar -->
   <div class="admin-bar" id="adminBar">
     <button class="delivery-btn" onclick="openDeliveryDashboard()"><i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub</button>
-    <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()"><i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance Mode</button>
-    <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add New Garment</button>
-    <button class="lock-btn" onclick="lockAdmin()"><i class="fa-solid fa-lock"></i> Lock Admin Mode</button>
+    <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()"><i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance</button>
+    <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add Garment</button>
+    <button class="lock-btn" onclick="lockAdmin()"><i class="fa-solid fa-lock"></i> Lock Admin</button>
   </div>
 
-  <!-- Catalog Grid -->
+  <!-- Catalog -->
   <main>
     <div class="products-grid" id="productsGrid"></div>
   </main>
 
-  <!-- Login Modal -->
+  <!-- Modals -->
   <div class="modal-overlay" id="loginModal">
-    <div class="modal-sheet">
+    <div class="modal-sheet" style="border-radius:20px; margin:16px;">
       <div class="modal-head">
-        <h3><i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i> Owner Authentication</h3>
-        <button class="close-btn" type="button" onclick="closeModal('loginModal')">&times;</button>
+        <h3>Owner Authentication</h3>
+        <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
       </div>
       <form id="ownerLoginForm" onsubmit="handleOwnerAuth(event)">
         <div class="form-group">
-          <label>Registered Owner Email</label>
-          <input type="email" id="authEmail" required placeholder="Enter owner email" />
+          <label>Email</label>
+          <input type="email" id="authEmail" required placeholder="owner email" />
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="authPassword" required placeholder="Enter Password" autocomplete="current-password" />
+          <input type="password" id="authPassword" required placeholder="password" />
         </div>
         <button type="submit" id="authLoginBtn" class="confirm-btn" style="background:var(--primary);">Sign In</button>
-        <p id="authErrorMsg" style="color:#ef4444; font-size:0.75rem; margin-top:8px; text-align:center; display:none;"></p>
       </form>
     </div>
   </div>
 
-  <!-- About Owner Modal -->
-  <div class="modal-overlay" id="ownerModal">
-    <div class="modal-sheet">
-      <div class="modal-head">
-        <h3><i class="fa-solid fa-circle-user" style="color:var(--accent-pink);"></i> About Owner</h3>
-        <button class="close-btn" type="button" onclick="closeModal('ownerModal')">&times;</button>
-      </div>
-      <div class="owner-card">
-        <div style="font-size:1.15rem; font-weight:800; color:#fbbf24; margin-bottom:4px;">Aamir Rashid</div>
-        <div style="font-size:0.75rem; color:#fbcfe8;">Proprietor - IBRAHIM Fashion Palace</div>
-        <div style="margin-top:14px; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
-          <div class="owner-info-row"><i class="fa-solid fa-phone" style="color:#fbbf24; width:18px;"></i><span><strong>Contact:</strong> <a href="tel:6005757393">6005757393</a></span></div>
-          <div class="owner-info-row"><i class="fa-solid fa-envelope" style="color:#fbbf24; width:18px;"></i><span><strong>Email:</strong> <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a></span></div>
-          <div class="owner-info-row"><i class="fa-solid fa-location-dot" style="color:#fbbf24; width:18px;"></i><span><strong>Address:</strong> Malapora, Charar-i-Sharief</span></div>
-        </div>
-      </div>
-      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('ownerModal')">Close</button>
-    </div>
-  </div>
-
-  <!-- Add Product Modal -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <h3>Upload New Garment</h3>
-        <button class="close-btn" type="button" onclick="closeModal('addProductModal')">&times;</button>
+        <button class="close-btn" onclick="closeModal('addProductModal')">&times;</button>
       </div>
       <form id="newProductForm" onsubmit="handleNewProduct(event)">
         <div class="form-group">
           <label>Garment Name *</label>
-          <input type="text" id="newTitle" required placeholder="e.g. Kashmiri Embroidered Kurti" />
+          <input type="text" id="newTitle" required />
         </div>
         <div class="form-group">
           <label>Price (₹) *</label>
-          <input type="number" id="newPrice" required placeholder="899" />
+          <input type="number" id="newPrice" required />
         </div>
         <div class="form-group">
-          <label>Number of Articles Available (Stock) *</label>
-          <input type="number" id="newStock" required min="1" value="10" />
+          <label>Stock Available *</label>
+          <input type="number" id="newStock" required value="10" />
         </div>
         <div class="form-group">
-          <label>Available Sizes (Separated by commas) *</label>
+          <label>Sizes (comma separated) *</label>
           <input type="text" id="newSizes" required value="S, M, L, XL" />
         </div>
         <div class="form-group">
-          <label>Garment Photos (Select images) *</label>
+          <label>Garment Photos *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
-        <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save Garment to Live Catalog</button>
+        <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save to Live Catalog</button>
       </form>
     </div>
   </div>
 
-  <!-- Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <h3>Confirm Order</h3>
-        <button class="close-btn" type="button" onclick="closeModal('orderModal')">&times;</button>
+        <button class="close-btn" onclick="closeModal('orderModal')">&times;</button>
       </div>
-      <div style="background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; padding:12px; margin-bottom:14px;">
-        <div id="orderItemTitle" style="font-weight:800; color:var(--primary); font-size:0.95rem;"></div>
-        <div id="orderItemSize" style="font-size:0.8rem; color:var(--muted); margin:3px 0;"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; border-top:1px dashed #fbcfe8; padding-top:6px;">
-          <span style="font-size:1.1rem; font-weight:800; color:#be123c;" id="orderItemPrice"></span>
-          <span class="cod-tag" style="position:static; font-size:0.75rem; padding:4px 8px;">Cash on Delivery (COD)</span>
-        </div>
+      <div style="padding:10px; background:#fdf2f8; border-radius:8px; margin-bottom:12px;">
+        <div id="orderItemTitle" style="font-weight:800;"></div>
+        <div id="orderItemPrice" style="color:#be123c; font-weight:800; font-size:1.1rem; margin-top:4px;"></div>
       </div>
       <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
-        <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required placeholder="Full Name" /></div>
-        <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required placeholder="e.g. 6005757393" /></div>
+        <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required /></div>
+        <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required /></div>
         <div class="form-group">
           <label>Delivery Area *</label>
           <select id="custArea" required>
-            <option value="" disabled selected>-- Select Area --</option>
             <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
             <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
-            <option value="Gulshanabad (Charar-i-Sharief)">Gulshanabad (Charar-i-Sharief)</option>
-            <option value="Nowhar (Charar-i-Sharief)">Nowhar (Charar-i-Sharief)</option>
-            <option value="Trajibal">Trajibal</option>
+            <option value="Gulshanabad">Gulshanabad</option>
             <option value="Chadoora">Chadoora</option>
-            <option value="Nagam">Nagam</option>
-            <option value="Srinagar">Srinagar</option>
             <option value="Other Area">Other Area</option>
           </select>
         </div>
-        <div class="form-group"><label>Street / Landmark *</label><input type="text" id="custStreet" required placeholder="House number / Landmark / Lane" /></div>
-        <button type="submit" id="confirmOrderBtn" class="confirm-btn">Confirm Order</button>
+        <div class="form-group"><label>Address / Landmark *</label><input type="text" id="custStreet" required /></div>
+        <button type="submit" class="confirm-btn">Confirm Order (COD)</button>
       </form>
     </div>
   </div>
 
-  <!-- Success Modal -->
-  <div class="modal-overlay" id="successModal">
-    <div class="modal-sheet" style="text-align:center; padding:30px 20px;">
-      <div style="font-size:3.5rem; color:#10b981; margin-bottom:10px;"><i class="fa-solid fa-circle-check"></i></div>
-      <h3 style="color:var(--primary); font-size:1.3rem; margin-bottom:6px;">Order Confirmed!</h3>
-      <p style="color:var(--muted); font-size:0.8rem; margin-bottom:16px;">We have received your order for Cash on Delivery (COD).</p>
-      <div id="confirmedOrderId" style="font-size:0.85rem; font-weight:800; background:#f1f5f9; padding:8px 14px; border-radius:8px; display:inline-block; margin-bottom:16px; color:var(--primary);"></div>
-      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('successModal')">Continue Shopping</button>
-    </div>
-  </div>
-
-  <!-- Delivery Dashboard Modal -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
-        <div><h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Owner Delivery Hub</h3></div>
-        <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
-      </div>
-      <div class="hub-tabs">
-        <button class="hub-tab-btn active" id="tabActiveDeliveriesBtn" onclick="switchDeliveryTab('active')">Active Deliveries (<span id="activeTabCount">0</span>)</button>
-        <button class="hub-tab-btn" id="tabDeliveredBtn" onclick="switchDeliveryTab('delivered')">Delivered (<span id="deliveredTabCount">0</span>)</button>
+        <h3>Delivery Hub</h3>
+        <button class="close-btn" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
       <div id="deliveryGroupContainer"></div>
-      <div id="deliveredOrdersContainer" style="display:none;"></div>
     </div>
   </div>
 
-  <!-- OTP Modal -->
-  <div class="modal-overlay" id="otpModal">
-    <div class="modal-sheet">
-      <div class="modal-head">
-        <h3><i class="fa-solid fa-shield-halved" style="color:#0284c7;"></i> Delivery OTP</h3>
-        <button class="close-btn" type="button" onclick="closeModal('otpModal')">&times;</button>
-      </div>
-      <div class="otp-display-box">
-        <div style="font-size:0.75rem; color:var(--muted); font-weight:700;">Customer Verification OTP</div>
-        <div class="otp-code" id="generatedOtpDisplay">----</div>
-        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
-          <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
-            <i class="fa-brands fa-whatsapp"></i> Send via WhatsApp
-          </a>
-        </div>
-      </div>
-      <form id="otpVerifyForm" onsubmit="confirmDeliveredWithOtp(event)">
-        <div class="form-group" style="text-align:center;">
-          <label style="font-size:0.85rem; font-weight:700;">Enter 4-Digit OTP:</label>
-          <input type="text" id="enteredOtpInput" class="otp-input-field" maxlength="4" placeholder="••••" required pattern="\d{4}" />
-        </div>
-        <button type="submit" class="confirm-btn" style="background:#10b981;"><i class="fa-solid fa-check"></i> Verify & Mark Delivered</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Customer Orders Modal -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
-        <h3><i class="fa-solid fa-bag-shopping" style="color:#be123c;"></i> My Orders</h3>
-        <button class="close-btn" type="button" onclick="closeModal('myOrdersModal')">&times;</button>
+        <h3>My Orders</h3>
+        <button class="close-btn" onclick="closeModal('myOrdersModal')">&times;</button>
       </div>
       <div id="ordersListContainer"></div>
     </div>
   </div>
 
   <footer>
-    <div class="footer-title">IBRAHIM FASHION PALACE</div>
-    <div>Malapora, Charar-i-Sharief, Budgam, J&K</div>
-    <div class="contact-container">
-      <a href="tel:6005757393" class="contact-badge"><i class="fa-solid fa-phone" style="color:#be123c;"></i> +91 6005757393</a>
-      <a href="https://wa.me/916005757393" target="_blank" class="contact-badge"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Us</a>
-      <a href="mailto:aamir757393@gmail.com" class="contact-badge"><i class="fa-solid fa-envelope" style="color:#0284c7;"></i> aamir757393@gmail.com</a>
-    </div>
-    <div class="creator-credit">Created by Aamir</div>
+    <div style="font-weight:800; margin-bottom:4px;">IBRAHIM FASHION PALACE</div>
+    <div>Malapora, Charar-i-Sharief, Budgam • Call: <a href="tel:6005757393">6005757393</a></div>
   </footer>
 
-  <!-- Firebase & App Logic (No Storage dependency, 100% Free Spark Plan Compatible) -->
+  <!-- Firebase Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      signOut, 
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-      getFirestore, 
-      collection, 
-      addDoc, 
-      onSnapshot, 
-      doc, 
-      setDoc, 
-      updateDoc, 
-      deleteDoc 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDS-bo_pHFSE6-cRInZmIMNNZNS5DnQ5QI",
@@ -1019,621 +635,265 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let tapCount = 0;
-    let tapTimer = null;
     let allProducts = [];
     let displayedProducts = [];
     let cloudOrders = [];
     let selectedProduct = null;
-    let isMaintenanceActive = localStorage.getItem('ifp_maint_active') === 'true';
-    let activeHubTab = "active";
-    let pendingDeliveryVerification = null;
+    let isMaintenanceActive = false;
     let currentAdminUser = null;
-    let bannerImagesList = ["https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75"];
+    let tapCount = 0;
+    let tapTimer = null;
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
-      if (currentAdminUser) {
-        localStorage.setItem('ifp_is_admin', 'true');
-      } else {
-        localStorage.removeItem('ifp_is_admin');
-      }
-      checkAdminStatus();
+      updateAdminUI();
       evaluateMaintenanceScreen();
     });
 
-    window.scrollBanner = function(direction) {
-      const track = document.getElementById("bannerTrack");
-      if (track) track.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
-    };
-
-    function renderBannerSlides(banners) {
-      const track = document.getElementById("bannerTrack");
-      const dotsContainer = document.getElementById("bannerDots");
-      if (!track || !dotsContainer) return;
-
-      bannerImagesList = (Array.isArray(banners) && banners.length > 0) ? banners : bannerImagesList;
-
-      track.innerHTML = bannerImagesList.map((imgUrl, idx) => `
-        <div class="banner-slide">
-          <img class="hero-img" src="${imgUrl}" alt="Banner ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" />
-          <div class="hero-overlay">
-            <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
-            <div class="hero-title">New Garment Collection</div>
-            <p style="font-size: 0.75rem; color: #fbcfe8; margin-top: 2px;">Premium traditional & modern wear • Cash on Delivery</p>
-          </div>
-        </div>
-      `).join("");
-
-      dotsContainer.innerHTML = bannerImagesList.map((_, idx) => `
-        <div class="banner-dot ${idx === 0 ? 'active' : ''}"></div>
-      `).join("");
-
-      track.onscroll = () => {
-        const slideIndex = Math.round(track.scrollLeft / track.clientWidth);
-        const dots = dotsContainer.querySelectorAll(".banner-dot");
-        dots.forEach((dot, i) => dot.classList.toggle("active", i === slideIndex));
-      };
+    function updateAdminUI() {
+      const isAuth = !!currentAdminUser;
+      document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
+      document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
+      const maintBtn = document.getElementById("maintToggleBtn");
+      if (maintBtn) {
+        maintBtn.innerHTML = isMaintenanceActive ? `<i class="fa-solid fa-circle-check"></i> Turn Maint OFF` : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maint ON`;
+        maintBtn.style.background = isMaintenanceActive ? "#10b981" : "#f59e0b";
+      }
     }
 
-    window.toggleMoreMenu = function(e) {
-      if (e) e.stopPropagation();
-      document.getElementById("moreMenu")?.classList.toggle("active");
-    };
-
-    window.closeMoreMenu = function() {
-      document.getElementById("moreMenu")?.classList.remove("active");
-    };
+    window.toggleMoreMenu = (e) => { e?.stopPropagation(); document.getElementById("moreMenu")?.classList.toggle("active"); };
+    window.closeMoreMenu = () => { document.getElementById("moreMenu")?.classList.remove("active"); };
+    window.toggleIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.toggle("active"); };
+    window.closeIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.remove("active"); };
 
     const badgeEl = document.getElementById("ifpBadge");
     if (badgeEl) {
       badgeEl.addEventListener("click", (e) => {
-        if (e) e.stopPropagation();
+        e.stopPropagation();
         tapCount++;
         clearTimeout(tapTimer);
-
         if (tapCount >= 3) {
           tapCount = 0;
           closeIfpDropdown();
-          if (navigator.vibrate) navigator.vibrate(60);
           promptOwnerLogin();
           return;
         }
-
         tapTimer = setTimeout(() => {
           if (tapCount === 1) toggleIfpDropdown();
           tapCount = 0;
-        }, 600);
+        }, 500);
       });
     }
 
-    window.toggleIfpDropdown = function() { document.getElementById("ifpDropdown")?.classList.toggle("active"); };
-    window.closeIfpDropdown = function() { document.getElementById("ifpDropdown")?.classList.remove("active"); };
-
-    document.addEventListener("click", (e) => {
-      const dropdown = document.getElementById("ifpDropdown");
-      const badge = document.getElementById("ifpBadge");
-      if (dropdown && badge && !badge.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("active");
-
-      const moreMenu = document.getElementById("moreMenu");
-      const moreBtn = document.getElementById("moreBtn");
-      if (moreMenu && moreBtn && !moreBtn.contains(e.target) && !moreMenu.contains(e.target)) moreMenu.classList.remove("active");
+    document.addEventListener("click", () => {
+      closeIfpDropdown();
+      closeMoreMenu();
     });
 
-    window.promptOwnerLogin = function() {
-      if (currentAdminUser) {
-        alert("You are authenticated as the Owner (Aamir Rashid).");
-        return;
-      }
-      document.getElementById("authErrorMsg").style.display = "none";
+    window.promptOwnerLogin = () => {
+      if (currentAdminUser) return alert("Already signed in as owner.");
       document.getElementById("loginModal").classList.add("active");
     };
 
-    window.handleOwnerAuth = async function(e) {
+    window.handleOwnerAuth = async (e) => {
       e.preventDefault();
-      const email = document.getElementById("authEmail").value.trim();
-      const password = document.getElementById("authPassword").value;
-      const errorMsg = document.getElementById("authErrorMsg");
-      const btn = document.getElementById("authLoginBtn");
-
-      errorMsg.style.display = "none";
-      btn.disabled = true;
-      btn.innerText = "Signing in...";
-
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, document.getElementById("authEmail").value.trim(), document.getElementById("authPassword").value);
         closeModal("loginModal");
-        document.getElementById("ownerLoginForm").reset();
-        alert("Owner Mode Unlocked!");
+        alert("Owner Mode Active!");
       } catch (err) {
-        errorMsg.textContent = "Access Denied: " + err.message;
-        errorMsg.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "Sign In";
+        alert("Login failed: " + err.message);
       }
     };
 
-    window.openOwnerModal = function() { document.getElementById("ownerModal").classList.add("active"); };
-
-    function checkAdminStatus() {
-      const isAuth = !!currentAdminUser;
-      document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
-      document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
-      document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
-
-      const maintBtn = document.getElementById("maintToggleBtn");
-      if (maintBtn) {
-        maintBtn.innerHTML = isMaintenanceActive
-          ? `<i class="fa-solid fa-circle-check"></i> Turn Maintenance Mode OFF`
-          : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maintenance Mode ON`;
-        maintBtn.style.background = isMaintenanceActive ? "#10b981" : "#f59e0b";
-      }
-
-      renderProducts();
-    }
-
-    window.lockAdmin = async function() {
+    window.lockAdmin = async () => {
       await signOut(auth);
       currentAdminUser = null;
-      localStorage.removeItem('ifp_is_admin');
-      checkAdminStatus();
+      updateAdminUI();
       evaluateMaintenanceScreen();
-      alert("Owner mode locked.");
     };
 
-    window.toggleMaintenanceMode = async function() {
-      const nextState = !isMaintenanceActive;
+    window.toggleMaintenanceMode = async () => {
       try {
-        await setDoc(doc(db, "site_settings", "maintenance"), { active: nextState });
-        isMaintenanceActive = nextState;
-        localStorage.setItem('ifp_maint_active', nextState ? 'true' : 'false');
-        checkAdminStatus();
-        evaluateMaintenanceScreen();
-        alert(nextState ? "Maintenance Mode is now ON!" : "Maintenance Mode is now OFF!");
+        await setDoc(doc(db, "site_settings", "maintenance"), { active: !isMaintenanceActive });
+        alert("Maintenance updated!");
       } catch (err) {
-        alert("Error updating maintenance: " + err.message);
+        alert("Error: " + err.message);
       }
     };
 
     function evaluateMaintenanceScreen() {
-      const isAuth = !!currentAdminUser;
       const screen = document.getElementById("maintenanceScreen");
-      document.getElementById("tempMaintScreen")?.remove();
-      if (screen) screen.classList.toggle("active", isMaintenanceActive && !isAuth);
+      if (screen) screen.classList.toggle("active", isMaintenanceActive && !currentAdminUser);
     }
 
     function initCloudSync() {
-      onSnapshot(doc(db, "site_settings", "maintenance"), (snapshot) => {
-        isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
-        localStorage.setItem('ifp_maint_active', isMaintenanceActive ? 'true' : 'false');
+      onSnapshot(doc(db, "site_settings", "maintenance"), (snap) => {
+        isMaintenanceActive = snap.exists() && snap.data().active === true;
         evaluateMaintenanceScreen();
-        checkAdminStatus();
+        updateAdminUI();
       });
 
-      onSnapshot(doc(db, "site_settings", "banner"), (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          if (Array.isArray(data.banners) && data.banners.length > 0) {
-            renderBannerSlides(data.banners);
-          } else if (data.img) {
-            renderBannerSlides([data.img]);
-          }
-        }
-      });
-
-      onSnapshot(collection(db, "garments"), (snapshot) => {
-        allProducts = snapshot.docs.map(d => {
-          const data = d.data();
-          return { id: d.id, ...data, images: data.images || (data.img ? [data.img] : []) };
-        });
+      onSnapshot(collection(db, "garments"), (snap) => {
+        allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         displayedProducts = [...allProducts];
         renderProducts();
       });
 
-      onSnapshot(collection(db, "orders"), (snapshot) => {
-        cloudOrders = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-        updateDeliveryBadge();
-        if (document.getElementById("deliveryModal")?.classList.contains("active")) renderDeliveryHub();
+      onSnapshot(collection(db, "orders"), (snap) => {
+        cloudOrders = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+        const active = cloudOrders.filter(o => o.status !== "delivered");
+        document.getElementById("activeDeliveryBadge").innerText = active.length;
       });
     }
 
-    function updateDeliveryBadge() {
-      const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
-      document.getElementById("activeDeliveryBadge").innerText = activeOrders.length;
-      document.getElementById("activeTabCount").innerText = activeOrders.length;
-      document.getElementById("deliveredTabCount").innerText = cloudOrders.filter(o => o.status === "delivered").length;
-    }
-
-    window.triggerHeroUpload = function() { document.getElementById("heroInput").click(); };
-
-    // Compress images directly to lightweight Base64 (completely free, saves in Firestore)
-    function fileToBase64(file, maxDim = 600, quality = 0.60) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
+    function fileToBase64(file, maxDim = 500) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            let w = img.width;
-            let h = img.height;
-            if (w > h && w > maxDim) {
-              h = Math.round((h * maxDim) / w);
-              w = maxDim;
-            } else if (h > maxDim) {
-              w = Math.round((w * maxDim) / h);
-              h = maxDim;
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL("image/jpeg", quality));
+            let w = img.width, h = img.height;
+            if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+            const cvs = document.createElement("canvas");
+            cvs.width = w; cvs.height = h;
+            cvs.getContext("2d").drawImage(img, 0, 0, w, h);
+            res(cvs.toDataURL("image/jpeg", 0.6));
           };
-          img.onerror = () => reject(new Error("Image read error"));
+          img.onerror = rej;
           img.src = e.target.result;
         };
-        reader.onerror = () => reject(new Error("File read error"));
-        reader.readAsDataURL(file);
+        r.onerror = rej;
+        r.readAsDataURL(file);
       });
     }
 
-    window.updateHeroImages = async function(e) {
-      const files = e.target.files;
-      if (!files || files.length === 0) return;
-
-      const editBtn = document.getElementById("heroEditBtn");
-      editBtn.innerText = "Processing...";
+    window.handleNewProduct = async (e) => {
+      e.preventDefault();
+      if (!currentAdminUser) return alert("Owner only");
+      const btn = document.getElementById("saveGarmentBtn");
+      btn.disabled = true;
+      btn.innerText = "Compressing photos...";
 
       try {
-        const bannerList = [];
+        const files = document.getElementById("newImgFiles").files;
+        const photos = [];
         for (let i = 0; i < files.length; i++) {
-          bannerList.push(await fileToBase64(files[i], 800, 0.65));
+          photos.push(await fileToBase64(files[i]));
         }
-
-        await setDoc(doc(db, "site_settings", "banner"), {
-          banners: bannerList,
-          img: bannerList[0],
-          updatedAt: Date.now()
+        await addDoc(collection(db, "garments"), {
+          name: document.getElementById("newTitle").value.trim(),
+          price: Number(document.getElementById("newPrice").value),
+          stock: Number(document.getElementById("newStock").value),
+          sizes: document.getElementById("newSizes").value.split(",").map(s => s.trim()),
+          images: photos,
+          createdAt: Date.now()
         });
-
-        alert("Hero banners updated!");
+        closeModal("addProductModal");
+        document.getElementById("newProductForm").reset();
+        alert("Garment added successfully!");
       } catch (err) {
-        alert("Error: " + err.message);
+        alert("Upload error: " + err.message);
       } finally {
-        editBtn.innerHTML = `<i class="fa-solid fa-camera"></i> Change Banners`;
-        e.target.value = "";
+        btn.disabled = false;
+        btn.innerText = "Save to Live Catalog";
       }
     };
 
-    window.handleSearch = function() {
-      const query = document.getElementById("searchInput").value.toLowerCase().trim();
-      displayedProducts = query ? allProducts.filter(p => (p.name || "").toLowerCase().includes(query)) : [...allProducts];
+    window.handleSearch = () => {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      displayedProducts = q ? allProducts.filter(p => (p.name || "").toLowerCase().includes(q)) : [...allProducts];
       renderProducts();
     };
 
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       if (!grid) return;
-      const isAuth = !!currentAdminUser;
       grid.innerHTML = "";
-
-      if (displayedProducts.length === 0) {
-        grid.innerHTML = `
-          <div style="grid-column:span 2; text-align:center; padding:40px 14px; background:#fff; border-radius:14px;">
-            <i class="fa-solid fa-shirt" style="font-size:2rem; color:#cbd5e1; margin-bottom:8px;"></i>
-            <div style="font-weight:700; color:var(--primary);">No garments in catalog</div>
-          </div>
-        `;
-        return;
-      }
-
       displayedProducts.forEach((p) => {
-        const images = (p.images && p.images.length > 0) ? p.images : [p.img || ""];
-        const activeImg = images[0] || "";
-
-        let thumbStripHtml = "";
-        if (images.length > 1) {
-          thumbStripHtml = `<div class="thumb-strip">` +
-            images.map((imgUrl, i) => `
-              <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" onclick="swapCardImage('${p.id}', '${imgUrl}', this)" />
-            `).join("") +
-          `</div>`;
-        }
-
-        const sizeOptions = (p.sizes && p.sizes.length > 0) ? p.sizes : ["S", "M", "L", "XL"];
-        const sizeSelectHtml = `
-          <select class="size-select" id="size-${p.id}">
-            ${sizeOptions.map(sz => `<option value="${sz}">${sz}</option>`).join("")}
-          </select>
-        `;
-
+        const img = (p.images && p.images[0]) || "";
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
+            <img class="card-img" src="${img}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge">${p.stock || 10} left</span>
           </div>
-          ${thumbStripHtml}
           <div class="card-body">
             <div class="item-name">${p.name}</div>
             <div class="item-price">₹${p.price}</div>
-            ${sizeSelectHtml}
-            <button class="order-btn" onclick="startOrder('${p.id}')">
-              <i class="fa-solid fa-bag-shopping"></i> Order
-            </button>
-            ${isAuth ? `<button class="delete-garment-btn" onclick="deleteGarment('${p.id}')"><i class="fa-solid fa-trash"></i> Delete</button>` : ''}
+            <button class="order-btn" onclick="startOrder('${p.id}')">Order</button>
+            ${currentAdminUser ? `<button class="delete-garment-btn" onclick="deleteGarment('${p.id}')">Delete</button>` : ''}
           </div>
         `;
         grid.appendChild(card);
       });
     }
 
-    window.swapCardImage = function(cardId, newSrc, el) {
-      document.getElementById(`card-img-${cardId}`).src = newSrc;
-      el.parentElement.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
-      el.classList.add('active');
+    window.deleteGarment = async (id) => {
+      if (confirm("Delete garment?")) await deleteDoc(doc(db, "garments", id));
     };
 
-    window.deleteGarment = async function(id) {
-      if (!confirm("Delete this garment?")) return;
-      try {
-        await deleteDoc(doc(db, "garments", id));
-        alert("Garment deleted.");
-      } catch (err) {
-        alert("Error: " + err.message);
-      }
-    };
-
-    window.handleNewProduct = async function(e) {
-      e.preventDefault();
-      if (!currentAdminUser) return alert("Only the owner can upload garments.");
-
-      const submitBtn = document.getElementById("saveGarmentBtn");
-      const title = document.getElementById("newTitle").value.trim();
-      const price = document.getElementById("newPrice").value.trim();
-      const stock = parseInt(document.getElementById("newStock").value.trim(), 10) || 1;
-      const sizes = document.getElementById("newSizes").value.split(",").map(s => s.trim()).filter(Boolean);
-      const files = document.getElementById("newImgFiles").files;
-
-      if (!files || files.length === 0) return alert("Select at least 1 image.");
-
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Processing photos...";
-
-      try {
-        const base64List = [];
-        for (let i = 0; i < files.length; i++) {
-          submitBtn.innerText = `Optimizing photo ${i + 1} of ${files.length}...`;
-          base64List.push(await fileToBase64(files[i], 600, 0.60));
-        }
-
-        submitBtn.innerText = "Saving to Live Catalog...";
-
-        await addDoc(collection(db, "garments"), {
-          name: title,
-          price: Number(price),
-          stock: Number(stock),
-          sizes: sizes.length > 0 ? sizes : ["S", "M", "L", "XL"],
-          img: base64List[0],
-          images: base64List,
-          createdAt: Date.now()
-        });
-
-        closeModal("addProductModal");
-        document.getElementById("newProductForm").reset();
-        alert(`Success! Garment added.`);
-      } catch (err) {
-        alert("Upload error: " + err.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Save Garment to Live Catalog";
-      }
-    };
-
-    window.startOrder = function(id) {
+    window.startOrder = (id) => {
       selectedProduct = allProducts.find(p => p.id === id);
       if (!selectedProduct) return;
-      selectedProduct.selectedSize = document.getElementById(`size-${id}`)?.value || "Standard";
-
       document.getElementById("orderItemTitle").innerText = selectedProduct.name;
-      document.getElementById("orderItemSize").innerText = "Size: " + selectedProduct.selectedSize;
       document.getElementById("orderItemPrice").innerText = "₹" + selectedProduct.price;
       document.getElementById("orderModal").classList.add("active");
     };
 
-    window.handleDirectOrderSubmit = async function(e) {
+    window.handleDirectOrderSubmit = async (e) => {
       e.preventDefault();
-      const submitBtn = document.getElementById("confirmOrderBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Placing Order...";
-
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
-      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
-
-      const orderData = {
-        orderId: newOrderId,
-        item: selectedProduct.name,
-        size: selectedProduct.selectedSize,
-        price: Number(selectedProduct.price),
-        photoUrl: (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.img || "",
-        paymentMethod: "Cash on Delivery (COD)",
-        customerName: document.getElementById("custName").value.trim(),
-        customerPhone: document.getElementById("custPhone").value.trim(),
-        customerArea: document.getElementById("custArea").value,
-        customerStreet: document.getElementById("custStreet").value.trim(),
-        deliveryOtp: generatedOtp,
-        status: "confirmed",
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        createdAt: Date.now()
-      };
-
       try {
-        const docRef = await addDoc(collection(db, "orders"), orderData);
-        orderData.firestoreId = docRef.id;
-
-        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-        localOrders.unshift({ ...orderData, photoUrl: "" });
-        localStorage.setItem("ifp_orders", JSON.stringify(localOrders.slice(0, 20)));
-
+        await addDoc(collection(db, "orders"), {
+          orderId: newOrderId,
+          item: selectedProduct.name,
+          price: Number(selectedProduct.price),
+          customerName: document.getElementById("custName").value.trim(),
+          customerPhone: document.getElementById("custPhone").value.trim(),
+          customerArea: document.getElementById("custArea").value,
+          customerStreet: document.getElementById("custStreet").value.trim(),
+          status: "confirmed",
+          createdAt: Date.now()
+        });
         closeModal("orderModal");
-        document.getElementById("directOrderForm").reset();
-        document.getElementById("confirmedOrderId").innerText = "Order ID: " + newOrderId;
-        document.getElementById("successModal").classList.add("active");
+        alert("Order placed! Order ID: " + newOrderId);
       } catch (err) {
         alert("Order error: " + err.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Confirm Order";
       }
     };
 
-    window.cancelOrder = async function(orderId) {
-      if (!confirm(`Cancel Order #${orderId}?`)) return;
-      let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-      localStorage.setItem("ifp_orders", JSON.stringify(localOrders.filter(o => o.orderId !== orderId)));
-
-      const targetOrder = cloudOrders.find(o => o.orderId === orderId);
-      if (targetOrder?.firestoreId) await deleteDoc(doc(db, "orders", targetOrder.firestoreId));
-      openOrdersModal();
-    };
-
-    window.initiateDeliveredOtp = function(orderId) {
-      const order = cloudOrders.find(o => o.orderId === orderId);
-      if (!order) return;
-
-      pendingDeliveryVerification = {
-        firestoreId: order.firestoreId || null,
-        orderId: order.orderId,
-        correctOtp: (order.deliveryOtp || "0000").toString()
-      };
-
-      document.getElementById("generatedOtpDisplay").innerText = pendingDeliveryVerification.correctOtp;
-      document.getElementById("enteredOtpInput").value = "";
-
-      const msg = encodeURIComponent(`Hello ${order.customerName}, your IFP order (${order.item}) verification OTP: ${pendingDeliveryVerification.correctOtp}`);
-      const cleanPhone = (order.customerPhone || "").replace(/[^0-9]/g, '');
-      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone}?text=${msg}`;
-      document.getElementById("otpModal").classList.add("active");
-    };
-
-    window.confirmDeliveredWithOtp = async function(e) {
-      e.preventDefault();
-      if (!pendingDeliveryVerification) return;
-
-      if (document.getElementById("enteredOtpInput").value.trim() !== pendingDeliveryVerification.correctOtp) {
-        alert("Incorrect OTP!");
-        return;
-      }
-
-      const { firestoreId } = pendingDeliveryVerification;
-      if (firestoreId) {
-        await updateDoc(doc(db, "orders", firestoreId), {
-          status: "delivered",
-          deliveredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        });
-      }
-
-      closeModal("otpModal");
-      alert("Order marked delivered!");
-      renderDeliveryHub();
-    };
-
-    window.switchDeliveryTab = function(tab) {
-      activeHubTab = tab;
-      document.getElementById("tabActiveDeliveriesBtn").classList.toggle("active", tab === "active");
-      document.getElementById("tabDeliveredBtn").classList.toggle("active", tab === "delivered");
-      document.getElementById("deliveryGroupContainer").style.display = tab === "active" ? "block" : "none";
-      document.getElementById("deliveredOrdersContainer").style.display = tab === "delivered" ? "block" : "none";
-      renderDeliveryHub();
-    };
-
-    window.openDeliveryDashboard = function() {
-      if (!currentAdminUser) return alert("Owner only.");
-      renderDeliveryHub();
+    window.openDeliveryDashboard = () => {
+      const container = document.getElementById("deliveryGroupContainer");
+      const active = cloudOrders.filter(o => o.status !== "delivered");
+      container.innerHTML = active.length === 0 ? `<p style="padding:20px;text-align:center;">No pending orders.</p>` : active.map(o => `
+        <div style="padding:10px; border-bottom:1px solid #eee;">
+          <strong>${o.customerName}</strong> (₹${o.price}) - ${o.item}<br>
+          <small>${o.customerPhone} • ${o.customerArea}</small><br>
+          <button style="margin-top:6px; background:#10b981; color:#fff; border:none; padding:4px 8px; border-radius:4px;" onclick="markDelivered('${o.firestoreId}')">Mark Delivered</button>
+        </div>
+      `).join("");
       document.getElementById("deliveryModal").classList.add("active");
     };
 
-    function renderDeliveryHub() {
-      const activeContainer = document.getElementById("deliveryGroupContainer");
-      const deliveredContainer = document.getElementById("deliveredOrdersContainer");
-      const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
-
-      if (activeOrders.length === 0) {
-        activeContainer.innerHTML = `<p style="text-align:center; padding:20px; color:var(--muted);">No active deliveries.</p>`;
-      } else {
-        const groups = activeOrders.reduce((acc, curr) => {
-          const area = curr.customerArea || "General Area";
-          if (!acc[area]) acc[area] = [];
-          acc[area].push(curr);
-          return acc;
-        }, {});
-
-        let html = "";
-        for (const [areaName, orders] of Object.entries(groups)) {
-          html += `
-            <div class="loc-group-card">
-              <div class="loc-group-header"><span>${areaName}</span><span>${orders.length} order(s)</span></div>
-          `;
-          orders.forEach(o => {
-            html += `
-              <div class="loc-order-item">
-                <div style="flex:1;">
-                  <div style="display:flex; justify-content:space-between;"><strong>${o.customerName}</strong><span style="color:#be123c;font-weight:800;">₹${o.price}</span></div>
-                  <div>${o.item} (Size: ${o.size}) • <strong>COD</strong></div>
-                  <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}">${o.customerPhone}</a></div>
-                  <button type="button" class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.orderId}')">Mark Delivered (OTP)</button>
-                </div>
-              </div>
-            `;
-          });
-          html += `</div>`;
-        }
-        activeContainer.innerHTML = html;
-      }
-
-      const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
-      deliveredContainer.innerHTML = deliveredOrders.length === 0 ? `<p style="text-align:center; padding:20px; color:var(--muted);">No delivered orders.</p>` : deliveredOrders.map(o => `
-        <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px;">
-          <div style="flex:1;">
-            <div style="display:flex; justify-content:space-between;"><strong>${o.item}</strong><span style="color:#10b981;font-weight:800;">Delivered</span></div>
-            <div style="font-size:0.75rem; color:var(--muted);">${o.customerName} • ₹${o.price}</div>
-          </div>
-        </div>
-      `).join("");
-      updateDeliveryBadge();
-    }
-
-    window.openOrdersModal = function() {
-      const container = document.getElementById("ordersListContainer");
-      const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-      container.innerHTML = orders.length === 0 ? `<p style="text-align:center; padding:20px; color:var(--muted);">No orders found.</p>` : orders.map(o => `
-        <div style="background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; border-left:4px solid #be123c;">
-          <div style="display:flex; justify-content:space-between;"><strong>${o.item}</strong><span style="color:#be123c;font-weight:800;">₹${o.price}</span></div>
-          <div style="color:var(--muted); font-size:0.75rem;">Size: ${o.size} • Order ID: ${o.orderId}</div>
-          <button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')">Cancel Order</button>
-        </div>
-      `).join("");
-      document.getElementById("myOrdersModal").classList.add("active");
+    window.markDelivered = async (id) => {
+      await updateDoc(doc(db, "orders", id), { status: "delivered" });
+      openDeliveryDashboard();
     };
 
-    window.openAddProductModal = function() { document.getElementById("addProductModal").classList.add("active"); };
-    window.closeModal = function(id) { document.getElementById(id)?.classList.remove("active"); };
+    window.openOrdersModal = () => document.getElementById("myOrdersModal").classList.add("active");
+    window.closeModal = (id) => document.getElementById(id)?.classList.remove("active");
 
-    checkAdminStatus();
-    evaluateMaintenanceScreen();
     initCloudSync();
   </script>
 
   <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW err:', err));
-      });
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
   </script>
 </body>
