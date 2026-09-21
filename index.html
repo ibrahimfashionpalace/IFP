@@ -488,7 +488,6 @@
   </header>
 
   <!-- Banner -->
-  <!-- Banner -->
   <div class="hero-container">
     <div class="banner-track" id="bannerTrack">
       <!-- Starts empty so the placeholder never flashes -->
@@ -511,7 +510,6 @@
   </div>
 
   <!-- Catalog -->
-  <!-- Catalog -->
   <main>
     <div class="products-grid" id="productsGrid">
       <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--primary); font-weight: 700; font-size: 0.9rem;">
@@ -520,6 +518,22 @@
       </div>
     </div>
   </main>
+
+  <!-- Welcome Popup Modal -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal-sheet" style="border-radius: 20px; margin: 20px auto; text-align: center; padding: 24px 18px;">
+      <div style="font-size: 2.5rem; margin-bottom: 8px;">✨</div>
+      <h2 style="font-size: 1.25rem; font-weight: 900; color: var(--primary); margin-bottom: 6px;">
+        Welcome to IBRAHIM Fashion Palace!
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 18px;">
+        Explore our latest collection of quality traditional and modern garments. Enjoy hassle-free Cash on Delivery across Charar-i-Sharief and nearby areas!
+      </p>
+      <button class="confirm-btn" style="background: linear-gradient(135deg, #1e1b4b, #312e81); padding: 10px;" onclick="dismissWelcomeModal()">
+        Start Shopping
+      </button>
+    </div>
+  </div>
 
   <!-- Modals -->
   <div class="modal-overlay" id="bannerModal">
@@ -1148,6 +1162,18 @@
 
     window.openOrdersModal = () => document.getElementById("myOrdersModal").classList.add("active");
     window.closeModal = (id) => document.getElementById(id)?.classList.remove("active");
+
+    // Welcome Popup handlers (shows once per session)
+    if (!sessionStorage.getItem("ifp_welcomed")) {
+      document.getElementById("welcomeModal")?.classList.add("active");
+    } else {
+      document.getElementById("welcomeModal")?.classList.remove("active");
+    }
+
+    window.dismissWelcomeModal = () => {
+      sessionStorage.setItem("ifp_welcomed", "true");
+      document.getElementById("welcomeModal")?.classList.remove("active");
+    };
 
     initCloudSync();
   </script>
