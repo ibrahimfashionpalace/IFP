@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBRAHIM Fashion Palace</title>
+  <title>IBRAHIM FASHION PALACE</title>
   
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
@@ -931,7 +931,7 @@
       });
     }
 
-    function fileToBase64(file, maxDim = 800) {
+    function fileToBase64(file, maxDim = 480) {
       return new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = (e) => {
@@ -943,7 +943,7 @@
             const cvs = document.createElement("canvas");
             cvs.width = w; cvs.height = h;
             cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.7));
+            res(cvs.toDataURL("image/jpeg", 0.55));
           };
           img.onerror = rej;
           img.src = e.target.result;
@@ -1120,7 +1120,7 @@
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" src="${img}" alt="${p.name}" />
+            <img class="card-img" src="${img}" alt="${p.name}" loading="lazy" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge" style="${isOutOfStock ? 'background:#ef4444; color:#fff;' : ''}">
               ${isOutOfStock ? 'Out of Stock' : (currentStock + ' in stock')}
