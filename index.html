@@ -499,6 +499,7 @@
   <div class="admin-bar" id="adminBar">
     <button class="delivery-btn" onclick="openDeliveryDashboard()"><i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub</button>
     <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()"><i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance</button>
+    <button onclick="openBannerManagerModal()"><i class="fa-solid fa-images"></i> Edit Banners</button>
     <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add Garment</button>
     <button class="lock-btn" onclick="lockAdmin()"><i class="fa-solid fa-lock"></i> Lock Admin</button>
   </div>
@@ -509,6 +510,37 @@
   </main>
 
   <!-- Modals -->
+  <div class="modal-overlay" id="bannerModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>Manage Swipable Banners</h3>
+        <button class="close-btn" onclick="closeModal('bannerModal')">&times;</button>
+      </div>
+      <form id="newBannerForm" onsubmit="handleNewBanner(event)">
+        <div class="form-group">
+          <label>Banner Image *</label>
+          <input type="file" id="bannerImgFile" accept="image/*" required />
+        </div>
+        <div class="form-group">
+          <label>Tag (e.g. New Arrivals, 20% OFF)</label>
+          <input type="text" id="bannerTag" placeholder="Exclusive Fashion" />
+        </div>
+        <div class="form-group">
+          <label>Banner Title *</label>
+          <input type="text" id="bannerTitle" placeholder="Special Collection" required />
+        </div>
+        <div class="form-group">
+          <label>Banner Subtitle</label>
+          <input type="text" id="bannerSubtitle" placeholder="Traditional & modern wear" />
+        </div>
+        <button type="submit" id="saveBannerBtn" class="confirm-btn" style="background:var(--primary);">Add Banner Slide</button>
+      </form>
+      <hr style="margin:16px 0; border:none; border-top:1px solid #f1f5f9;" />
+      <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary);">Active Banners</h4>
+      <div id="bannerListAdmin"></div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="loginModal">
     <div class="modal-sheet" style="border-radius:20px; margin:16px;">
       <div class="modal-head">
@@ -638,16 +670,20 @@
     let allProducts = [];
     let displayedProducts = [];
     let cloudOrders = [];
+    let cloudBanners = [];
     let selectedProduct = null;
     let isMaintenanceActive = false;
     let currentAdminUser = null;
     let tapCount = 0;
     let tapTimer = null;
+    let bannerInterval = null;
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
       updateAdminUI();
       evaluateMaintenanceScreen();
+      renderProducts();
+      renderAdminBannerList();
     });
 
     function updateAdminUI() {
@@ -711,6 +747,8 @@
       currentAdminUser = null;
       updateAdminUI();
       evaluateMaintenanceScreen();
+      renderProducts();
+      renderAdminBannerList();
     };
 
     window.toggleMaintenanceMode = async () => {
@@ -734,6 +772,12 @@
         updateAdminUI();
       });
 
+      onSnapshot(collection(db, "banners"), (snap) => {
+        cloudBanners = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderBanners();
+        renderAdminBannerList();
+      });
+
       onSnapshot(collection(db, "garments"), (snap) => {
         allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         displayedProducts = [...allProducts];
@@ -747,7 +791,7 @@
       });
     }
 
-    function fileToBase64(file, maxDim = 500) {
+    function fileToBase64(file, maxDim = 800) {
       return new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = (e) => {
@@ -759,7 +803,7 @@
             const cvs = document.createElement("canvas");
             cvs.width = w; cvs.height = h;
             cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.6));
+            res(cvs.toDataURL("image/jpeg", 0.7));
           };
           img.onerror = rej;
           img.src = e.target.result;
@@ -768,6 +812,100 @@
         r.readAsDataURL(file);
       });
     }
+
+    function renderBanners() {
+      const track = document.getElementById("bannerTrack");
+      if (!track) return;
+      if (cloudBanners.length === 0) {
+        track.innerHTML = `
+          <div class="banner-slide">
+            <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner" />
+            <div class="hero-overlay">
+              <span class="hero-tag">Exclusive Fashion</span>
+              <div class="hero-title">New Garment Collection</div>
+              <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional & modern wear • Cash on Delivery</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      track.innerHTML = cloudBanners.map(b => `
+        <div class="banner-slide">
+          <img class="hero-img" src="${b.image}" alt="${b.title || 'Banner'}" />
+          <div class="hero-overlay">
+            ${b.tag ? `<span class="hero-tag">${b.tag}</span>` : ''}
+            <div class="hero-title">${b.title || ''}</div>
+            ${b.subtitle ? `<p style="font-size: 0.75rem; color: #fbcfe8;">${b.subtitle}</p>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      clearInterval(bannerInterval);
+      if (cloudBanners.length > 1) {
+        bannerInterval = setInterval(() => {
+          if (!track) return;
+          const maxScroll = track.scrollWidth - track.clientWidth;
+          if (track.scrollLeft >= maxScroll - 5) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+          }
+        }, 4000);
+      }
+    }
+
+    function renderAdminBannerList() {
+      const container = document.getElementById("bannerListAdmin");
+      if (!container) return;
+      if (cloudBanners.length === 0) {
+        container.innerHTML = `<p style="font-size:0.75rem; color:var(--muted);">No custom banners uploaded.</p>`;
+        return;
+      }
+      container.innerHTML = cloudBanners.map(b => `
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; padding:6px; background:#f8fafc; border-radius:8px;">
+          <img src="${b.image}" style="width:50px; height:32px; object-fit:cover; border-radius:4px;" />
+          <span style="font-size:0.78rem; font-weight:700; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</span>
+          <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;" onclick="deleteBanner('${b.id}')">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    window.openBannerManagerModal = () => {
+      renderAdminBannerList();
+      document.getElementById("bannerModal").classList.add("active");
+    };
+
+    window.handleNewBanner = async (e) => {
+      e.preventDefault();
+      if (!currentAdminUser) return alert("Owner only");
+      const btn = document.getElementById("saveBannerBtn");
+      btn.disabled = true;
+      btn.innerText = "Uploading banner...";
+      try {
+        const file = document.getElementById("bannerImgFile").files[0];
+        const base64Img = await fileToBase64(file, 900);
+        await addDoc(collection(db, "banners"), {
+          image: base64Img,
+          tag: document.getElementById("bannerTag").value.trim(),
+          title: document.getElementById("bannerTitle").value.trim(),
+          subtitle: document.getElementById("bannerSubtitle").value.trim(),
+          createdAt: Date.now()
+        });
+        document.getElementById("newBannerForm").reset();
+        alert("Banner added successfully!");
+      } catch (err) {
+        alert("Error uploading banner: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Add Banner Slide";
+      }
+    };
+
+    window.deleteBanner = async (id) => {
+      if (confirm("Delete this banner?")) {
+        await deleteDoc(doc(db, "banners", id));
+      }
+    };
 
     window.handleNewProduct = async (e) => {
       e.preventDefault();
@@ -835,6 +973,8 @@
     window.deleteGarment = async (id) => {
       if (confirm("Delete garment?")) await deleteDoc(doc(db, "garments", id));
     };
+
+    window.openAddProductModal = () => document.getElementById("addProductModal").classList.add("active");
 
     window.startOrder = (id) => {
       selectedProduct = allProducts.find(p => p.id === id);
