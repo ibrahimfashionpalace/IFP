@@ -276,6 +276,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
     .card-img-wrap {
       position: relative;
@@ -320,19 +321,27 @@
       flex-grow: 1;
       gap: 6px;
       background: #ffffff;
+      position: relative;
+      z-index: 1;
     }
     .item-name { font-size: 0.85rem; font-weight: 700; color: #111827; }
     .item-price { font-size: 1rem; font-weight: 800; color: #be123c; }
     .variant-select {
       width: 100%;
-      padding: 5px;
-      font-size: 0.75rem;
+      padding: 6px 8px;
+      font-size: 0.8rem;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       outline: none;
-      background: #fdf2f8;
+      background: #ffffff;
       color: var(--primary);
       font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      z-index: 5;
+      touch-action: manipulation;
+      -webkit-appearance: menulist;
+      appearance: menulist;
     }
     .order-btn {
       margin-top: 4px;
@@ -943,12 +952,19 @@
         for (let i = 0; i < files.length; i++) {
           photos.push(await fileToBase64(files[i]));
         }
+
+        const rawSizes = document.getElementById("newSizes").value;
+        const parsedSizes = rawSizes.split(",").map(s => s.trim()).filter(Boolean);
+
+        const rawColors = document.getElementById("newColors").value;
+        const parsedColors = rawColors.split(",").map(c => c.trim()).filter(Boolean);
+
         await addDoc(collection(db, "garments"), {
           name: document.getElementById("newTitle").value.trim(),
           price: Number(document.getElementById("newPrice").value),
           stock: Number(document.getElementById("newStock").value),
-          sizes: document.getElementById("newSizes").value.split(",").map(s => s.trim()).filter(Boolean),
-          colors: document.getElementById("newColors").value.split(",").map(c => c.trim()).filter(Boolean),
+          sizes: parsedSizes.length > 0 ? parsedSizes : ["Standard"],
+          colors: parsedColors.length > 0 ? parsedColors : ["Standard"],
           images: photos,
           createdAt: Date.now()
         });
@@ -975,8 +991,20 @@
       grid.innerHTML = "";
       displayedProducts.forEach((p) => {
         const img = (p.images && p.images[0]) || "";
-        const sizes = (p.sizes && p.sizes.length > 0) ? p.sizes : ["Free Size"];
-        const colors = (p.colors && p.colors.length > 0) ? p.colors : ["Standard"];
+        
+        let sizesList = ["Standard"];
+        if (Array.isArray(p.sizes) && p.sizes.length > 0) {
+          sizesList = p.sizes;
+        } else if (typeof p.sizes === "string" && p.sizes.trim()) {
+          sizesList = p.sizes.split(",").map(s => s.trim()).filter(Boolean);
+        }
+
+        let colorsList = ["Standard"];
+        if (Array.isArray(p.colors) && p.colors.length > 0) {
+          colorsList = p.colors;
+        } else if (typeof p.colors === "string" && p.colors.trim()) {
+          colorsList = p.colors.split(",").map(c => c.trim()).filter(Boolean);
+        }
 
         const card = document.createElement("div");
         card.className = "card";
@@ -992,12 +1020,12 @@
             
             <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Size:</label>
             <select class="variant-select" id="sizeSelect_${p.id}">
-              ${sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
+              ${sizesList.map(s => `<option value="${s}">${s}</option>`).join("")}
             </select>
 
             <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Color:</label>
             <select class="variant-select" id="colorSelect_${p.id}">
-              ${colors.map(c => `<option value="${c}">${c}</option>`).join("")}
+              ${colorsList.map(c => `<option value="${c}">${c}</option>`).join("")}
             </select>
 
             <button class="order-btn" onclick="startOrder('${p.id}')">Place Order</button>
@@ -1018,8 +1046,11 @@
       const product = allProducts.find(p => p.id === id);
       if (!product) return;
 
-      const size = document.getElementById(`sizeSelect_${id}`)?.value || "Standard";
-      const color = document.getElementById(`colorSelect_${id}`)?.value || "Standard";
+      const sizeSelect = document.getElementById(`sizeSelect_${id}`);
+      const colorSelect = document.getElementById(`colorSelect_${id}`);
+
+      const size = sizeSelect ? sizeSelect.value : "Standard";
+      const color = colorSelect ? colorSelect.value : "Standard";
 
       activeOrderData = {
         id: product.id,
@@ -1032,7 +1063,6 @@
       document.getElementById("orderItemSummary").innerText = `${product.name} (Size: ${size}, Color: ${color})`;
       document.getElementById("orderItemPrice").innerText = "₹" + product.price;
 
-      // Reset modal views
       document.getElementById("orderFormWrapper").style.display = "block";
       document.getElementById("orderSuccessMessage").style.display = "none";
       document.getElementById("directOrderForm").reset();
@@ -1064,9 +1094,8 @@
           createdAt: Date.now()
         });
 
-        // Show thank you screen
         document.getElementById("orderFormWrapper").style.display = "none";
-        document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • Item: ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
+        document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
         document.getElementById("orderSuccessMessage").style.display = "block";
       } catch (err) {
         alert("Order error: " + err.message);
@@ -1101,10 +1130,12 @@
     initCloudSync();
   </script>
 
-  <!-- Service Worker -->
+  <!-- Service Worker Registration Guard -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    if ('serviceWorker' in navigator && window.isSecureContext) {
+      try {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      } catch (e) {}
     }
   </script>
 </body>
