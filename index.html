@@ -365,14 +365,14 @@
       cursor: pointer;
     }
     .modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  z-index: 100000;
-  align-items: flex-end;
-  justify-content: center;
-}
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 100000;
+      align-items: flex-end;
+      justify-content: center;
+    }
     .modal-overlay.active { display: flex; }
     .modal-sheet {
       background: #fff;
@@ -746,6 +746,7 @@
     let tapCount = 0;
     let tapTimer = null;
     let bannerInterval = null;
+    let currentDeliveryFilter = "pending";
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
@@ -1123,8 +1124,11 @@
       confirmBtn.innerText = "Placing order...";
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
+      const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+
       const newOrder = {
         orderId: newOrderId,
+        otp: generatedOtp,
         item: activeOrderData.name,
         size: activeOrderData.selectedSize,
         color: activeOrderData.selectedColor,
@@ -1163,23 +1167,90 @@
       }
     };
 
+    window.setDeliveryTab = (tab) => {
+      currentDeliveryFilter = tab;
+      openDeliveryDashboard();
+    };
+
     window.openDeliveryDashboard = () => {
       const container = document.getElementById("deliveryGroupContainer");
-      const active = cloudOrders.filter(o => o.status !== "delivered");
-      container.innerHTML = active.length === 0 ? `<p style="padding:20px;text-align:center;">No pending orders.</p>` : active.map(o => `
-        <div style="padding:10px; border-bottom:1px solid #eee;">
-          <strong>${o.customerName}</strong> (₹${o.price}) - ${o.item}<br>
-          <small>Size: ${o.size || 'N/A'} | Color: ${o.color || 'N/A'}</small><br>
-          <small>${o.customerPhone} • ${o.customerArea}</small><br>
-          <button style="margin-top:6px; background:#10b981; color:#fff; border:none; padding:4px 8px; border-radius:4px;" onclick="markDelivered('${o.firestoreId}')">Mark Delivered</button>
+      if (!container) return;
+
+      const pendingOrders = cloudOrders.filter(o => o.status !== "delivered");
+      const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
+
+      let html = `
+        <div style="display:flex; gap:8px; margin-bottom:14px;">
+          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:8px; border-radius:8px; border:none; font-weight:700; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
+            Pending (${pendingOrders.length})
+          </button>
+          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:8px; border-radius:8px; border:none; font-weight:700; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
+            Delivered Orders (${deliveredOrders.length})
+          </button>
         </div>
-      `).join("");
+      `;
+
+      const listToDisplay = currentDeliveryFilter === "pending" ? pendingOrders : deliveredOrders;
+
+      if (listToDisplay.length === 0) {
+        html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No ${currentDeliveryFilter} orders.</p>`;
+      } else {
+        html += listToDisplay.map(o => `
+          <div style="padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:10px; background:#fff;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <strong style="color:var(--primary); font-size:0.95rem;">${o.customerName}</strong>
+                <span style="font-size:0.75rem; color:var(--muted); display:block;">Order: #${o.orderId}</span>
+              </div>
+              <strong style="color:#be123c; font-size:1rem;">₹${o.price}</strong>
+            </div>
+
+            <div style="font-size:0.8rem; color:#334155; margin:6px 0;">
+              <b>${o.item}</b> (${o.size} / ${o.color})<br>
+              <i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i> ${o.customerStreet}, ${o.customerArea}<br>
+              <i class="fa-solid fa-phone" style="color:var(--accent);"></i> ${o.customerPhone}
+            </div>
+
+            ${currentDeliveryFilter === 'pending' ? `
+              <button style="width:100%; margin-top:8px; background:#0284c7; color:#fff; border:none; padding:9px; border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;" onclick="initiateDelivery('${o.firestoreId}', '${o.customerPhone}', '${o.otp || ''}', '${o.item}', '${o.customerName}')">
+                <i class="fa-solid fa-paper-plane"></i> Deliver (Send OTP)
+              </button>
+            ` : `
+              <div style="font-size:0.75rem; color:#10b981; font-weight:700; margin-top:6px;">
+                <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+              </div>
+            `}
+          </div>
+        `).join("");
+      }
+
+      container.innerHTML = html;
       document.getElementById("deliveryModal").classList.add("active");
     };
 
-    window.markDelivered = async (id) => {
-      await updateDoc(doc(db, "orders", id), { status: "delivered" });
-      openDeliveryDashboard();
+    window.initiateDelivery = async (firestoreId, phone, realOtp, itemName, custName) => {
+      const cleanPhone = phone.replace(/[^0-9]/g, "");
+      const fullPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
+      const message = encodeURIComponent(`Hello ${custName},\nYour delivery partner is at your doorstep with your order (${itemName}) from IBRAHIM Fashion Palace.\n\nYour Delivery Confirmation OTP is: ${realOtp}\n\nPlease share this OTP with the rider to receive your parcel.`);
+      
+      window.open(`https://wa.me/${fullPhone}?text=${message}`, "_blank");
+
+      setTimeout(async () => {
+        const enteredOtp = prompt(`Enter the 4-digit OTP provided by ${custName} to confirm delivery:`);
+        
+        if (!enteredOtp) return;
+
+        if (enteredOtp.trim() === String(realOtp).trim()) {
+          await updateDoc(doc(db, "orders", firestoreId), { 
+            status: "delivered",
+            deliveredAt: Date.now()
+          });
+          alert("OTP Verified! Order moved to 'Delivered Orders'.");
+          openDeliveryDashboard();
+        } else {
+          alert("Incorrect OTP! Delivery not completed.");
+        }
+      }, 800);
     };
 
     // My Orders handler
