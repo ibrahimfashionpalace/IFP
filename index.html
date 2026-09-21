@@ -488,16 +488,10 @@
   </header>
 
   <!-- Banner -->
+  <!-- Banner -->
   <div class="hero-container">
     <div class="banner-track" id="bannerTrack">
-      <div class="banner-slide">
-        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner" />
-        <div class="hero-overlay">
-          <span class="hero-tag">Exclusive Fashion</span>
-          <div class="hero-title">New Garment Collection</div>
-          <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional & modern wear • Cash on Delivery</p>
-        </div>
-      </div>
+      <!-- Starts empty so the placeholder never flashes -->
     </div>
   </div>
 
@@ -517,8 +511,14 @@
   </div>
 
   <!-- Catalog -->
+  <!-- Catalog -->
   <main>
-    <div class="products-grid" id="productsGrid"></div>
+    <div class="products-grid" id="productsGrid">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--primary); font-weight: 700; font-size: 0.9rem;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.8rem; margin-bottom: 10px; display: block; color: var(--accent);"></i>
+        Loading collection...
+      </div>
+    </div>
   </main>
 
   <!-- Modals -->
