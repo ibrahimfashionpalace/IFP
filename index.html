@@ -318,20 +318,24 @@
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      gap: 4px;
+      gap: 6px;
       background: #ffffff;
     }
     .item-name { font-size: 0.85rem; font-weight: 700; color: #111827; }
     .item-price { font-size: 1rem; font-weight: 800; color: #be123c; }
-    .size-select {
+    .variant-select {
       width: 100%;
       padding: 5px;
       font-size: 0.75rem;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
+      outline: none;
+      background: #fdf2f8;
+      color: var(--primary);
+      font-weight: 600;
     }
     .order-btn {
-      margin-top: 6px;
+      margin-top: 4px;
       background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff;
       border: none;
@@ -350,7 +354,6 @@
       font-size: 0.72rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 4px;
     }
     .modal-overlay {
       display: none;
@@ -577,15 +580,19 @@
           <input type="number" id="newPrice" required />
         </div>
         <div class="form-group">
-          <label>Stock Available *</label>
+          <label>Number of Products Available (Stock) *</label>
           <input type="number" id="newStock" required value="10" />
         </div>
         <div class="form-group">
-          <label>Sizes (comma separated) *</label>
+          <label>Available Sizes (comma separated) *</label>
           <input type="text" id="newSizes" required value="S, M, L, XL" />
         </div>
         <div class="form-group">
-          <label>Garment Photos *</label>
+          <label>Available Colors (comma separated) *</label>
+          <input type="text" id="newColors" required value="Red, Blue, Black, Green" />
+        </div>
+        <div class="form-group">
+          <label>Garment Photos (Multiple allowed) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save to Live Catalog</button>
@@ -593,32 +600,48 @@
     </div>
   </div>
 
+  <!-- Place & Confirm Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
-        <h3>Confirm Order</h3>
+        <h3>Place Order</h3>
         <button class="close-btn" onclick="closeModal('orderModal')">&times;</button>
       </div>
-      <div style="padding:10px; background:#fdf2f8; border-radius:8px; margin-bottom:12px;">
-        <div id="orderItemTitle" style="font-weight:800;"></div>
-        <div id="orderItemPrice" style="color:#be123c; font-weight:800; font-size:1.1rem; margin-top:4px;"></div>
-      </div>
-      <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
-        <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required /></div>
-        <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required /></div>
-        <div class="form-group">
-          <label>Delivery Area *</label>
-          <select id="custArea" required>
-            <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
-            <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
-            <option value="Gulshanabad">Gulshanabad</option>
-            <option value="Chadoora">Chadoora</option>
-            <option value="Other Area">Other Area</option>
-          </select>
+
+      <div id="orderFormWrapper">
+        <div style="padding:12px; background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; margin-bottom:14px;">
+          <div style="font-size:0.85rem; color:#881337; font-weight:700; margin-bottom:4px;">You have placed order for:</div>
+          <div id="orderItemSummary" style="font-size:1rem; font-weight:800; color:#1e1b4b;"></div>
+          <div id="orderItemPrice" style="color:#be123c; font-weight:800; font-size:1.15rem; margin-top:4px;"></div>
         </div>
-        <div class="form-group"><label>Address / Landmark *</label><input type="text" id="custStreet" required /></div>
-        <button type="submit" class="confirm-btn">Confirm Order (COD)</button>
-      </form>
+
+        <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
+          <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required /></div>
+          <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required /></div>
+          <div class="form-group">
+            <label>Delivery Area *</label>
+            <select id="custArea" required>
+              <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
+              <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
+              <option value="Gulshanabad">Gulshanabad</option>
+              <option value="Chadoora">Chadoora</option>
+              <option value="Other Area">Other Area</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Address / Landmark *</label><input type="text" id="custStreet" required /></div>
+          <button type="submit" id="confirmOrderBtn" class="confirm-btn">Confirm Order (COD)</button>
+        </form>
+      </div>
+
+      <!-- Confirmation Message -->
+      <div id="orderSuccessMessage" style="display:none; text-align:center; padding:24px 10px;">
+        <i class="fa-solid fa-circle-check" style="font-size:3.5rem; color:#10b981; margin-bottom:12px;"></i>
+        <h3 style="font-size:1.25rem; font-weight:800; color:var(--primary); margin-bottom:8px;">Your order is confirmed!</h3>
+        <p style="font-size:0.95rem; color:var(--text); margin-bottom:6px;">Thank you for shopping with us.</p>
+        <p id="confirmedOrderId" style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-bottom:20px;"></p>
+        <button class="confirm-btn" style="background:var(--primary);" onclick="closeModal('orderModal')">Back to Shopping</button>
+      </div>
+
     </div>
   </div>
 
@@ -671,7 +694,7 @@
     let displayedProducts = [];
     let cloudOrders = [];
     let cloudBanners = [];
-    let selectedProduct = null;
+    let activeOrderData = null;
     let isMaintenanceActive = false;
     let currentAdminUser = null;
     let tapCount = 0;
@@ -924,7 +947,8 @@
           name: document.getElementById("newTitle").value.trim(),
           price: Number(document.getElementById("newPrice").value),
           stock: Number(document.getElementById("newStock").value),
-          sizes: document.getElementById("newSizes").value.split(",").map(s => s.trim()),
+          sizes: document.getElementById("newSizes").value.split(",").map(s => s.trim()).filter(Boolean),
+          colors: document.getElementById("newColors").value.split(",").map(c => c.trim()).filter(Boolean),
           images: photos,
           createdAt: Date.now()
         });
@@ -951,18 +975,32 @@
       grid.innerHTML = "";
       displayedProducts.forEach((p) => {
         const img = (p.images && p.images[0]) || "";
+        const sizes = (p.sizes && p.sizes.length > 0) ? p.sizes : ["Free Size"];
+        const colors = (p.colors && p.colors.length > 0) ? p.colors : ["Standard"];
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
             <img class="card-img" src="${img}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
-            <span class="stock-badge">${p.stock || 10} left</span>
+            <span class="stock-badge">${p.stock || 0} in stock</span>
           </div>
           <div class="card-body">
             <div class="item-name">${p.name}</div>
             <div class="item-price">₹${p.price}</div>
-            <button class="order-btn" onclick="startOrder('${p.id}')">Order</button>
+            
+            <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Size:</label>
+            <select class="variant-select" id="sizeSelect_${p.id}">
+              ${sizes.map(s => `<option value="${s}">${s}</option>`).join("")}
+            </select>
+
+            <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Color:</label>
+            <select class="variant-select" id="colorSelect_${p.id}">
+              ${colors.map(c => `<option value="${c}">${c}</option>`).join("")}
+            </select>
+
+            <button class="order-btn" onclick="startOrder('${p.id}')">Place Order</button>
             ${currentAdminUser ? `<button class="delete-garment-btn" onclick="deleteGarment('${p.id}')">Delete</button>` : ''}
           </div>
         `;
@@ -977,21 +1015,47 @@
     window.openAddProductModal = () => document.getElementById("addProductModal").classList.add("active");
 
     window.startOrder = (id) => {
-      selectedProduct = allProducts.find(p => p.id === id);
-      if (!selectedProduct) return;
-      document.getElementById("orderItemTitle").innerText = selectedProduct.name;
-      document.getElementById("orderItemPrice").innerText = "₹" + selectedProduct.price;
+      const product = allProducts.find(p => p.id === id);
+      if (!product) return;
+
+      const size = document.getElementById(`sizeSelect_${id}`)?.value || "Standard";
+      const color = document.getElementById(`colorSelect_${id}`)?.value || "Standard";
+
+      activeOrderData = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        selectedSize: size,
+        selectedColor: color
+      };
+
+      document.getElementById("orderItemSummary").innerText = `${product.name} (Size: ${size}, Color: ${color})`;
+      document.getElementById("orderItemPrice").innerText = "₹" + product.price;
+
+      // Reset modal views
+      document.getElementById("orderFormWrapper").style.display = "block";
+      document.getElementById("orderSuccessMessage").style.display = "none";
+      document.getElementById("directOrderForm").reset();
+
       document.getElementById("orderModal").classList.add("active");
     };
 
     window.handleDirectOrderSubmit = async (e) => {
       e.preventDefault();
+      if (!activeOrderData) return;
+
+      const confirmBtn = document.getElementById("confirmOrderBtn");
+      confirmBtn.disabled = true;
+      confirmBtn.innerText = "Placing order...";
+
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
       try {
         await addDoc(collection(db, "orders"), {
           orderId: newOrderId,
-          item: selectedProduct.name,
-          price: Number(selectedProduct.price),
+          item: activeOrderData.name,
+          size: activeOrderData.selectedSize,
+          color: activeOrderData.selectedColor,
+          price: Number(activeOrderData.price),
           customerName: document.getElementById("custName").value.trim(),
           customerPhone: document.getElementById("custPhone").value.trim(),
           customerArea: document.getElementById("custArea").value,
@@ -999,10 +1063,16 @@
           status: "confirmed",
           createdAt: Date.now()
         });
-        closeModal("orderModal");
-        alert("Order placed! Order ID: " + newOrderId);
+
+        // Show thank you screen
+        document.getElementById("orderFormWrapper").style.display = "none";
+        document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • Item: ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
+        document.getElementById("orderSuccessMessage").style.display = "block";
       } catch (err) {
         alert("Order error: " + err.message);
+      } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Confirm Order (COD)";
       }
     };
 
@@ -1012,6 +1082,7 @@
       container.innerHTML = active.length === 0 ? `<p style="padding:20px;text-align:center;">No pending orders.</p>` : active.map(o => `
         <div style="padding:10px; border-bottom:1px solid #eee;">
           <strong>${o.customerName}</strong> (₹${o.price}) - ${o.item}<br>
+          <small>Size: ${o.size || 'N/A'} | Color: ${o.color || 'N/A'}</small><br>
           <small>${o.customerPhone} • ${o.customerArea}</small><br>
           <button style="margin-top:6px; background:#10b981; color:#fff; border:none; padding:4px 8px; border-radius:4px;" onclick="markDelivered('${o.firestoreId}')">Mark Delivered</button>
         </div>
