@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBRAHIM Fashion Palace</title>
   
-  <!-- Browser Tab Favicon & Apple Touch Icon -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
-<link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png" />
-<link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png" />
 
-  <!-- PWA Manifest & Mobile Capability Tags -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#312e81" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -69,7 +67,6 @@
       position: relative;
       flex-shrink: 0;
     }
-    
     .brand-logo-badge {
       width: 50px;
       height: 50px;
@@ -90,7 +87,6 @@
       overflow: hidden;
       padding: 0;
     }
-
     .brand-logo-badge img {
       width: 100% !important;
       height: 100% !important;
@@ -101,11 +97,8 @@
       border-radius: 50%;
       border: none;
       outline: none;
-      transform: none !important;
     }
-    .brand-logo-badge:active {
-      transform: scale(0.92);
-    }
+    .brand-logo-badge:active { transform: scale(0.92); }
 
     .ifp-dropdown-menu {
       display: none;
@@ -120,14 +113,9 @@
       overflow: hidden;
       border: 1px solid #cbd5e1;
     }
-    .ifp-dropdown-menu.active {
-      display: block;
-      animation: fadeInDown 0.2s ease-out;
-    }
+    .ifp-dropdown-menu.active { display: block; animation: fadeInDown 0.2s ease-out; }
 
-    .right-menu-container {
-      position: relative;
-    }
+    .right-menu-container { position: relative; }
     .more-options-menu {
       display: none;
       position: absolute;
@@ -141,10 +129,7 @@
       overflow: hidden;
       border: 1px solid #cbd5e1;
     }
-    .more-options-menu.active {
-      display: block;
-      animation: fadeInDown 0.2s ease-out;
-    }
+    .more-options-menu.active { display: block; animation: fadeInDown 0.2s ease-out; }
     .more-options-item, .ifp-dropdown-item {
       display: flex;
       align-items: center;
@@ -157,24 +142,15 @@
       cursor: pointer;
       border-bottom: 1px solid #f1f5f9;
       background: #ffffff;
-      transition: background 0.15s ease;
     }
-    .more-options-item:last-child, .ifp-dropdown-item:last-child {
-      border-bottom: none;
-    }
-    .more-options-item:hover, .more-options-item:active,
-    .ifp-dropdown-item:hover, .ifp-dropdown-item:active {
-      background: #fdf2f8;
-      color: var(--accent-pink);
-    }
+    .more-options-item:last-child, .ifp-dropdown-item:last-child { border-bottom: none; }
+    .more-options-item:hover, .ifp-dropdown-item:hover { background: #fdf2f8; color: var(--accent-pink); }
 
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .brand-text-block {
-      flex: 1;
-    }
+    .brand-text-block { flex: 1; }
     .brand-title {
       font-size: 1.08rem;
       font-weight: 900;
@@ -209,7 +185,6 @@
       align-items: center;
       gap: 5px;
     }
-    .nav-btn:hover { background: rgba(255, 255, 255, 0.25); }
     .badge-count {
       background: #ef4444;
       color: white;
@@ -235,9 +210,7 @@
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
     }
-    .banner-track::-webkit-scrollbar {
-      display: none;
-    }
+    .banner-track::-webkit-scrollbar { display: none; }
     .banner-slide {
       flex: 0 0 100%;
       position: relative;
@@ -275,12 +248,7 @@
       margin-bottom: 6px;
       text-transform: uppercase;
     }
-    .hero-title {
-      font-size: 1.18rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-    
+    .hero-title { font-size: 1.18rem; font-weight: 800; color: #ffffff; }
     .banner-nav-btn {
       position: absolute;
       top: 50%;
@@ -297,15 +265,9 @@
       justify-content: center;
       font-size: 0.8rem;
       z-index: 10;
-      backdrop-filter: blur(2px);
-      transition: background 0.2s ease;
-    }
-    .banner-nav-btn:hover {
-      background: rgba(225, 29, 72, 0.85);
     }
     .banner-nav-prev { left: 8px; }
     .banner-nav-next { right: 8px; }
-
     .banner-dots {
       position: absolute;
       bottom: 8px;
@@ -322,11 +284,7 @@
       background: rgba(255, 255, 255, 0.4);
       transition: all 0.2s ease;
     }
-    .banner-dot.active {
-      background: #fbbf24;
-      width: 18px;
-      border-radius: 10px;
-    }
+    .banner-dot.active { background: #fbbf24; width: 18px; border-radius: 10px; }
 
     .hero-edit-btn {
       display: none;
@@ -344,10 +302,7 @@
       z-index: 15;
     }
 
-    .search-wrap {
-      margin: 0 14px 14px;
-      position: relative;
-    }
+    .search-wrap { margin: 0 14px 14px; position: relative; }
     .search-input {
       width: 100%;
       padding: 12px 14px 12px 40px;
@@ -356,7 +311,6 @@
       background: #ffffff;
       outline: none;
       font-size: 0.85rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     .search-icon {
       position: absolute;
@@ -388,25 +342,9 @@
       justify-content: center;
       gap: 6px;
     }
-    .admin-bar button.delivery-btn {
-      background: #0284c7;
-      color: #ffffff;
-      border: none;
-      flex: 1 1 100%;
-      font-size: 0.85rem;
-    }
-    .admin-bar button.maintenance-btn {
-      background: #f59e0b;
-      color: #ffffff;
-      border: none;
-      flex: 1 1 100%;
-    }
-    .admin-bar button.lock-btn {
-      background: #fee2e2;
-      color: #b91c1c;
-      border: none;
-      flex: 1 1 100%;
-    }
+    .admin-bar button.delivery-btn { background: #0284c7; color: #ffffff; border: none; flex: 1 1 100%; }
+    .admin-bar button.maintenance-btn { background: #f59e0b; color: #ffffff; border: none; flex: 1 1 100%; }
+    .admin-bar button.lock-btn { background: #fee2e2; color: #b91c1c; border: none; flex: 1 1 100%; }
 
     .products-grid {
       display: grid;
@@ -461,20 +399,6 @@
       font-weight: 800;
       z-index: 2;
     }
-    .img-count-badge {
-      position: absolute;
-      bottom: 6px;
-      right: 6px;
-      background: rgba(15, 23, 42, 0.75);
-      color: #ffffff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 12px;
-      backdrop-filter: blur(2px);
-      z-index: 2;
-    }
-
     .thumb-strip {
       display: flex;
       gap: 6px;
@@ -494,10 +418,7 @@
       border: 2px solid #cbd5e1;
       flex-shrink: 0;
     }
-    .thumb-item.active {
-      border-color: #be123c;
-      box-shadow: 0 0 0 2px rgba(190, 18, 60, 0.4);
-    }
+    .thumb-item.active { border-color: #be123c; }
 
     .card-body {
       padding: 10px;
@@ -507,23 +428,14 @@
       gap: 4px;
       background: #ffffff;
     }
-    .item-name {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #111827;
-    }
-    .item-price {
-      font-size: 1rem;
-      font-weight: 800;
-      color: #be123c;
-    }
+    .item-name { font-size: 0.85rem; font-weight: 700; color: #111827; }
+    .item-price { font-size: 1rem; font-weight: 800; color: #be123c; }
     .size-select {
       width: 100%;
       padding: 5px;
       font-size: 0.75rem;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
-      margin-top: 2px;
     }
     .order-btn {
       margin-top: 6px;
@@ -563,7 +475,6 @@
       justify-content: center;
     }
     .modal-overlay.active { display: flex; }
-
     #otpModal { z-index: 300; }
     #loginModal { z-index: 400; align-items: center; }
 
@@ -576,10 +487,7 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    #loginModal .modal-sheet {
-      border-radius: 20px;
-      margin: 16px;
-    }
+    #loginModal .modal-sheet { border-radius: 20px; margin: 16px; }
     .modal-head {
       display: flex;
       justify-content: space-between;
@@ -588,21 +496,9 @@
       border-bottom: 1px solid #f1f5f9;
       padding-bottom: 10px;
     }
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      color: var(--muted);
-    }
+    .close-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--muted); }
     .form-group { margin-bottom: 10px; }
-    .form-group label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--muted);
-    }
+    .form-group label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
     .form-group input, .form-group select {
       width: 100%;
       padding: 9px;
@@ -640,13 +536,8 @@
       gap: 10px;
       margin-top: 8px;
       font-size: 0.85rem;
-      word-break: break-word;
     }
-    .owner-info-row a {
-      color: #fbbf24;
-      text-decoration: none;
-      font-weight: bold;
-    }
+    .owner-info-row a { color: #fbbf24; text-decoration: none; font-weight: bold; }
 
     .hub-tabs {
       display: flex;
@@ -666,10 +557,7 @@
       font-size: 0.8rem;
       cursor: pointer;
     }
-    .hub-tab-btn.active {
-      background: var(--primary);
-      color: #ffffff;
-    }
+    .hub-tab-btn.active { background: var(--primary); color: #ffffff; }
 
     .btn-delivered-action {
       background: #10b981;
@@ -684,9 +572,6 @@
       align-items: center;
       gap: 6px;
       margin-top: 8px;
-    }
-    .btn-delivered-action:hover {
-      background: #059669;
     }
     .btn-cancel-action {
       background: #ef4444;
@@ -711,13 +596,7 @@
       text-align: center;
       margin-bottom: 16px;
     }
-    .otp-code {
-      font-size: 2rem;
-      letter-spacing: 8px;
-      font-weight: 900;
-      color: #be123c;
-      margin: 6px 0;
-    }
+    .otp-code { font-size: 2rem; letter-spacing: 8px; font-weight: 900; color: #be123c; margin: 6px 0; }
     .otp-input-field {
       text-align: center;
       letter-spacing: 12px;
@@ -771,12 +650,7 @@
       font-size: 0.8rem;
       color: var(--muted);
     }
-    .footer-title {
-      font-weight: 800;
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-      color: var(--primary);
-    }
+    .footer-title { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; color: var(--primary); }
     .contact-container {
       display: flex;
       flex-wrap: wrap;
@@ -804,14 +678,7 @@
       color: var(--accent-pink);
       letter-spacing: 0.5px;
     }
-
-    .loc-group-card {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
+    .loc-group-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
     .loc-group-header {
       background: #e2e8f0;
       padding: 8px 12px;
@@ -821,20 +688,25 @@
       font-size: 0.85rem;
       color: var(--primary);
     }
-    .loc-order-item {
-      padding: 10px 12px;
-      border-bottom: 1px dashed #cbd5e1;
-      font-size: 0.78rem;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .loc-order-item { padding: 10px 12px; border-bottom: 1px dashed #cbd5e1; font-size: 0.78rem; display: flex; gap: 10px; align-items: center; }
     .loc-order-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
 
-  <!-- Maintenance Mode Overlay -->
+  <!-- Instant Maintenance Guard -->
+  <script>
+    if (localStorage.getItem('ifp_maint_active') === 'true' && !localStorage.getItem('ifp_is_admin')) {
+      document.write(`
+        <div id="tempMaintScreen" style="position:fixed;inset:0;z-index:999999;background:#1e1b4b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+          <h2 style="color:#fbbf24;margin-bottom:10px;">Website Under Maintenance</h2>
+          <p style="color:#fbcfe8;font-size:0.9rem;">We are updating catalog items. Back shortly!</p>
+        </div>
+      `);
+    }
+  </script>
+
+  <!-- Maintenance Mode Screen -->
   <div id="maintenanceScreen">
     <div class="maint-icon"><i class="fa-solid fa-wrench"></i></div>
     <div class="maint-title">Website Under Maintenance</div>
@@ -851,16 +723,8 @@
   <header>
     <div class="brand-wrap">
       <div class="brand-logo-container">
-        <div class="brand-logo-badge" id="ifpBadge" title="Click for Menu (Triple-tap for Owner)">
-          <img 
-            src="./icon-192.png" 
-            alt="IFP" 
-            width="50" 
-            height="50" 
-            loading="eager" 
-            decoding="async" 
-            onerror="this.style.display='none'; this.parentElement.innerText='IFP';" 
-          />
+        <div class="brand-logo-badge" id="ifpBadge" title="Triple-tap for Owner">
+          <img src="./icon-192.png" alt="IFP" width="50" height="50" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
         </div>
         <div class="ifp-dropdown-menu" id="ifpDropdown">
           <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
@@ -873,19 +737,16 @@
       </div>
       <div class="brand-text-block">
         <div class="brand-title">IBRAHIM FASHION PALACE</div>
-        <div class="brand-sub" title="Malapora, Charar-i-Sharief, Budgam">
-          <i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam
-        </div>
+        <div class="brand-sub"><i class="fa-solid fa-location-dot"></i> Malapora, Charar-i-Sharief, Budgam</div>
       </div>
     </div>
     <div class="header-actions">
-      <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()" title="Delivery Section (Owner Only)">
+      <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" onclick="openDeliveryDashboard()">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
       </button>
-
       <div class="right-menu-container">
-        <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)" title="Menu Options" aria-label="More Options">
+        <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)">
           <i class="fa-solid fa-ellipsis-vertical" style="font-size:1.1rem;"></i>
         </button>
         <div class="more-options-menu" id="moreMenu">
@@ -899,16 +760,11 @@
 
   <!-- Banner Container -->
   <div class="hero-container" id="heroBannerContainer">
-    <button class="banner-nav-btn banner-nav-prev" onclick="scrollBanner(-1)" aria-label="Previous Banner">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-    <button class="banner-nav-btn banner-nav-next" onclick="scrollBanner(1)" aria-label="Next Banner">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-
+    <button class="banner-nav-btn banner-nav-prev" onclick="scrollBanner(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="banner-nav-btn banner-nav-next" onclick="scrollBanner(1)"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="banner-track" id="bannerTrack">
       <div class="banner-slide">
-        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" loading="eager" decoding="async" />
+        <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner 1" />
         <div class="hero-overlay">
           <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
           <div class="hero-title">New Garment Collection</div>
@@ -916,16 +772,12 @@
         </div>
       </div>
     </div>
-
     <div class="banner-dots" id="bannerDots"></div>
-
-    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()">
-      <i class="fa-solid fa-camera"></i> Change Banners
-    </button>
+    <button class="hero-edit-btn" id="heroEditBtn" onclick="triggerHeroUpload()"><i class="fa-solid fa-camera"></i> Change Banners</button>
     <input type="file" id="heroInput" accept="image/*" multiple style="display:none" onchange="updateHeroImages(event)" />
   </div>
 
-  <!-- Search Bar -->
+  <!-- Search -->
   <div class="search-wrap">
     <i class="fa-solid fa-magnifying-glass search-icon"></i>
     <input type="text" class="search-input" id="searchInput" placeholder="Search garments by name..." oninput="handleSearch()" />
@@ -933,12 +785,8 @@
 
   <!-- Admin Bar -->
   <div class="admin-bar" id="adminBar">
-    <button class="delivery-btn" onclick="openDeliveryDashboard()">
-      <i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub (Cloud Orders)
-    </button>
-    <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()">
-      <i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance Mode
-    </button>
+    <button class="delivery-btn" onclick="openDeliveryDashboard()"><i class="fa-solid fa-truck-ramp-box"></i> Delivery Hub</button>
+    <button class="maintenance-btn" id="maintToggleBtn" onclick="toggleMaintenanceMode()"><i class="fa-solid fa-triangle-exclamation"></i> Toggle Maintenance Mode</button>
     <button onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Add New Garment</button>
     <button class="lock-btn" onclick="lockAdmin()"><i class="fa-solid fa-lock"></i> Lock Admin Mode</button>
   </div>
@@ -948,7 +796,7 @@
     <div class="products-grid" id="productsGrid"></div>
   </main>
 
-  <!-- Modals -->
+  <!-- Login Modal -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -962,16 +810,15 @@
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="authPassword" required placeholder="Enter Firebase Password" autocomplete="current-password" />
+          <input type="password" id="authPassword" required placeholder="Enter Password" autocomplete="current-password" />
         </div>
-        <button type="submit" id="authLoginBtn" class="confirm-btn" style="background:var(--primary);">
-          Sign In to Admin Hub
-        </button>
+        <button type="submit" id="authLoginBtn" class="confirm-btn" style="background:var(--primary);">Sign In</button>
         <p id="authErrorMsg" style="color:#ef4444; font-size:0.75rem; margin-top:8px; text-align:center; display:none;"></p>
       </form>
     </div>
   </div>
 
+  <!-- About Owner Modal -->
   <div class="modal-overlay" id="ownerModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -981,32 +828,17 @@
       <div class="owner-card">
         <div style="font-size:1.15rem; font-weight:800; color:#fbbf24; margin-bottom:4px;">Aamir Rashid</div>
         <div style="font-size:0.75rem; color:#fbcfe8;">Proprietor - IBRAHIM Fashion Palace</div>
-        
         <div style="margin-top:14px; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
-          <div class="owner-info-row">
-            <i class="fa-solid fa-user-check" style="color:#fbbf24; width:18px;"></i>
-            <span><strong>Owner Name:</strong> Aamir Rashid</span>
-          </div>
-          <div class="owner-info-row">
-            <i class="fa-solid fa-phone" style="color:#fbbf24; width:18px;"></i>
-            <span><strong>Owner Contact:</strong> <a href="tel:6005757393">6005757393</a></span>
-          </div>
-          <div class="owner-info-row">
-            <i class="fa-solid fa-envelope" style="color:#fbbf24; width:18px;"></i>
-            <span><strong>Owner Email:</strong> <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a></span>
-          </div>
-          <div class="owner-info-row">
-            <i class="fa-solid fa-location-dot" style="color:#fbbf24; width:18px;"></i>
-            <span><strong>Owner Address:</strong> Malapora, Charar-i-Sharief</span>
-          </div>
+          <div class="owner-info-row"><i class="fa-solid fa-phone" style="color:#fbbf24; width:18px;"></i><span><strong>Contact:</strong> <a href="tel:6005757393">6005757393</a></span></div>
+          <div class="owner-info-row"><i class="fa-solid fa-envelope" style="color:#fbbf24; width:18px;"></i><span><strong>Email:</strong> <a href="mailto:aamir757393@gmail.com">aamir757393@gmail.com</a></span></div>
+          <div class="owner-info-row"><i class="fa-solid fa-location-dot" style="color:#fbbf24; width:18px;"></i><span><strong>Address:</strong> Malapora, Charar-i-Sharief</span></div>
         </div>
       </div>
-      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('ownerModal')">
-        Close
-      </button>
+      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('ownerModal')">Close</button>
     </div>
   </div>
 
+  <!-- Add Product Modal -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1024,30 +856,28 @@
         </div>
         <div class="form-group">
           <label>Number of Articles Available (Stock) *</label>
-          <input type="number" id="newStock" required placeholder="e.g. 10" min="1" value="10" />
+          <input type="number" id="newStock" required min="1" value="10" />
         </div>
         <div class="form-group">
           <label>Available Sizes (Separated by commas) *</label>
-          <input type="text" id="newSizes" required placeholder="e.g. S, M, L, XL or Free Size" value="S, M, L, XL" />
+          <input type="text" id="newSizes" required value="S, M, L, XL" />
         </div>
         <div class="form-group">
-          <label>Garment Photos (Select multiple from gallery) *</label>
+          <label>Garment Photos (Select images) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
-        <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">
-          Save Garment to Live Catalog
-        </button>
+        <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save Garment to Live Catalog</button>
       </form>
     </div>
   </div>
 
+  <!-- Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
         <h3>Confirm Order</h3>
         <button class="close-btn" type="button" onclick="closeModal('orderModal')">&times;</button>
       </div>
-
       <div style="background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; padding:12px; margin-bottom:14px;">
         <div id="orderItemTitle" style="font-weight:800; color:var(--primary); font-size:0.95rem;"></div>
         <div id="orderItemSize" style="font-size:0.8rem; color:var(--muted); margin:3px 0;"></div>
@@ -1056,20 +886,13 @@
           <span class="cod-tag" style="position:static; font-size:0.75rem; padding:4px 8px;">Cash on Delivery (COD)</span>
         </div>
       </div>
-
       <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
-        <div class="form-group">
-          <label>Your Name *</label>
-          <input type="text" id="custName" required placeholder="Full Name" />
-        </div>
-        <div class="form-group">
-          <label>Phone Number *</label>
-          <input type="tel" id="custPhone" required placeholder="e.g. 6005757393" />
-        </div>
+        <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required placeholder="Full Name" /></div>
+        <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required placeholder="e.g. 6005757393" /></div>
         <div class="form-group">
           <label>Delivery Area *</label>
           <select id="custArea" required>
-            <option value="" disabled selected>-- Select Your Delivery Area --</option>
+            <option value="" disabled selected>-- Select Area --</option>
             <option value="Malapora (Charar-i-Sharief)">Malapora (Charar-i-Sharief)</option>
             <option value="Main Market Charar-i-Sharief">Main Market Charar-i-Sharief</option>
             <option value="Gulshanabad (Charar-i-Sharief)">Gulshanabad (Charar-i-Sharief)</option>
@@ -1081,93 +904,66 @@
             <option value="Other Area">Other Area</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Street / Landmark / House No. *</label>
-          <input type="text" id="custStreet" required placeholder="House number / Landmark / Lane" />
-        </div>
-        <button type="submit" id="confirmOrderBtn" class="confirm-btn">
-          Confirm Order
-        </button>
+        <div class="form-group"><label>Street / Landmark *</label><input type="text" id="custStreet" required placeholder="House number / Landmark / Lane" /></div>
+        <button type="submit" id="confirmOrderBtn" class="confirm-btn">Confirm Order</button>
       </form>
     </div>
   </div>
 
+  <!-- Success Modal -->
   <div class="modal-overlay" id="successModal">
     <div class="modal-sheet" style="text-align:center; padding:30px 20px;">
-      <div style="font-size:3.5rem; color:#10b981; margin-bottom:10px;">
-        <i class="fa-solid fa-circle-check"></i>
-      </div>
-      <h3 style="color:var(--primary); font-size:1.3rem; margin-bottom:6px;">Congratulations!</h3>
-      <p style="font-weight:700; color:#047857; font-size:1rem; margin-bottom:8px;">Your order is confirmed.</p>
-      <p style="color:var(--muted); font-size:0.8rem; margin-bottom:16px;">
-        We have received your order for Cash on Delivery (COD). We will prepare it for delivery right away!
-      </p>
+      <div style="font-size:3.5rem; color:#10b981; margin-bottom:10px;"><i class="fa-solid fa-circle-check"></i></div>
+      <h3 style="color:var(--primary); font-size:1.3rem; margin-bottom:6px;">Order Confirmed!</h3>
+      <p style="color:var(--muted); font-size:0.8rem; margin-bottom:16px;">We have received your order for Cash on Delivery (COD).</p>
       <div id="confirmedOrderId" style="font-size:0.85rem; font-weight:800; background:#f1f5f9; padding:8px 14px; border-radius:8px; display:inline-block; margin-bottom:16px; color:var(--primary);"></div>
-      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('successModal')">
-        Continue Shopping
-      </button>
+      <button type="button" class="confirm-btn" style="background:var(--primary);" onclick="closeModal('successModal')">Continue Shopping</button>
     </div>
   </div>
 
+  <!-- Delivery Dashboard Modal -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
-        <div>
-          <h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Owner Delivery Hub</h3>
-          <p style="font-size:0.72rem; color:var(--muted);">Private delivery control & 4-digit verification OTP</p>
-        </div>
+        <div><h3><i class="fa-solid fa-boxes-stacked" style="color:var(--accent);"></i> Owner Delivery Hub</h3></div>
         <button class="close-btn" type="button" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
-
       <div class="hub-tabs">
-        <button class="hub-tab-btn active" id="tabActiveDeliveriesBtn" onclick="switchDeliveryTab('active')">
-          Active Deliveries (<span id="activeTabCount">0</span>)
-        </button>
-        <button class="hub-tab-btn" id="tabDeliveredBtn" onclick="switchDeliveryTab('delivered')">
-          Delivered (<span id="deliveredTabCount">0</span>)
-        </button>
+        <button class="hub-tab-btn active" id="tabActiveDeliveriesBtn" onclick="switchDeliveryTab('active')">Active Deliveries (<span id="activeTabCount">0</span>)</button>
+        <button class="hub-tab-btn" id="tabDeliveredBtn" onclick="switchDeliveryTab('delivered')">Delivered (<span id="deliveredTabCount">0</span>)</button>
       </div>
-
       <div id="deliveryGroupContainer"></div>
       <div id="deliveredOrdersContainer" style="display:none;"></div>
     </div>
   </div>
 
+  <!-- OTP Modal -->
   <div class="modal-overlay" id="otpModal">
     <div class="modal-sheet">
       <div class="modal-head">
-        <h3><i class="fa-solid fa-shield-halved" style="color:#0284c7;"></i> Delivery OTP Verification</h3>
+        <h3><i class="fa-solid fa-shield-halved" style="color:#0284c7;"></i> Delivery OTP</h3>
         <button class="close-btn" type="button" onclick="closeModal('otpModal')">&times;</button>
       </div>
-
       <div class="otp-display-box">
-        <div style="font-size:0.75rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Generated Customer OTP</div>
+        <div style="font-size:0.75rem; color:var(--muted); font-weight:700;">Customer Verification OTP</div>
         <div class="otp-code" id="generatedOtpDisplay">----</div>
-        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:10px;">
-          Send this 4-digit code to the customer or verify on arrival:
-        </p>
-        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+        <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
           <a id="otpWhatsAppLink" href="#" target="_blank" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#25d366; text-decoration:none; display:inline-flex; width:auto;">
-            <i class="fa-brands fa-whatsapp"></i> Send OTP via WhatsApp
-          </a>
-          <a id="otpSmsLink" href="#" class="confirm-btn" style="padding:8px 14px; font-size:0.78rem; background:#0284c7; text-decoration:none; display:inline-flex; width:auto;">
-            <i class="fa-solid fa-comment-sms"></i> Send SMS
+            <i class="fa-brands fa-whatsapp"></i> Send via WhatsApp
           </a>
         </div>
       </div>
-
       <form id="otpVerifyForm" onsubmit="confirmDeliveredWithOtp(event)">
         <div class="form-group" style="text-align:center;">
-          <label style="font-size:0.85rem; font-weight:700; color:var(--primary);">Enter Customer's 4-Digit OTP:</label>
-          <input type="text" id="enteredOtpInput" class="form-group otp-input-field" maxlength="4" placeholder="••••" required pattern="\d{4}" />
+          <label style="font-size:0.85rem; font-weight:700;">Enter 4-Digit OTP:</label>
+          <input type="text" id="enteredOtpInput" class="otp-input-field" maxlength="4" placeholder="••••" required pattern="\d{4}" />
         </div>
-        <button type="submit" class="confirm-btn" style="background:#10b981;">
-          <i class="fa-solid fa-check"></i> Verify & Move to Delivered
-        </button>
+        <button type="submit" class="confirm-btn" style="background:#10b981;"><i class="fa-solid fa-check"></i> Verify & Mark Delivered</button>
       </form>
     </div>
   </div>
 
+  <!-- Customer Orders Modal -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1181,24 +977,15 @@
   <footer>
     <div class="footer-title">IBRAHIM FASHION PALACE</div>
     <div>Malapora, Charar-i-Sharief, Budgam, J&K</div>
-    
     <div class="contact-container">
-      <a href="tel:6005757393" class="contact-badge">
-        <i class="fa-solid fa-phone" style="color:#be123c;"></i> +91 6005757393
-      </a>
-      <a href="https://wa.me/916005757393" target="_blank" class="contact-badge">
-        <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Us
-      </a>
-      <a href="mailto:aamir757393@gmail.com" class="contact-badge">
-        <i class="fa-solid fa-envelope" style="color:#0284c7;"></i> aamir757393@gmail.com
-      </a>
+      <a href="tel:6005757393" class="contact-badge"><i class="fa-solid fa-phone" style="color:#be123c;"></i> +91 6005757393</a>
+      <a href="https://wa.me/916005757393" target="_blank" class="contact-badge"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Us</a>
+      <a href="mailto:aamir757393@gmail.com" class="contact-badge"><i class="fa-solid fa-envelope" style="color:#0284c7;"></i> aamir757393@gmail.com</a>
     </div>
-    
     <div class="creator-credit">Created by Aamir</div>
-    <p style="margin-top:8px; font-size:0.7rem; color:var(--muted);">Customer Support Available 10:00 AM – 8:00 PM</p>
   </footer>
 
-  <!-- Firebase & App Script -->
+  <!-- Firebase & App Logic (No Storage dependency, 100% Free Spark Plan Compatible) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -1218,13 +1005,6 @@
       deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-import {
-      getStorage,
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyDS-bo_pHFSE6-cRInZmIMNNZNS5DnQ5QI",
       authDomain: "ibrahim-fashion-point.firebaseapp.com",
@@ -1238,7 +1018,6 @@ import {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
     let tapCount = 0;
     let tapTimer = null;
@@ -1246,7 +1025,7 @@ import {
     let displayedProducts = [];
     let cloudOrders = [];
     let selectedProduct = null;
-    let isMaintenanceActive = false;
+    let isMaintenanceActive = localStorage.getItem('ifp_maint_active') === 'true';
     let activeHubTab = "active";
     let pendingDeliveryVerification = null;
     let currentAdminUser = null;
@@ -1254,15 +1033,18 @@ import {
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
+      if (currentAdminUser) {
+        localStorage.setItem('ifp_is_admin', 'true');
+      } else {
+        localStorage.removeItem('ifp_is_admin');
+      }
       checkAdminStatus();
       evaluateMaintenanceScreen();
     });
 
     window.scrollBanner = function(direction) {
       const track = document.getElementById("bannerTrack");
-      if (track) {
-        track.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
-      }
+      if (track) track.scrollBy({ left: direction * track.clientWidth, behavior: 'smooth' });
     };
 
     function renderBannerSlides(banners) {
@@ -1274,7 +1056,7 @@ import {
 
       track.innerHTML = bannerImagesList.map((imgUrl, idx) => `
         <div class="banner-slide">
-          <img class="hero-img" src="${imgUrl}" alt="Banner ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async" />
+          <img class="hero-img" src="${imgUrl}" alt="Banner ${idx + 1}" loading="${idx === 0 ? 'eager' : 'lazy'}" />
           <div class="hero-overlay">
             <span class="hero-tag"><i class="fa-solid fa-sparkles"></i> Exclusive Fashion</span>
             <div class="hero-title">New Garment Collection</div>
@@ -1296,13 +1078,11 @@ import {
 
     window.toggleMoreMenu = function(e) {
       if (e) e.stopPropagation();
-      const menu = document.getElementById("moreMenu");
-      if (menu) menu.classList.toggle("active");
+      document.getElementById("moreMenu")?.classList.toggle("active");
     };
 
     window.closeMoreMenu = function() {
-      const menu = document.getElementById("moreMenu");
-      if (menu) menu.classList.remove("active");
+      document.getElementById("moreMenu")?.classList.remove("active");
     };
 
     const badgeEl = document.getElementById("ifpBadge");
@@ -1321,47 +1101,32 @@ import {
         }
 
         tapTimer = setTimeout(() => {
-          if (tapCount === 1) {
-            toggleIfpDropdown();
-          }
+          if (tapCount === 1) toggleIfpDropdown();
           tapCount = 0;
         }, 600);
       });
     }
 
-    window.toggleIfpDropdown = function() {
-      const dropdown = document.getElementById("ifpDropdown");
-      if (dropdown) dropdown.classList.toggle("active");
-    };
-
-    window.closeIfpDropdown = function() {
-      const dropdown = document.getElementById("ifpDropdown");
-      if (dropdown) dropdown.classList.remove("active");
-    };
+    window.toggleIfpDropdown = function() { document.getElementById("ifpDropdown")?.classList.toggle("active"); };
+    window.closeIfpDropdown = function() { document.getElementById("ifpDropdown")?.classList.remove("active"); };
 
     document.addEventListener("click", (e) => {
       const dropdown = document.getElementById("ifpDropdown");
       const badge = document.getElementById("ifpBadge");
-      if (dropdown && badge && !badge.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.remove("active");
-      }
+      if (dropdown && badge && !badge.contains(e.target) && !dropdown.contains(e.target)) dropdown.classList.remove("active");
 
       const moreMenu = document.getElementById("moreMenu");
       const moreBtn = document.getElementById("moreBtn");
-      if (moreMenu && moreBtn && !moreBtn.contains(e.target) && !moreMenu.contains(e.target)) {
-        moreMenu.classList.remove("active");
-      }
+      if (moreMenu && moreBtn && !moreBtn.contains(e.target) && !moreMenu.contains(e.target)) moreMenu.classList.remove("active");
     });
 
     window.promptOwnerLogin = function() {
       if (currentAdminUser) {
-        alert("You are already authenticated as the Owner (Aamir Rashid).");
+        alert("You are authenticated as the Owner (Aamir Rashid).");
         return;
       }
-      const modal = document.getElementById("loginModal");
-      const errEl = document.getElementById("authErrorMsg");
-      if (errEl) errEl.style.display = "none";
-      if (modal) modal.classList.add("active");
+      document.getElementById("authErrorMsg").style.display = "none";
+      document.getElementById("loginModal").classList.add("active");
     };
 
     window.handleOwnerAuth = async function(e) {
@@ -1371,7 +1136,7 @@ import {
       const errorMsg = document.getElementById("authErrorMsg");
       const btn = document.getElementById("authLoginBtn");
 
-      if (errorMsg) errorMsg.style.display = "none";
+      errorMsg.style.display = "none";
       btn.disabled = true;
       btn.innerText = "Signing in...";
 
@@ -1379,38 +1144,23 @@ import {
         await signInWithEmailAndPassword(auth, email, password);
         closeModal("loginModal");
         document.getElementById("ownerLoginForm").reset();
-        alert("Owner Mode Unlocked! Welcome back, Aamir.");
+        alert("Owner Mode Unlocked!");
       } catch (err) {
-        let text = err.message;
-        if (err.code === "auth/configuration-not-found") {
-          text = "Firebase Auth setup incomplete. Turn Email/Password ON in Firebase Console > Authentication > Sign-in method.";
-        }
-        if (errorMsg) {
-          errorMsg.textContent = "Access Denied: " + text;
-          errorMsg.style.display = "block";
-        } else {
-          alert("Access Denied: " + text);
-        }
+        errorMsg.textContent = "Access Denied: " + err.message;
+        errorMsg.style.display = "block";
       } finally {
         btn.disabled = false;
-        btn.innerText = "Sign In to Admin Hub";
+        btn.innerText = "Sign In";
       }
     };
 
-    window.openOwnerModal = function() {
-      document.getElementById("ownerModal").classList.add("active");
-    };
+    window.openOwnerModal = function() { document.getElementById("ownerModal").classList.add("active"); };
 
     function checkAdminStatus() {
       const isAuth = !!currentAdminUser;
-      const adminBar = document.getElementById("adminBar");
-      if (adminBar) adminBar.style.display = isAuth ? "flex" : "none";
-
-      const heroEditBtn = document.getElementById("heroEditBtn");
-      if (heroEditBtn) heroEditBtn.style.display = isAuth ? "block" : "none";
-
-      const deliveryBtn = document.getElementById("headerDeliveryBtn");
-      if (deliveryBtn) deliveryBtn.style.display = isAuth ? "flex" : "none";
+      document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
+      document.getElementById("heroEditBtn").style.display = isAuth ? "block" : "none";
+      document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
 
       const maintBtn = document.getElementById("maintToggleBtn");
       if (maintBtn) {
@@ -1426,36 +1176,40 @@ import {
     window.lockAdmin = async function() {
       await signOut(auth);
       currentAdminUser = null;
+      localStorage.removeItem('ifp_is_admin');
       checkAdminStatus();
       evaluateMaintenanceScreen();
-      alert("Owner mode locked. Delivery controls hidden.");
+      alert("Owner mode locked.");
     };
 
     window.toggleMaintenanceMode = async function() {
       const nextState = !isMaintenanceActive;
       try {
         await setDoc(doc(db, "site_settings", "maintenance"), { active: nextState });
-        alert(nextState 
-          ? "Maintenance Mode is now ON for all visitors!" 
-          : "Maintenance Mode is now OFF. Site is live!"
-        );
+        isMaintenanceActive = nextState;
+        localStorage.setItem('ifp_maint_active', nextState ? 'true' : 'false');
+        checkAdminStatus();
+        evaluateMaintenanceScreen();
+        alert(nextState ? "Maintenance Mode is now ON!" : "Maintenance Mode is now OFF!");
       } catch (err) {
-        alert("Error updating maintenance mode: " + err.message);
+        alert("Error updating maintenance: " + err.message);
       }
     };
 
     function evaluateMaintenanceScreen() {
       const isAuth = !!currentAdminUser;
       const screen = document.getElementById("maintenanceScreen");
+      document.getElementById("tempMaintScreen")?.remove();
       if (screen) screen.classList.toggle("active", isMaintenanceActive && !isAuth);
     }
 
     function initCloudSync() {
       onSnapshot(doc(db, "site_settings", "maintenance"), (snapshot) => {
         isMaintenanceActive = snapshot.exists() && snapshot.data().active === true;
+        localStorage.setItem('ifp_maint_active', isMaintenanceActive ? 'true' : 'false');
         evaluateMaintenanceScreen();
         checkAdminStatus();
-      }, (err) => console.warn("Settings sync notice:", err.message));
+      });
 
       onSnapshot(doc(db, "site_settings", "banner"), (snapshot) => {
         if (snapshot.exists()) {
@@ -1466,211 +1220,95 @@ import {
             renderBannerSlides([data.img]);
           }
         }
-      }, (err) => console.warn("Banner sync notice:", err.message));
+      });
 
       onSnapshot(collection(db, "garments"), (snapshot) => {
         allProducts = snapshot.docs.map(d => {
           const data = d.data();
-          let photos = [];
-          if (Array.isArray(data.images) && data.images.length > 0) {
-            photos = data.images;
-          } else if (data.img) {
-            photos = [data.img];
-          }
-          return { id: d.id, ...data, images: photos };
+          return { id: d.id, ...data, images: data.images || (data.img ? [data.img] : []) };
         });
         displayedProducts = [...allProducts];
-        renderProducts();
-      }, (err) => {
-        console.error("Garments read permission check:", err.message);
         renderProducts();
       });
 
       onSnapshot(collection(db, "orders"), (snapshot) => {
         cloudOrders = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
         updateDeliveryBadge();
-        const delModal = document.getElementById("deliveryModal");
-        if (delModal && delModal.classList.contains("active")) {
-          renderDeliveryHub();
-        }
-      }, (err) => console.warn("Orders sync notice:", err.message));
+        if (document.getElementById("deliveryModal")?.classList.contains("active")) renderDeliveryHub();
+      });
     }
 
     function updateDeliveryBadge() {
       const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
-      const badge = document.getElementById("activeDeliveryBadge");
-      if (badge) badge.innerText = activeOrders.length;
-
-      const countEl = document.getElementById("activeTabCount");
-      if (countEl) countEl.innerText = activeOrders.length;
-
-      const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
-      const deliveredCountEl = document.getElementById("deliveredTabCount");
-      if (deliveredCountEl) deliveredCountEl.innerText = deliveredOrders.length;
+      document.getElementById("activeDeliveryBadge").innerText = activeOrders.length;
+      document.getElementById("activeTabCount").innerText = activeOrders.length;
+      document.getElementById("deliveredTabCount").innerText = cloudOrders.filter(o => o.status === "delivered").length;
     }
 
-    window.triggerHeroUpload = function() {
-      document.getElementById("heroInput").click();
-    };
+    window.triggerHeroUpload = function() { document.getElementById("heroInput").click(); };
 
-    function compressFile(file, maxDim = 900, quality = 0.72) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    // Compress images directly to lightweight Base64 (completely free, saves in Firestore)
+    function fileToBase64(file, maxDim = 600, quality = 0.60) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > h && w > maxDim) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else if (h > maxDim) {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = () => reject(new Error("Image read error"));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error("File read error"));
+        reader.readAsDataURL(file);
+      });
+    }
 
-    reader.onload = (e) => {
-      const img = new Image();
-
-      img.onload = () => {
-        try {
-          let w = img.width;
-          let h = img.height;
-
-          if (w > h && w > maxDim) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else if (h > maxDim) {
-            w = Math.round((w * maxDim) / h);
-            h = maxDim;
-          }
-
-          const canvas = document.createElement("canvas");
-          canvas.width = w;
-          canvas.height = h;
-
-          const ctx = canvas.getContext("2d", {
-            alpha: false
-          });
-
-          ctx.drawImage(img, 0, 0, w, h);
-
-          canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                reject(new Error("Image compression failed."));
-                return;
-              }
-
-              resolve(blob);
-            },
-            "image/jpeg",
-            quality
-          );
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      img.onerror = () => {
-        reject(new Error("Could not read image."));
-      };
-
-      img.src = e.target.result;
-    };
-
-    reader.onerror = () => {
-      reject(new Error("Could not read selected file."));
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-async function uploadImageToStorage(file, folder = "garments") {
-  const compressedBlob = await compressFile(file, 900, 0.72);
-
-  const safeName = file.name
-    .replace(/[^a-zA-Z0-9._-]/g, "_")
-    .replace(/\.[^/.]+$/, "");
-
-  const uniqueName =
-    `${Date.now()}_${Math.random().toString(36).substring(2, 8)}_${safeName}.jpg`;
-
-  const storageRef = ref(
-    storage,
-    `${folder}/${uniqueName}`
-  );
-
-  await uploadBytes(storageRef, compressedBlob, {
-    contentType: "image/jpeg",
-    cacheControl: "public,max-age=31536000,immutable"
-  });
-
-  return await getDownloadURL(storageRef);
-}
     window.updateHeroImages = async function(e) {
-  const files = e.target.files;
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
-  if (!files || files.length === 0) {
-    return;
-  }
+      const editBtn = document.getElementById("heroEditBtn");
+      editBtn.innerText = "Processing...";
 
-  const editBtn =
-    document.getElementById("heroEditBtn");
+      try {
+        const bannerList = [];
+        for (let i = 0; i < files.length; i++) {
+          bannerList.push(await fileToBase64(files[i], 800, 0.65));
+        }
 
-  editBtn.innerText =
-    "Uploading Banners...";
+        await setDoc(doc(db, "site_settings", "banner"), {
+          banners: bannerList,
+          img: bannerList[0],
+          updatedAt: Date.now()
+        });
 
-  try {
-    const bannerList = [];
-
-    for (let i = 0; i < files.length; i++) {
-      editBtn.innerText =
-        `Uploading banner ${i + 1} of ${files.length}...`;
-
-      const imageUrl =
-        await uploadImageToStorage(
-          files[i],
-          "banners"
-        );
-
-      bannerList.push(imageUrl);
-    }
-
-    if (bannerList.length === 0) {
-      throw new Error("No banners were uploaded.");
-    }
-
-    /*
-     * Firestore now stores only the URLs.
-     */
-    await setDoc(
-      doc(db, "site_settings", "banner"),
-      {
-        banners: bannerList,
-        img: bannerList[0],
-        updatedAt: Date.now()
+        alert("Hero banners updated!");
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        editBtn.innerHTML = `<i class="fa-solid fa-camera"></i> Change Banners`;
+        e.target.value = "";
       }
-    );
-
-    alert(
-      "Hero banners updated successfully!"
-    );
-
-  } catch (err) {
-    console.error(
-      "Banner upload error:",
-      err
-    );
-
-    alert(
-      "Error uploading banners: " +
-      err.message
-    );
-
-  } finally {
-    editBtn.innerHTML =
-      `<i class="fa-solid fa-camera"></i> Change Banners`;
-
-    e.target.value = "";
-  }
-};
+    };
 
     window.handleSearch = function() {
       const query = document.getElementById("searchInput").value.toLowerCase().trim();
-      if (!query) {
-        displayedProducts = [...allProducts];
-      } else {
-        displayedProducts = allProducts.filter(p => (p.name || "").toLowerCase().includes(query));
-      }
+      displayedProducts = query ? allProducts.filter(p => (p.name || "").toLowerCase().includes(query)) : [...allProducts];
       renderProducts();
     };
 
@@ -1684,14 +1322,13 @@ async function uploadImageToStorage(file, folder = "garments") {
         grid.innerHTML = `
           <div style="grid-column:span 2; text-align:center; padding:40px 14px; background:#fff; border-radius:14px;">
             <i class="fa-solid fa-shirt" style="font-size:2rem; color:#cbd5e1; margin-bottom:8px;"></i>
-            <div style="font-weight:700; color:var(--primary);">No garments found</div>
-            <p style="color:var(--muted); font-size:0.75rem; margin-top:4px;">Try searching for something else or check back soon!</p>
+            <div style="font-weight:700; color:var(--primary);">No garments in catalog</div>
           </div>
         `;
         return;
       }
 
-      displayedProducts.forEach((p, index) => {
+      displayedProducts.forEach((p) => {
         const images = (p.images && p.images.length > 0) ? p.images : [p.img || ""];
         const activeImg = images[0] || "";
 
@@ -1699,9 +1336,7 @@ async function uploadImageToStorage(file, folder = "garments") {
         if (images.length > 1) {
           thumbStripHtml = `<div class="thumb-strip">` +
             images.map((imgUrl, i) => `
-              <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" 
-                   loading="lazy" decoding="async" 
-                   onclick="swapCardImage('${p.id}', '${imgUrl}', this, ${i + 1}, ${images.length})" />
+              <img src="${imgUrl}" class="thumb-item ${i === 0 ? 'active' : ''}" onclick="swapCardImage('${p.id}', '${imgUrl}', this)" />
             `).join("") +
           `</div>`;
         }
@@ -1712,16 +1347,14 @@ async function uploadImageToStorage(file, folder = "garments") {
             ${sizeOptions.map(sz => `<option value="${sz}">${sz}</option>`).join("")}
           </select>
         `;
-        const stockCount = (p.stock !== undefined) ? p.stock : 10;
 
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" loading="lazy" decoding="async" />
+            <img class="card-img" id="card-img-${p.id}" src="${activeImg}" alt="${p.name}" />
             <span class="cod-tag">COD</span>
-            <span class="stock-badge">${stockCount} left</span>
-            ${images.length > 1 ? `<span class="img-count-badge" id="img-badge-${p.id}">1 / ${images.length}</span>` : ''}
+            <span class="stock-badge">${p.stock || 10} left</span>
           </div>
           ${thumbStripHtml}
           <div class="card-body">
@@ -1738,132 +1371,76 @@ async function uploadImageToStorage(file, folder = "garments") {
       });
     }
 
-    window.swapCardImage = function(cardId, newSrc, el, currentIdx, total) {
-      const mainImg = document.getElementById(`card-img-${cardId}`);
-      if (mainImg) mainImg.src = newSrc;
-      const badge = document.getElementById(`img-badge-${cardId}`);
-      if (badge && currentIdx && total) badge.innerText = `${currentIdx} / ${total}`;
-      const strip = el.parentElement;
-      strip.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
+    window.swapCardImage = function(cardId, newSrc, el) {
+      document.getElementById(`card-img-${cardId}`).src = newSrc;
+      el.parentElement.querySelectorAll('.thumb-item').forEach(img => img.classList.remove('active'));
       el.classList.add('active');
     };
 
+    window.deleteGarment = async function(id) {
+      if (!confirm("Delete this garment?")) return;
+      try {
+        await deleteDoc(doc(db, "garments", id));
+        alert("Garment deleted.");
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    };
+
     window.handleNewProduct = async function(e) {
-  e.preventDefault();
+      e.preventDefault();
+      if (!currentAdminUser) return alert("Only the owner can upload garments.");
 
-  if (!currentAdminUser) {
-    alert("Only the owner can upload garments.");
-    return;
-  }
+      const submitBtn = document.getElementById("saveGarmentBtn");
+      const title = document.getElementById("newTitle").value.trim();
+      const price = document.getElementById("newPrice").value.trim();
+      const stock = parseInt(document.getElementById("newStock").value.trim(), 10) || 1;
+      const sizes = document.getElementById("newSizes").value.split(",").map(s => s.trim()).filter(Boolean);
+      const files = document.getElementById("newImgFiles").files;
 
-  const submitBtn = document.getElementById("saveGarmentBtn");
+      if (!files || files.length === 0) return alert("Select at least 1 image.");
 
-  const title = document.getElementById("newTitle").value.trim();
-  const price = document.getElementById("newPrice").value.trim();
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing photos...";
 
-  const stock =
-    parseInt(
-      document.getElementById("newStock").value.trim(),
-      10
-    ) || 1;
+      try {
+        const base64List = [];
+        for (let i = 0; i < files.length; i++) {
+          submitBtn.innerText = `Optimizing photo ${i + 1} of ${files.length}...`;
+          base64List.push(await fileToBase64(files[i], 600, 0.60));
+        }
 
-  const rawSizes =
-    document.getElementById("newSizes").value.trim();
+        submitBtn.innerText = "Saving to Live Catalog...";
 
-  const sizesArray = rawSizes
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean);
+        await addDoc(collection(db, "garments"), {
+          name: title,
+          price: Number(price),
+          stock: Number(stock),
+          sizes: sizes.length > 0 ? sizes : ["S", "M", "L", "XL"],
+          img: base64List[0],
+          images: base64List,
+          createdAt: Date.now()
+        });
 
-  const files =
-    document.getElementById("newImgFiles").files;
-
-  if (!files || files.length === 0) {
-    alert("Please select at least 1 photo.");
-    return;
-  }
-
-  submitBtn.disabled = true;
-
-  try {
-    const uploadedUrls = [];
-
-    for (let i = 0; i < files.length; i++) {
-      submitBtn.innerText =
-        `Uploading photo ${i + 1} of ${files.length}...`;
-
-      const imageUrl =
-        await uploadImageToStorage(
-          files[i],
-          "garments"
-        );
-
-      uploadedUrls.push(imageUrl);
-    }
-
-    if (uploadedUrls.length === 0) {
-      throw new Error("No images were uploaded.");
-    }
-
-    submitBtn.innerText =
-      "Saving to Live Catalog...";
-
-    await addDoc(collection(db, "garments"), {
-      name: title,
-      price: Number(price),
-      stock: Number(stock),
-
-      sizes:
-        sizesArray.length > 0
-          ? sizesArray
-          : ["S", "M", "L", "XL"],
-
-      /*
-       * New system:
-       * Only URLs are stored in Firestore.
-       * The actual image files are in Firebase Storage.
-       */
-      img: uploadedUrls[0],
-      images: uploadedUrls,
-
-      createdAt: Date.now()
-    });
-
-    closeModal("addProductModal");
-
-    document
-      .getElementById("newProductForm")
-      .reset();
-
-    alert(
-      `Success! Garment added with ${stock} in stock.`
-    );
-
-  } catch (err) {
-    console.error("Garment upload error:", err);
-
-    alert(
-      "Upload failed: " + err.message
-    );
-
-  } finally {
-    submitBtn.disabled = false;
-
-    submitBtn.innerText =
-      "Save Garment to Live Catalog";
-  }
-};
+        closeModal("addProductModal");
+        document.getElementById("newProductForm").reset();
+        alert(`Success! Garment added.`);
+      } catch (err) {
+        alert("Upload error: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Save Garment to Live Catalog";
+      }
+    };
 
     window.startOrder = function(id) {
       selectedProduct = allProducts.find(p => p.id === id);
       if (!selectedProduct) return;
-      const sizeEl = document.getElementById(`size-${id}`);
-      selectedProduct.selectedSize = sizeEl ? sizeEl.value : "Standard";
+      selectedProduct.selectedSize = document.getElementById(`size-${id}`)?.value || "Standard";
 
       document.getElementById("orderItemTitle").innerText = selectedProduct.name;
       document.getElementById("orderItemSize").innerText = "Size: " + selectedProduct.selectedSize;
       document.getElementById("orderItemPrice").innerText = "₹" + selectedProduct.price;
-
       document.getElementById("orderModal").classList.add("active");
     };
 
@@ -1873,14 +1450,6 @@ async function uploadImageToStorage(file, folder = "garments") {
       submitBtn.disabled = true;
       submitBtn.innerText = "Placing Order...";
 
-      const name = document.getElementById("custName").value.trim();
-      const phone = document.getElementById("custPhone").value.trim();
-      const area = document.getElementById("custArea").value;
-      const street = document.getElementById("custStreet").value.trim();
-      const productPhoto = (Array.isArray(selectedProduct.images) && selectedProduct.images.length > 0)
-        ? selectedProduct.images[0]
-        : (selectedProduct.img || "");
-
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
       const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
@@ -1889,12 +1458,12 @@ async function uploadImageToStorage(file, folder = "garments") {
         item: selectedProduct.name,
         size: selectedProduct.selectedSize,
         price: Number(selectedProduct.price),
-        photoUrl: productPhoto,
+        photoUrl: (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.img || "",
         paymentMethod: "Cash on Delivery (COD)",
-        customerName: name,
-        customerPhone: phone,
-        customerArea: area,
-        customerStreet: street,
+        customerName: document.getElementById("custName").value.trim(),
+        customerPhone: document.getElementById("custPhone").value.trim(),
+        customerArea: document.getElementById("custArea").value,
+        customerStreet: document.getElementById("custStreet").value.trim(),
         deliveryOtp: generatedOtp,
         status: "confirmed",
         date: new Date().toLocaleDateString(),
@@ -1906,23 +1475,16 @@ async function uploadImageToStorage(file, folder = "garments") {
         const docRef = await addDoc(collection(db, "orders"), orderData);
         orderData.firestoreId = docRef.id;
 
-        try {
-          const lightweightLocalOrder = { ...orderData, photoUrl: "" };
-          let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-          localOrders.unshift(lightweightLocalOrder);
-          if (localOrders.length > 20) localOrders = localOrders.slice(0, 20);
-          localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
-        } catch (storageErr) {
-          console.warn("Storage warning:", storageErr);
-        }
+        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
+        localOrders.unshift({ ...orderData, photoUrl: "" });
+        localStorage.setItem("ifp_orders", JSON.stringify(localOrders.slice(0, 20)));
 
         closeModal("orderModal");
         document.getElementById("directOrderForm").reset();
         document.getElementById("confirmedOrderId").innerText = "Order ID: " + newOrderId;
         document.getElementById("successModal").classList.add("active");
-        updateDeliveryBadge();
       } catch (err) {
-        alert("Failed to confirm order: " + err.message);
+        alert("Order error: " + err.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Confirm Order";
@@ -1931,67 +1493,30 @@ async function uploadImageToStorage(file, folder = "garments") {
 
     window.cancelOrder = async function(orderId) {
       if (!confirm(`Cancel Order #${orderId}?`)) return;
-
       let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-      localOrders = localOrders.filter(o => o.orderId !== orderId);
-      localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
+      localStorage.setItem("ifp_orders", JSON.stringify(localOrders.filter(o => o.orderId !== orderId)));
 
-      try {
-        const targetOrder = cloudOrders.find(o => o.orderId === orderId);
-        if (targetOrder && targetOrder.firestoreId) {
-          await deleteDoc(doc(db, "orders", targetOrder.firestoreId));
-        }
-        alert("Order cancelled.");
-      } catch (err) {
-        console.error(err);
-      }
-
+      const targetOrder = cloudOrders.find(o => o.orderId === orderId);
+      if (targetOrder?.firestoreId) await deleteDoc(doc(db, "orders", targetOrder.firestoreId));
       openOrdersModal();
-      updateDeliveryBadge();
-    };
-
-    window.deleteDeliveredOrder = async function(orderId, firestoreId) {
-      if (!currentAdminUser) return;
-      if (!confirm(`Permanently delete Order #${orderId}?`)) return;
-
-      try {
-        if (firestoreId) {
-          await deleteDoc(doc(db, "orders", firestoreId));
-        }
-
-        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-        localOrders = localOrders.filter(o => o.orderId !== orderId);
-        localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
-
-        alert(`Order #${orderId} deleted.`);
-        renderDeliveryHub();
-        updateDeliveryBadge();
-      } catch (err) {
-        alert("Error: " + err.message);
-      }
     };
 
     window.initiateDeliveredOtp = function(orderId) {
-      const allKnownOrders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
-      const order = allKnownOrders.find(o => o.orderId === orderId);
-      if (!order) return alert("Could not locate order details.");
+      const order = cloudOrders.find(o => o.orderId === orderId);
+      if (!order) return;
 
-      let otp = order.deliveryOtp || Math.floor(1000 + Math.random() * 9000).toString();
       pendingDeliveryVerification = {
         firestoreId: order.firestoreId || null,
         orderId: order.orderId,
-        correctOtp: otp.toString()
+        correctOtp: (order.deliveryOtp || "0000").toString()
       };
 
-      document.getElementById("generatedOtpDisplay").innerText = otp;
+      document.getElementById("generatedOtpDisplay").innerText = pendingDeliveryVerification.correctOtp;
       document.getElementById("enteredOtpInput").value = "";
 
-      const msg = encodeURIComponent(`Hello ${order.customerName || "Customer"}, your order (${order.item || "Garment"}) is out for delivery! Verification OTP: ${otp}`);
+      const msg = encodeURIComponent(`Hello ${order.customerName}, your IFP order (${order.item}) verification OTP: ${pendingDeliveryVerification.correctOtp}`);
       const cleanPhone = (order.customerPhone || "").replace(/[^0-9]/g, '');
-      const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
-      
-      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${waPhone}?text=${msg}`;
-      document.getElementById("otpSmsLink").href = `sms:${cleanPhone}?body=${msg}`;
+      document.getElementById("otpWhatsAppLink").href = `https://wa.me/${cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone}?text=${msg}`;
       document.getElementById("otpModal").classList.add("active");
     };
 
@@ -1999,36 +1524,22 @@ async function uploadImageToStorage(file, folder = "garments") {
       e.preventDefault();
       if (!pendingDeliveryVerification) return;
 
-      const enteredCode = document.getElementById("enteredOtpInput").value.trim();
-      if (enteredCode !== pendingDeliveryVerification.correctOtp) {
-        alert("❌ Incorrect OTP!");
+      if (document.getElementById("enteredOtpInput").value.trim() !== pendingDeliveryVerification.correctOtp) {
+        alert("Incorrect OTP!");
         return;
       }
 
-      const { firestoreId, orderId } = pendingDeliveryVerification;
-      try {
-        if (firestoreId) {
-          await updateDoc(doc(db, "orders", firestoreId), {
-            status: "delivered",
-            deliveredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          });
-        }
-
-        let localOrders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-        localOrders = localOrders.map(o => {
-          if (o.orderId === orderId) o.status = "delivered";
-          return o;
+      const { firestoreId } = pendingDeliveryVerification;
+      if (firestoreId) {
+        await updateDoc(doc(db, "orders", firestoreId), {
+          status: "delivered",
+          deliveredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
-        localStorage.setItem("ifp_orders", JSON.stringify(localOrders));
-
-        closeModal("otpModal");
-        alert(`✅ Order #${orderId} moved to DELIVERED!`);
-        pendingDeliveryVerification = null;
-        renderDeliveryHub();
-        updateDeliveryBadge();
-      } catch (err) {
-        alert("Error: " + err.message);
       }
+
+      closeModal("otpModal");
+      alert("Order marked delivered!");
+      renderDeliveryHub();
     };
 
     window.switchDeliveryTab = function(tab) {
@@ -2041,22 +1552,18 @@ async function uploadImageToStorage(file, folder = "garments") {
     };
 
     window.openDeliveryDashboard = function() {
-      if (!currentAdminUser) {
-        alert("Access Restricted: Owner only.");
-        return;
-      }
+      if (!currentAdminUser) return alert("Owner only.");
       renderDeliveryHub();
       document.getElementById("deliveryModal").classList.add("active");
     };
 
     function renderDeliveryHub() {
-      const orders = cloudOrders.length > 0 ? cloudOrders : (JSON.parse(localStorage.getItem("ifp_orders")) || []);
       const activeContainer = document.getElementById("deliveryGroupContainer");
       const deliveredContainer = document.getElementById("deliveredOrdersContainer");
+      const activeOrders = cloudOrders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
 
-      const activeOrders = orders.filter(o => o.status !== "delivered" && o.status !== "cancelled");
       if (activeOrders.length === 0) {
-        activeContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No pending deliveries.</p>`;
+        activeContainer.innerHTML = `<p style="text-align:center; padding:20px; color:var(--muted);">No active deliveries.</p>`;
       } else {
         const groups = activeOrders.reduce((acc, curr) => {
           const area = curr.customerArea || "General Area";
@@ -2066,29 +1573,19 @@ async function uploadImageToStorage(file, folder = "garments") {
         }, {});
 
         let html = "";
-        for (const [areaName, areaOrders] of Object.entries(groups)) {
+        for (const [areaName, orders] of Object.entries(groups)) {
           html += `
             <div class="loc-group-card">
-              <div class="loc-group-header">
-                <span><i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> ${areaName}</span>
-                <span>${areaOrders.length} order(s)</span>
-              </div>
+              <div class="loc-group-header"><span>${areaName}</span><span>${orders.length} order(s)</span></div>
           `;
-          areaOrders.forEach(o => {
+          orders.forEach(o => {
             html += `
               <div class="loc-order-item">
-                ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:48px; height:48px; border-radius:6px; object-fit:cover; border:1px solid #cbd5e1;" />` : ''}
                 <div style="flex:1;">
-                  <div style="display:flex; justify-content:space-between;">
-                    <span style="font-weight:700; color:var(--primary);">${o.customerName}</span>
-                    <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
-                  </div>
-                  <div>${o.item} (Size: ${o.size}) • <strong style="color:#047857;">COD</strong></div>
-                  <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}" style="color:#0284c7; font-weight:700;">${o.customerPhone}</a></div>
-                  <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">ID: ${o.orderId} • ${o.date} ${o.time || ''}</div>
-                  <button type="button" class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.orderId}')">
-                    <i class="fa-solid fa-shield-halved"></i> Delivered (OTP)
-                  </button>
+                  <div style="display:flex; justify-content:space-between;"><strong>${o.customerName}</strong><span style="color:#be123c;font-weight:800;">₹${o.price}</span></div>
+                  <div>${o.item} (Size: ${o.size}) • <strong>COD</strong></div>
+                  <div style="color:var(--muted);">${o.customerStreet} • <a href="tel:${o.customerPhone}">${o.customerPhone}</a></div>
+                  <button type="button" class="btn-delivered-action" onclick="initiateDeliveredOtp('${o.orderId}')">Mark Delivered (OTP)</button>
                 </div>
               </div>
             `;
@@ -2098,78 +1595,44 @@ async function uploadImageToStorage(file, folder = "garments") {
         activeContainer.innerHTML = html;
       }
 
-      const deliveredOrders = orders.filter(o => o.status === "delivered");
-      if (deliveredOrders.length === 0) {
-        deliveredContainer.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No delivered items yet.</p>`;
-      } else {
-        deliveredContainer.innerHTML = deliveredOrders.map(o => `
-          <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px; border:1px solid #e2e8f0;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:44px; height:44px; border-radius:6px; object-fit:cover;" />` : ''}
-            <div style="flex:1;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong style="color:var(--primary);">${o.item}</strong>
-                <span style="color:#10b981; font-weight:800;"><i class="fa-solid fa-circle-check"></i> Delivered</span>
-              </div>
-              <div style="font-size:0.75rem; color:var(--muted);">Customer: ${o.customerName} (${o.customerPhone}) • ₹${o.price}</div>
-              <div style="font-size:0.7rem; color:#94a3b8;">Order ID: ${o.orderId} • Area: ${o.customerArea || ''}</div>
-              <button class="btn-cancel-action" style="margin-top:6px; font-size:0.7rem; padding:4px 8px; background:#b91c1c;" onclick="deleteDeliveredOrder('${o.orderId}', '${o.firestoreId || ''}')">
-                <i class="fa-solid fa-trash"></i> Delete Delivered Record
-              </button>
-            </div>
+      const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
+      deliveredContainer.innerHTML = deliveredOrders.length === 0 ? `<p style="text-align:center; padding:20px; color:var(--muted);">No delivered orders.</p>` : deliveredOrders.map(o => `
+        <div class="loc-order-item" style="background:#f8fafc; margin-bottom:8px; border-radius:8px;">
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between;"><strong>${o.item}</strong><span style="color:#10b981;font-weight:800;">Delivered</span></div>
+            <div style="font-size:0.75rem; color:var(--muted);">${o.customerName} • ₹${o.price}</div>
           </div>
-        `).join("");
-      }
+        </div>
+      `).join("");
       updateDeliveryBadge();
     }
 
     window.openOrdersModal = function() {
       const container = document.getElementById("ordersListContainer");
       const orders = JSON.parse(localStorage.getItem("ifp_orders")) || [];
-      if (orders.length === 0) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:var(--muted); text-align:center; padding:20px;">No active orders found.</p>`;
-      } else {
-        container.innerHTML = orders.map(o => `
-          <div style="display:flex; gap:10px; align-items:center; border-left:4px solid ${o.status === 'delivered' ? '#10b981' : '#e11d48'}; background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; font-size:0.8rem;">
-            ${o.photoUrl ? `<img src="${o.photoUrl}" loading="lazy" decoding="async" style="width:48px; height:48px; border-radius:6px; object-fit:cover;" />` : ''}
-            <div style="flex:1;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>${o.item}</strong>
-                <span style="font-weight:800; color:#be123c;">₹${o.price}</span>
-              </div>
-              <div style="color:var(--muted);">Size: ${o.size} • COD</div>
-              <div style="color:#94a3b8; font-size:0.7rem; margin-top:2px;">Order ID: ${o.orderId} • Placed: ${o.date} ${o.time || ''}</div>
-              <div style="margin-top:6px;">
-                ${o.status === 'delivered' 
-                  ? `<span style="color:#10b981; font-weight:800; font-size:0.75rem;"><i class="fa-solid fa-check-double"></i> Delivered</span>` 
-                  : `<button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')"><i class="fa-solid fa-xmark"></i> Cancel Order</button>`
-                }
-              </div>
-            </div>
-          </div>
-        `).join("");
-      }
+      container.innerHTML = orders.length === 0 ? `<p style="text-align:center; padding:20px; color:var(--muted);">No orders found.</p>` : orders.map(o => `
+        <div style="background:#f8fafc; padding:10px; margin-bottom:10px; border-radius:8px; border-left:4px solid #be123c;">
+          <div style="display:flex; justify-content:space-between;"><strong>${o.item}</strong><span style="color:#be123c;font-weight:800;">₹${o.price}</span></div>
+          <div style="color:var(--muted); font-size:0.75rem;">Size: ${o.size} • Order ID: ${o.orderId}</div>
+          <button class="btn-cancel-action" onclick="cancelOrder('${o.orderId}')">Cancel Order</button>
+        </div>
+      `).join("");
       document.getElementById("myOrdersModal").classList.add("active");
     };
 
-    window.openAddProductModal = function() {
-      document.getElementById("addProductModal").classList.add("active");
-    };
-
-    window.closeModal = function(id) {
-      document.getElementById(id).classList.remove("active");
-    };
+    window.openAddProductModal = function() { document.getElementById("addProductModal").classList.add("active"); };
+    window.closeModal = function(id) { document.getElementById(id)?.classList.remove("active"); };
 
     checkAdminStatus();
+    evaluateMaintenanceScreen();
     initCloudSync();
   </script>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('IFP PWA Worker Active:', reg.scope))
-          .catch(err => console.error('PWA Worker Registration error:', err));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW err:', err));
       });
     }
   </script>
