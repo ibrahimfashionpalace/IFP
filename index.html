@@ -1172,6 +1172,21 @@
       openDeliveryDashboard();
     };
 
+    window.toggleOtpMask = (orderId, realOtp) => {
+      const span = document.getElementById(`otpText_${orderId}`);
+      const icon = document.getElementById(`otpEye_${orderId}`);
+      if (!span || !icon) return;
+      if (span.getAttribute("data-revealed") === "true") {
+        span.innerText = "••••";
+        span.setAttribute("data-revealed", "false");
+        icon.className = "fa-solid fa-eye";
+      } else {
+        span.innerText = realOtp;
+        span.setAttribute("data-revealed", "true");
+        icon.className = "fa-solid fa-eye-slash";
+      }
+    };
+
     window.openDeliveryDashboard = () => {
       const container = document.getElementById("deliveryGroupContainer");
       if (!container) return;
@@ -1198,50 +1213,62 @@
         html += listToDisplay.map(o => {
           const cleanPhone = (o.customerPhone || "").replace(/[^0-9]/g, "");
           const fullWaPhone = cleanPhone.length === 10 ? "91" + cleanPhone : cleanPhone;
-          const msgText = encodeURIComponent(`Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${o.otp || 'N/A'}\n\nPlease share this code with the delivery partner upon arrival.`);
+          const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
+          
+          const rawMessage = `Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${activeOtp}\n\nPlease share this code with the delivery partner upon arrival.`;
+          const msgText = encodeURIComponent(rawMessage);
           
           const waUrl = `https://wa.me/${fullWaPhone}?text=${msgText}`;
-          const smsUrl = `sms:${cleanPhone}?body=${msgText}`;
+          const smsUrl = `sms:${cleanPhone}?&body=${msgText}`;
 
           return `
-            <div style="padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:10px; background:#fff;">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                  <strong style="color:var(--primary); font-size:0.95rem;">${o.customerName}</strong>
-                  <span style="font-size:0.75rem; color:var(--muted); display:block;">Order: #${o.orderId}</span>
+            <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
+              <!-- Compact 1-2 line order header with side call button -->
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:0.88rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${o.customerName} <span style="font-size:0.75rem; font-weight:600; color:var(--muted);">(${o.customerPhone || 'No Phone'})</span>
+                  </div>
+                  <div style="font-size:0.76rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
+                    <b>${o.item}</b> (${o.size || 'Std'}) • <span style="color:var(--accent-pink); font-weight:700;">${o.customerArea || 'Area'}</span>
+                  </div>
                 </div>
-                <strong style="color:#be123c; font-size:1rem;">₹${o.price}</strong>
-              </div>
 
-              <div style="font-size:0.8rem; color:#334155; margin:6px 0;">
-                <b>${o.item}</b> (${o.size || 'Standard'} / ${o.color || 'Standard'})<br>
-                <i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i> ${o.customerStreet}, ${o.customerArea}<br>
-                <i class="fa-solid fa-phone" style="color:var(--accent);"></i> ${o.customerPhone}
+                <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                  <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
+                  <a href="tel:${cleanPhone}" style="width:34px; height:34px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.85rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                    <i class="fa-solid fa-phone"></i>
+                  </a>
+                </div>
               </div>
 
               ${currentDeliveryFilter === 'pending' ? `
-                <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:8px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:0.75rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
-                  <span style="font-size:1.05rem; font-weight:900; letter-spacing:2px; color:var(--primary);">${o.otp || '----'}</span>
+                <!-- Masked OTP with Eye Toggle -->
+                <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
+                    <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                  </div>
                 </div>
 
                 <div style="display:flex; gap:6px; margin-bottom:8px;">
-                  <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; font-weight:700;">
-                    <i class="fa-brands fa-whatsapp"></i> Send WhatsApp
+                  <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
                   </a>
-                  <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:8px; border-radius:6px; font-size:0.75rem; font-weight:700;">
-                    <i class="fa-solid fa-comment-sms"></i> Send SMS
+                  <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                    <i class="fa-solid fa-comment-sms"></i> SMS
                   </a>
                 </div>
 
                 <div style="display:flex; gap:6px;">
-                  <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.82rem;" />
-                  <button style="background:#10b981; color:#fff; border:none; padding:8px 12px; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
+                  <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
+                  <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
                     Verify &amp; Deliver
                   </button>
                 </div>
               ` : `
-                <div style="font-size:0.75rem; color:#10b981; font-weight:700; margin-top:6px;">
+                <div style="font-size:0.72rem; color:#10b981; font-weight:700; margin-top:6px;">
                   <i class="fa-solid fa-circle-check"></i> Delivered Successfully
                 </div>
               `}
@@ -1265,7 +1292,9 @@
       const targetOrder = cloudOrders.find(o => o.firestoreId === firestoreId);
       if (!targetOrder) return alert("Order not found.");
 
-      if (String(targetOrder.otp).trim() === enteredOtp) {
+      const expectedOtp = String(targetOrder.otp || (targetOrder.orderId ? targetOrder.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234")).trim();
+
+      if (expectedOtp === enteredOtp) {
         await updateDoc(doc(db, "orders", firestoreId), { 
           status: "delivered",
           deliveredAt: Date.now()
