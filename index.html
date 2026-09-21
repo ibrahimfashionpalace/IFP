@@ -1329,11 +1329,16 @@
             const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
             const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
             
-            const rawMessage = `Hello ${o.customerName},\nYour order (${o.item}) from IBRAHIM Fashion Palace is out for delivery.\n\nYour Delivery Confirmation OTP is: ${activeOtp}\n\nPlease share this code with the delivery partner upon arrival.`;
-            const msgText = encodeURIComponent(rawMessage);
-            
-            const waUrl = `https://wa.me/${fullWaPhone}?text=${msgText}`;
-            const smsUrl = `sms:${cleanPhone}?&body=${msgText}`;
+            // Keep text clean on a single line so Android SMS intent does not drop the message
+          const cleanCustName = (o.customerName || 'Customer').trim();
+          const cleanItem = (o.item || 'Garment').trim();
+          
+          const textForMessage = `Hello ${cleanCustName}, your order (${cleanItem}) from IBRAHIM Fashion Palace is out for delivery. Your Delivery Confirmation OTP is: ${activeOtp}. Please share this OTP with the rider upon arrival.`;
+          const encodedMessage = encodeURIComponent(textForMessage);
+
+          // Correct WhatsApp & Universal SMS URL formats
+          const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
+          const smsUrl = `sms:${cleanPhone}?body=${encodedMessage}`;
 
             html += `
               <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
