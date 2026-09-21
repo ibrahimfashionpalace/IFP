@@ -959,14 +959,33 @@
       if (cloudBanners.length === 0) {
         track.innerHTML = `
           <div class="banner-slide">
-            <img class="hero-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=75" alt="Banner" />
+            <img class="hero-img" src="./banner1.jpg" alt="Special Collection" fetchpriority="high" />
+            <div class="hero-overlay">
+              <span class="hero-tag">New Arrivals</span>
+              <div class="hero-title">Special Collection</div>
+              <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional &amp; modern wear • Cash on Delivery</p>
+            </div>
+          </div>
+          <div class="banner-slide">
+            <img class="hero-img" src="./banner2.jpg" alt="Exclusive Garments" loading="lazy" />
             <div class="hero-overlay">
               <span class="hero-tag">Exclusive Fashion</span>
-              <div class="hero-title">New Garment Collection</div>
-              <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional & modern wear • Cash on Delivery</p>
+              <div class="hero-title">IBRAHIM Fashion Palace</div>
+              <p style="font-size: 0.75rem; color: #fbcfe8;">Premium quality • Best prices</p>
             </div>
           </div>
         `;
+
+        clearInterval(bannerInterval);
+        bannerInterval = setInterval(() => {
+          if (!track) return;
+          const maxScroll = track.scrollWidth - track.clientWidth;
+          if (track.scrollLeft >= maxScroll - 5) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+          }
+        }, 4000);
         return;
       }
       track.innerHTML = cloudBanners.map(b => `
