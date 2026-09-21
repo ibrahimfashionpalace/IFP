@@ -519,8 +519,8 @@
     </div>
   </main>
 
-  <!-- Welcome Popup Modal -->
-  <div class="modal-overlay" id="welcomeModal">
+  <!-- Welcome Popup Modal (Active by default) -->
+  <div class="modal-overlay active" id="welcomeModal">
     <div class="modal-sheet" style="border-radius: 20px; margin: 20px auto; text-align: center; padding: 24px 18px;">
       <div style="font-size: 2.5rem; margin-bottom: 8px;">✨</div>
       <h2 style="font-size: 1.25rem; font-weight: 900; color: var(--primary); margin-bottom: 6px;">
@@ -678,6 +678,7 @@
     </div>
   </div>
 
+  <!-- My Orders Modal -->
   <div class="modal-overlay" id="myOrdersModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1115,20 +1116,27 @@
       confirmBtn.innerText = "Placing order...";
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
+      const newOrder = {
+        orderId: newOrderId,
+        item: activeOrderData.name,
+        size: activeOrderData.selectedSize,
+        color: activeOrderData.selectedColor,
+        price: Number(activeOrderData.price),
+        customerName: document.getElementById("custName").value.trim(),
+        customerPhone: document.getElementById("custPhone").value.trim(),
+        customerArea: document.getElementById("custArea").value,
+        customerStreet: document.getElementById("custStreet").value.trim(),
+        status: "confirmed",
+        createdAt: Date.now()
+      };
+
       try {
-        await addDoc(collection(db, "orders"), {
-          orderId: newOrderId,
-          item: activeOrderData.name,
-          size: activeOrderData.selectedSize,
-          color: activeOrderData.selectedColor,
-          price: Number(activeOrderData.price),
-          customerName: document.getElementById("custName").value.trim(),
-          customerPhone: document.getElementById("custPhone").value.trim(),
-          customerArea: document.getElementById("custArea").value,
-          customerStreet: document.getElementById("custStreet").value.trim(),
-          status: "confirmed",
-          createdAt: Date.now()
-        });
+        await addDoc(collection(db, "orders"), newOrder);
+
+        // Save order to customer's device for "My Orders"
+        const existing = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
+        existing.unshift(newOrder);
+        localStorage.setItem("ifp_my_orders", JSON.stringify(existing));
 
         document.getElementById("orderFormWrapper").style.display = "none";
         document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
@@ -1160,18 +1168,36 @@
       openDeliveryDashboard();
     };
 
-    window.openOrdersModal = () => document.getElementById("myOrdersModal").classList.add("active");
+    // My Orders handler
+    window.openOrdersModal = () => {
+      const container = document.getElementById("ordersListContainer");
+      const myOrders = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
+      
+      if (myOrders.length === 0) {
+        container.innerHTML = `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">You haven't placed any orders yet.</p>`;
+      } else {
+        container.innerHTML = myOrders.map(o => `
+          <div style="padding:12px; border-bottom:1px solid #f1f5f9; margin-bottom:8px; background:#fdf2f8; border-radius:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:800; color:var(--primary); font-size:0.9rem;">${o.item}</span>
+              <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">
+              Size: <b>${o.size || 'Standard'}</b> | Color: <b>${o.color || 'Standard'}</b>
+            </div>
+            <div style="font-size:0.72rem; color:var(--primary); margin-top:4px;">
+              Order ID: <b>${o.orderId}</b> • Status: <span style="color:#10b981; font-weight:700;">Confirmed (COD)</span>
+            </div>
+          </div>
+        `).join("");
+      }
+      document.getElementById("myOrdersModal").classList.add("active");
+    };
+
     window.closeModal = (id) => document.getElementById(id)?.classList.remove("active");
 
-    // Welcome Popup handlers (shows once per session)
-    if (!sessionStorage.getItem("ifp_welcomed")) {
-      document.getElementById("welcomeModal")?.classList.add("active");
-    } else {
-      document.getElementById("welcomeModal")?.classList.remove("active");
-    }
-
+    // Welcome popup dismiss
     window.dismissWelcomeModal = () => {
-      sessionStorage.setItem("ifp_welcomed", "true");
       document.getElementById("welcomeModal")?.classList.remove("active");
     };
 
