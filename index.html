@@ -1805,8 +1805,8 @@
           console.error("Delivered history archive error:", e);
         }
 
-        alert("OTP Verified! Order moved to Delivered tab and permanently archived in Delivered History.");
-        currentDeliveryFilter = "delivered";
+        alert("OTP Verified! Order marked as Delivered.");
+        currentDeliveryFilter = "pending";
         openDeliveryDashboard();
       } else {
         alert("Incorrect OTP! Delivery could not be confirmed.");
