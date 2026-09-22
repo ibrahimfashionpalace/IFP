@@ -289,11 +289,13 @@
     .admin-bar button.orders-placed-btn { background: #6366f1; color: #fff; border: none; flex: 1 1 100%; }
     .admin-bar button.maintenance-btn { background: #f59e0b; color: #fff; border: none; flex: 1 1 100%; }
     .admin-bar button.lock-btn { background: #fee2e2; color: #b91c1c; border: none; flex: 1 1 100%; }
+    
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
       padding: 0 12px;
+      align-items: stretch;
     }
     .card {
       background: var(--card-bg);
@@ -303,11 +305,12 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      height: 100%;
     }
     .card-img-wrap {
       position: relative;
       width: 100%;
-      padding-top: 125%;
+      padding-top: 115%;
       background: #f8fafc;
     }
     .card-img {
@@ -341,46 +344,52 @@
       font-weight: 800;
     }
 
-    /* ULTRA COMPACT CARD BODY BELOW IMAGE */
+    /* CARD BODY - AMPLE SPACE FOR FULL TITLES */
     .card-body {
-      padding: 5px 6px 6px;
+      padding: 8px 8px 10px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      flex: 1;
+      justify-content: space-between;
+      gap: 6px;
       background: #ffffff;
       position: relative;
       z-index: 1;
     }
     .card-title-row {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 4px;
+      flex-direction: column;
+      gap: 3px;
       margin-bottom: 2px;
     }
     .item-name { 
-      font-size: 0.78rem; 
-      font-weight: 700; 
+      font-size: 0.84rem; 
+      font-weight: 800; 
       color: #111827; 
-      white-space: nowrap; 
-      overflow: hidden; 
-      text-overflow: ellipsis;
-      line-height: 1.2;
+      white-space: normal; /* Allows full wrapping */
+      word-break: break-word; /* Prevents overflow */
+      overflow: visible; 
+      text-overflow: clip;
+      line-height: 1.35;
+      min-height: 2.7em; /* Consistent card height across cards */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .item-price { 
-      font-size: 0.88rem; 
+      font-size: 0.95rem; 
       font-weight: 800; 
       color: #be123c; 
-      line-height: 1; 
-      flex-shrink: 0;
+      line-height: 1.2; 
     }
     /* SIDE-BY-SIDE DROPDOWNS */
     .variant-row {
       display: flex !important;
       flex-direction: row !important;
-      gap: 4px !important;
+      gap: 5px !important;
       width: 100% !important;
-      margin-bottom: 3px !important;
+      margin-bottom: 4px !important;
     }
     .variant-col {
       flex: 1 1 50% !important;
@@ -389,10 +398,10 @@
     }
     .variant-col label {
       display: block;
-      font-size: 0.6rem;
+      font-size: 0.62rem;
       font-weight: 700;
       color: var(--muted);
-      margin-bottom: 1px;
+      margin-bottom: 2px;
       line-height: 1;
       text-transform: uppercase;
     }
@@ -400,12 +409,12 @@
       display: block !important;
       width: 100% !important;
       max-width: 100% !important;
-      padding: 2px 4px !important;
+      padding: 3px 4px !important;
       font-size: 0.72rem !important;
-      height: 25px !important;
+      height: 28px !important;
       line-height: 1.2 !important;
       border: 1px solid #cbd5e1;
-      border-radius: 5px;
+      border-radius: 6px;
       outline: none;
       background: #ffffff;
       color: var(--primary);
@@ -418,28 +427,29 @@
       appearance: menulist;
     }
     .order-btn {
-      margin-top: 1px;
+      margin-top: 2px;
       background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff;
       border: none;
-      padding: 5px 0;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      font-weight: 700;
+      padding: 8px 0;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 800;
       cursor: pointer;
       width: 100%;
       line-height: 1;
+      box-shadow: 0 2px 6px rgba(30, 27, 75, 0.2);
     }
     .delete-garment-btn {
       background: #fee2e2;
       color: #b91c1c;
       border: none;
-      padding: 3px;
+      padding: 4px;
       border-radius: 4px;
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 2px;
+      margin-top: 3px;
       width: 100%;
       line-height: 1;
     }
@@ -531,19 +541,16 @@
   <!-- Header -->
   <header>
     <div class="brand-wrap">
-      <!-- 3 Horizontal Lines (Hamburger Menu) -->
       <button class="menu-bar-btn" id="menuBarBtn" onclick="toggleIfpDropdown(event)">
         <i class="fa-solid fa-bars"></i>
       </button>
 
       <div class="brand-logo-container">
-        <!-- IFP Badge: Retains 3-tap secret owner login -->
         <div class="brand-logo-badge" id="ifpBadge" title="IFP Logo">
           <img src="./icon-192.png" alt="IFP" onerror="this.style.display='none'; this.parentElement.innerText='IFP';" />
         </div>
       </div>
 
-      <!-- Main Navigation Dropdown attached to the 3 lines -->
       <div class="ifp-dropdown-menu" id="ifpDropdown">
         <div class="ifp-dropdown-item" onclick="openOrdersModal(); closeIfpDropdown();">
           <i class="fa-solid fa-bag-shopping" style="color:var(--accent-pink);"></i> My Orders
@@ -563,13 +570,11 @@
     </div>
 
     <div class="header-actions">
-      <!-- Delivery Van Icon (Pending & Delivered Hub) -->
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" title="Delivery Hub (Pending & Delivered)" onclick="openDeliveryDashboard()">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
       </button>
 
-      <!-- About Orders Icon & Dropdown -->
       <div class="right-menu-container" id="aboutOrdersWrapper" style="display:none;">
         <button class="nav-btn" id="aboutOrdersBtn" onclick="toggleAboutOrdersMenu(event)" title="About Orders">
           <i class="fa-solid fa-clipboard-list"></i>
@@ -584,7 +589,6 @@
         </div>
       </div>
 
-      <!-- More Options (3 Dots Menu - Hidden when logged in as Owner) -->
       <div class="right-menu-container" id="moreBtnContainer">
         <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)">
           <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -603,9 +607,7 @@
 
   <!-- Banner -->
   <div class="hero-container">
-    <div class="banner-track" id="bannerTrack">
-      <!-- Starts empty so the placeholder never flashes -->
-    </div>
+    <div class="banner-track" id="bannerTrack"></div>
   </div>
 
   <!-- Search -->
@@ -634,7 +636,7 @@
     </div>
   </main>
 
-  <!-- Welcome Popup Modal (Active by default) -->
+  <!-- Welcome Popup Modal -->
   <div class="modal-overlay active" id="welcomeModal">
     <div class="modal-sheet" style="border-radius: 20px; margin: 20px auto; text-align: center; padding: 24px 18px;">
       <div style="font-size: 2.5rem; margin-bottom: 8px;">✨</div>
@@ -651,7 +653,7 @@
     </div>
   </div>
 
-  <!-- Modals -->
+  <!-- Banner Modal -->
   <div class="modal-overlay" id="bannerModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -683,6 +685,7 @@
     </div>
   </div>
 
+  <!-- Login Modal -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-sheet" style="border-radius:20px; margin:16px;">
       <div class="modal-head">
@@ -703,6 +706,7 @@
     </div>
   </div>
 
+  <!-- Add Product Modal -->
   <div class="modal-overlay" id="addProductModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -739,7 +743,7 @@
     </div>
   </div>
 
-  <!-- Place & Confirm Order Modal -->
+  <!-- Order Modal -->
   <div class="modal-overlay" id="orderModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -750,8 +754,8 @@
       <div id="orderFormWrapper">
         <div style="padding:12px; background:#fdf2f8; border:1px solid #fbcfe8; border-radius:10px; margin-bottom:14px;">
           <div style="font-size:0.85rem; color:#881337; font-weight:700; margin-bottom:4px;">You have placed order for:</div>
-          <div id="orderItemSummary" style="font-size:1rem; font-weight:800; color:#1e1b4b;"></div>
-          <div id="orderItemPrice" style="color:#be123c; font-weight:800; font-size:1.15rem; margin-top:4px;"></div>
+          <div id="orderItemSummary" style="font-size:1rem; font-weight:800; color:#1e1b4b; line-height: 1.35;"></div>
+          <div id="orderItemPrice" style="color:#be123c; font-weight:800; font-size:1.15rem; margin-top:6px;"></div>
         </div>
 
         <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
@@ -772,7 +776,6 @@
         </form>
       </div>
 
-      <!-- Confirmation Message -->
       <div id="orderSuccessMessage" style="display:none; text-align:center; padding:24px 10px;">
         <i class="fa-solid fa-circle-check" style="font-size:3.5rem; color:#10b981; margin-bottom:12px;"></i>
         <h3 style="font-size:1.25rem; font-weight:800; color:var(--primary); margin-bottom:8px;">Your order is confirmed!</h3>
@@ -780,11 +783,10 @@
         <p id="confirmedOrderId" style="font-size:0.8rem; font-weight:700; color:var(--muted); margin-bottom:20px;"></p>
         <button class="confirm-btn" style="background:var(--primary);" onclick="closeModal('orderModal')">Back to Shopping</button>
       </div>
-
     </div>
   </div>
 
-  <!-- Delivery Hub Modal (Van: Pending & Delivered ONLY) -->
+  <!-- Delivery Modal -->
   <div class="modal-overlay" id="deliveryModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -795,7 +797,7 @@
     </div>
   </div>
 
-  <!-- Orders Placed Modal (Separate Section) -->
+  <!-- Orders Placed Modal -->
   <div class="modal-overlay" id="ordersPlacedModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -806,7 +808,7 @@
     </div>
   </div>
 
-  <!-- About Orders Modal (Canceled & Delivered History) -->
+  <!-- About Orders Modal -->
   <div class="modal-overlay" id="aboutOrdersViewModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1329,7 +1331,7 @@
           </div>
           <div class="card-body">
             <div class="card-title-row">
-              <div class="item-name">${p.name}</div>
+              <div class="item-name" title="${p.name}">${p.name}</div>
               <div class="item-price">₹${p.price}</div>
             </div>
             
@@ -1551,7 +1553,7 @@
                   
                   <div style="flex:1; min-width:0; line-height:1.2;">
                     <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                      <span style="font-size:0.8rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${o.customerName}</span>
+                      <span style="font-size:0.8rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
                       <span style="color:#be123c; font-weight:800; font-size:0.84rem; margin-left:4px;">₹${o.price}</span>
                     </div>
 
@@ -1559,7 +1561,7 @@
                       <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerStreet || locationName}</span>
                     </div>
 
-                    <div style="font-size:0.7rem; color:#64748b; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
                       <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
                     </div>
                   </div>
@@ -1631,7 +1633,7 @@
                 
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${o.customerName}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
                     <span style="color:#be123c; font-weight:800; font-size:0.86rem;">₹${o.price}</span>
                   </div>
 
@@ -1639,7 +1641,7 @@
                     <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerArea || ''}</span>
                   </div>
 
-                  <div style="font-size:0.7rem; color:#64748b; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
                     <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
                   </div>
                 </div>
@@ -1732,7 +1734,7 @@
                 <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #86efac;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${o.customerName}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
                     <span style="color:#047857; font-weight:800; font-size:0.86rem;">₹${o.price}</span>
                   </div>
                   <div style="font-size:0.72rem; color:#334155; margin-top:2px;">
