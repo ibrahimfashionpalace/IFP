@@ -890,7 +890,6 @@
       const aboutOrdersEl = document.getElementById("aboutOrdersWrapper");
       if (aboutOrdersEl) aboutOrdersEl.style.display = isAuth ? "block" : "none";
 
-      // Strict !important styling to override any responsive CSS keeping it visible
       const moreBtnContainer = document.getElementById("moreBtnContainer");
       if (moreBtnContainer) {
         if (isAuth) {
@@ -1402,11 +1401,11 @@
       const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
 
       let html = `
-        <div style="display:flex; gap:8px; margin-bottom:14px;">
-          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:9px 6px; border-radius:8px; border:none; font-weight:800; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:7px 6px; border-radius:8px; border:none; font-weight:800; font-size:0.78rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
             Pending (${pendingOrders.length})
           </button>
-          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:9px 6px; border-radius:8px; border:none; font-weight:800; font-size:0.8rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
+          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:7px 6px; border-radius:8px; border:none; font-weight:800; font-size:0.78rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
             Delivered (${deliveredOrders.length})
           </button>
         </div>
@@ -1415,7 +1414,7 @@
       let listToDisplay = (currentDeliveryFilter === 'pending') ? pendingOrders : deliveredOrders;
 
       if (listToDisplay.length === 0) {
-        html += `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No ${currentDeliveryFilter} orders at the moment.</p>`;
+        html += `<p style="text-align:center; padding:24px; color:var(--muted); font-size:0.82rem;">No ${currentDeliveryFilter} orders at the moment.</p>`;
       } else {
         const groupedByLocation = {};
         listToDisplay.forEach(o => {
@@ -1427,10 +1426,10 @@
         Object.keys(groupedByLocation).sort().forEach(locationName => {
           const ordersInLoc = groupedByLocation[locationName];
           html += `
-            <div style="margin-bottom:14px;">
-              <div style="font-size:0.82rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:5px 10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="margin-bottom:10px;">
+              <div style="font-size:0.78rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:4px 8px; border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
                 <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
-                <span style="font-size:0.72rem; background:var(--primary); color:#fff; padding:2px 7px; border-radius:10px;">${ordersInLoc.length}</span>
+                <span style="font-size:0.68rem; background:var(--primary); color:#fff; padding:1px 6px; border-radius:10px;">${ordersInLoc.length}</span>
               </div>
           `;
 
@@ -1452,71 +1451,74 @@
             const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
 
             html += `
-              <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #cbd5e1;" />
+              <div style="padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:6px; background:#fff;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
                   
-                  <div style="flex:1; min-width:0;">
-                    <div style="font-size:0.86rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                      ${o.customerName}
+                  <div style="flex:1; min-width:0; line-height:1.25;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:0.84rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${o.customerName}
+                      </span>
+                      <span style="color:#be123c; font-weight:800; font-size:0.9rem;">₹${o.price}</span>
                     </div>
                     
-                    <div style="font-size:0.78rem; font-weight:600; color:var(--muted); margin-top:1px;">
+                    <div style="font-size:0.75rem; font-weight:700; color:#334155; margin-top:2px;">
                       ${o.customerPhone || 'No Phone'}
                     </div>
 
-                    <div style="font-size:0.75rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
-                      <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
+                    <div style="font-size:0.72rem; color:#475569; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      <b>${o.item}</b> • Size: <b>${o.size || 'Std'}</b> • Color: <b>${o.color || 'Std'}</b>
+                    </div>
+                    
+                    <div style="font-size:0.7rem; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${o.customerStreet || ''}
                     </div>
                   </div>
 
-                  <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                    <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
-                    <a href="tel:${formattedSmsPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                  <div style="flex-shrink:0; margin-left:4px;">
+                    <a href="tel:${formattedSmsPhone}" style="width:28px; height:28px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.72rem; box-shadow:0 1px 4px rgba(16,185,129,0.3);">
                       <i class="fa-solid fa-phone"></i>
                     </a>
                   </div>
                 </div>
 
-                <div style="margin-top:6px; font-size:0.72rem; color:var(--muted);">
-                  <i class="fa-regular fa-clock"></i> Placed on: <b>${formatOrderDateTime(o.createdAt)}</b>
+                <div style="margin-top:4px; font-size:0.68rem; color:var(--muted); padding-top:4px; border-top:1px dashed #f1f5f9;">
+                  <i class="fa-regular fa-clock"></i> Placed: <b>${formatOrderDateTime(o.createdAt)}</b>
                 </div>
 
                 ${currentDeliveryFilter === 'pending' ? `
-                  <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
-                      <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                  <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:6px; padding:4px 8px; margin:6px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.7rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.88rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
+                      <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.78rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
                     </div>
                   </div>
 
-                  <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <a href="${waUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                  <div style="display:flex; gap:5px; margin-bottom:6px;">
+                    <a href="${waUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:5px 4px; border-radius:5px; font-size:0.7rem; font-weight:700;">
                       <i class="fa-brands fa-whatsapp"></i> WhatsApp
                     </a>
-                    <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                    <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:5px 4px; border-radius:5px; font-size:0.7rem; font-weight:700;">
                       <i class="fa-solid fa-comment-sms"></i> SMS
                     </a>
                   </div>
 
-                  <div style="display:flex; gap:6px;">
-                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
-                    <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
-                      Verify &amp; Deliver
+                  <div style="display:flex; gap:5px;">
+                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="OTP" style="flex:1; padding:5px 6px; border:1px solid #cbd5e1; border-radius:5px; font-size:0.75rem;" />
+                    <button style="background:#10b981; color:#fff; border:none; padding:5px 10px; border-radius:5px; font-weight:700; font-size:0.72rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
+                      Verify
                     </button>
                   </div>
                 ` : ''}
 
                 ${currentDeliveryFilter === 'delivered' ? `
-                  <div style="margin-top:6px; font-size:0.72rem; color:#047857;">
-                    <i class="fa-solid fa-circle-check"></i> Delivered on: <b>${formatOrderDateTime(o.deliveredAt)}</b>
-                  </div>
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                    <span style="font-size:0.72rem; color:#10b981; font-weight:700;">
-                      <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px dashed #f1f5f9;">
+                    <span style="font-size:0.68rem; color:#047857; font-weight:700;">
+                      <i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}
                     </span>
-                    <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
+                    <button style="background:#fee2e2; color:#b91c1c; border:none; padding:3px 7px; border-radius:5px; font-size:0.68rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
                       <i class="fa-solid fa-trash"></i> Delete
                     </button>
                   </div>
@@ -1541,34 +1543,43 @@
       const placedOrders = cloudOrders.filter(o => o.status === "placed" || (!o.status && o.status !== "delivered" && o.status !== "canceled") || o.status === "confirmed");
 
       if (placedOrders.length === 0) {
-        container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No new orders placed.</p>`;
+        container.innerHTML = `<p style="text-align:center; padding:24px; color:var(--muted); font-size:0.82rem;">No new orders placed.</p>`;
       } else {
         container.innerHTML = placedOrders.map(o => {
           const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
           return `
-            <div style="padding:12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:10px; background:#fff;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:48px; height:48px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #cbd5e1;" />
-                <div style="flex:1; min-width:0;">
-                  <div style="font-size:0.92rem; font-weight:800; color:var(--primary);">${o.customerName}</div>
-                  <div style="font-size:0.9rem; font-weight:800; color:#1e1b4b; margin-top:2px;">${o.customerPhone || 'No Phone'}</div>
-                  <div style="font-size:0.75rem; color:#475569; margin-top:2px;">
-                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerArea || ''}
+            <div style="padding:8px 10px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:8px; background:#fff;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${garmentImg}" alt="${o.item}" style="width:48px; height:48px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
+                
+                <div style="flex:1; min-width:0; line-height:1.25;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.86rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${o.customerName}
+                    </span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.92rem;">₹${o.price}</span>
                   </div>
-                  <div style="font-size:0.72rem; color:var(--muted);">${o.customerStreet || ''}</div>
-                </div>
-                <div style="text-align:right;">
-                  <span style="color:#be123c; font-weight:800; font-size:1rem;">₹${o.price}</span>
+
+                  <div style="font-size:0.8rem; font-weight:800; color:#1e1b4b; margin-top:2px;">
+                    ${o.customerPhone || 'No Phone'}
+                  </div>
+
+                  <div style="font-size:0.72rem; color:#475569; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <b>${o.item}</b> • Size: <b>${o.size || 'Std'}</b> • Color: <b>${o.color || 'Std'}</b>
+                  </div>
+                  
+                  <div style="font-size:0.7rem; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${o.customerArea || ''} • ${o.customerStreet || ''}
+                  </div>
                 </div>
               </div>
 
-              <div style="margin-top:6px; font-size:0.72rem; color:var(--muted);">
-                <i class="fa-regular fa-clock"></i> Placed on: <b>${formatOrderDateTime(o.createdAt)}</b>
-              </div>
-
-              <div style="margin-top:8px;">
-                <button style="width:100%; background:var(--primary); color:#fff; border:none; padding:9px; border-radius:8px; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
-                  <i class="fa-solid fa-box-archive"></i> Accept / Dispatch to Pending
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; padding-top:4px; border-top:1px dashed #f1f5f9;">
+                <span style="font-size:0.68rem; color:var(--muted);">
+                  <i class="fa-regular fa-clock"></i> ${formatOrderDateTime(o.createdAt)}
+                </span>
+                <button style="background:var(--primary); color:#fff; border:none; padding:4px 9px; border-radius:5px; font-weight:700; font-size:0.72rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
+                  <i class="fa-solid fa-box-archive"></i> Accept &amp; Dispatch
                 </button>
               </div>
             </div>
@@ -1596,73 +1607,77 @@
         const canceledOrders = cloudOrders.filter(o => o.status === "canceled");
 
         if (canceledOrders.length === 0) {
-          container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No canceled orders.</p>`;
+          container.innerHTML = `<p style="text-align:center; padding:24px; color:var(--muted); font-size:0.82rem;">No canceled orders.</p>`;
           return;
         }
 
         container.innerHTML = canceledOrders.map(o => {
           const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
           return `
-            <div style="padding:10px 12px; border:1px solid #fee2e2; border-radius:10px; margin-bottom:10px; background:#fff5f5;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #fca5a5;" />
-                <div style="flex:1;">
-                  <div style="font-size:0.86rem; font-weight:800; color:var(--primary);">${o.customerName}</div>
-                  <div style="font-size:0.75rem; color:#475569;">${o.item} (${o.size || 'Std'} / ${o.color || 'Std'})</div>
-                  <div style="font-size:0.72rem; color:var(--muted);">${o.customerPhone || ''} • ${o.customerArea || ''}</div>
+            <div style="padding:8px 10px; border:1px solid #fee2e2; border-radius:8px; margin-bottom:6px; background:#fff5f5;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #fca5a5;" />
+                <div style="flex:1; min-width:0; line-height:1.25;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.84rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
+                    <span style="color:#b91c1c; font-weight:800; font-size:0.9rem;">₹${o.price}</span>
+                  </div>
+                  <div style="font-size:0.72rem; color:#475569; margin-top:2px;">
+                    <b>${o.item}</b> • Size: <b>${o.size || 'Std'}</b> • Color: <b>${o.color || 'Std'}</b>
+                  </div>
+                  <div style="font-size:0.7rem; color:var(--muted); margin-top:1px;">
+                    ${o.customerPhone || ''} • ${o.customerArea || ''}
+                  </div>
                 </div>
-                <div style="color:#b91c1c; font-weight:800; font-size:0.95rem;">₹${o.price}</div>
               </div>
-              <div style="margin-top:6px; font-size:0.72rem; color:#b91c1c; font-weight:700;">
-                <i class="fa-solid fa-ban"></i> Order Canceled by Customer
-              </div>
-              <div style="font-size:0.7rem; color:var(--muted); margin-top:2px;">
-                Placed: ${formatOrderDateTime(o.createdAt)}
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px dashed #fecaca; font-size:0.68rem;">
+                <span style="color:#b91c1c; font-weight:700;"><i class="fa-solid fa-ban"></i> Canceled</span>
+                <span style="color:var(--muted);">Placed: ${formatOrderDateTime(o.createdAt)}</span>
               </div>
             </div>
           `;
         }).join("");
 
       } else {
-        // Read strictly from cloudHistory so deletion in active orders NEVER touches this list
         titleEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:#047857; margin-right:6px;"></i> Delivered History`;
         
         const deliveredHistoryOrders = [...cloudHistory].sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
 
         if (deliveredHistoryOrders.length === 0) {
-          container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No delivered history records found.</p>`;
+          container.innerHTML = `<p style="text-align:center; padding:24px; color:var(--muted); font-size:0.82rem;">No delivered history records found.</p>`;
           return;
         }
 
         let html = `
-          <div style="font-size:0.75rem; color:var(--muted); margin-bottom:10px; font-weight:700;">
-            Permanent records arranged by completion date (Protected archive without delete option):
+          <div style="font-size:0.72rem; color:var(--muted); margin-bottom:8px; font-weight:700;">
+            Permanent archive sorted by delivery completion date:
           </div>
         `;
 
         html += deliveredHistoryOrders.map(o => {
           const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
           return `
-            <div style="padding:10px 12px; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px; background:#f0fdf4;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #86efac;" />
-                <div style="flex:1; min-width:0;">
+            <div style="padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:6px; background:#f0fdf4;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #86efac;" />
+                <div style="flex:1; min-width:0; line-height:1.25;">
                   <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.86rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
-                    <span style="color:#047857; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
+                    <span style="font-size:0.84rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${o.customerName}
+                    </span>
+                    <span style="color:#047857; font-weight:800; font-size:0.9rem;">₹${o.price}</span>
                   </div>
-                  <div style="font-size:0.78rem; font-weight:700; color:#334155; margin-top:1px;">
+                  <div style="font-size:0.75rem; font-weight:700; color:#334155; margin-top:2px;">
                     ${o.customerPhone || 'No Phone'} • ${o.customerArea || ''}
                   </div>
-                  <div style="font-size:0.73rem; color:#64748b;">
-                    ${o.item} (${o.size || 'Std'} / ${o.color || 'Std'}) • OTP: <b>${o.otp || 'Verified'}</b>
+                  <div style="font-size:0.72rem; color:#64748b; margin-top:1px;">
+                    <b>${o.item}</b> • Size: <b>${o.size || 'Std'}</b> • Color: <b>${o.color || 'Std'}</b>
                   </div>
                 </div>
               </div>
-              <div style="margin-top:8px; padding-top:6px; border-top:1px dashed #bbf7d0; font-size:0.72rem; display:flex; flex-direction:column; gap:2px; color:#166534;">
-                <div><b>Order ID:</b> #${o.orderId}</div>
-                <div><i class="fa-regular fa-clock"></i> <b>Placed on:</b> ${formatOrderDateTime(o.createdAt)}</div>
-                <div><i class="fa-solid fa-circle-check"></i> <b>Delivered on:</b> ${formatOrderDateTime(o.deliveredAt)}</div>
+              <div style="margin-top:4px; padding-top:4px; border-top:1px dashed #bbf7d0; font-size:0.68rem; display:flex; justify-content:space-between; color:#166534;">
+                <span>#${o.orderId} • OTP: <b>${o.otp || 'Verified'}</b></span>
+                <span><i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}</span>
               </div>
             </div>
           `;
@@ -1688,13 +1703,11 @@
       if (expectedOtp === enteredOtp) {
         const now = Date.now();
 
-        // 1. Update status in active orders
         await updateDoc(doc(db, "orders", firestoreId), { 
           status: "delivered",
           deliveredAt: now
         });
 
-        // 2. Cleanly mirror into permanent delivered_history collection (No undefined values)
         try {
           const historyRecord = {
             orderId: targetOrder.orderId || "",
@@ -1770,7 +1783,7 @@
       const myLocalOrders = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
       
       if (myLocalOrders.length === 0) {
-        container.innerHTML = `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">You haven't placed any orders yet.</p>`;
+        container.innerHTML = `<p style="text-align:center; padding:24px; color:var(--muted); font-size:0.82rem;">You haven't placed any orders yet.</p>`;
       } else {
         container.innerHTML = myLocalOrders.map(localOrder => {
           const liveOrder = cloudOrders.find(o => o.orderId === localOrder.orderId);
@@ -1782,7 +1795,7 @@
 
           let statusBadge = `<span style="color:#0284c7; font-weight:700;">Order Placed</span>`;
           if (currentStatus === "pending") {
-            statusBadge = `<span style="color:#d97706; font-weight:700;">Your order is dispatched</span>`;
+            statusBadge = `<span style="color:#d97706; font-weight:700;">Dispatched</span>`;
           } else if (currentStatus === "delivered") {
             statusBadge = `<span style="color:#10b981; font-weight:700;">Delivered</span>`;
           } else if (currentStatus === "canceled") {
@@ -1792,33 +1805,33 @@
           const garmentImg = localOrder.image || (allProducts.find(p => p.name === localOrder.item)?.images?.[0]) || "./icon-192.png";
 
           return `
-            <div style="padding:12px; border-bottom:1px solid #f1f5f9; margin-bottom:8px; background:#fdf2f8; border-radius:10px;">
-              <div style="display:flex; gap:10px; align-items:center;">
-                <img src="${garmentImg}" alt="${localOrder.item}" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid #fbcfe8;" />
-                <div style="flex:1;">
+            <div style="padding:8px 10px; border-bottom:1px solid #f1f5f9; margin-bottom:6px; background:#fdf2f8; border-radius:8px;">
+              <div style="display:flex; gap:8px; align-items:center;">
+                <img src="${garmentImg}" alt="${localOrder.item}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; border:1px solid #fbcfe8;" />
+                <div style="flex:1; min-width:0; line-height:1.25;">
                   <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:800; color:var(--primary); font-size:0.88rem;">${localOrder.item}</span>
-                    <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${localOrder.price}</span>
+                    <span style="font-weight:800; color:var(--primary); font-size:0.84rem;">${localOrder.item}</span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.9rem;">₹${localOrder.price}</span>
                   </div>
-                  <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;">
-                    Size: <b>${localOrder.size || 'Standard'}</b> | Color: <b>${localOrder.color || 'Standard'}</b>
+                  <div style="font-size:0.72rem; color:var(--muted); margin-top:2px;">
+                    Size: <b>${localOrder.size || 'Std'}</b> • Color: <b>${localOrder.color || 'Std'}</b>
                   </div>
                 </div>
               </div>
 
-              <div style="margin-top:6px; font-size:0.72rem; color:var(--muted); display:flex; flex-direction:column; gap:1px;">
-                <div><i class="fa-regular fa-clock"></i> Placed on: <b>${formatOrderDateTime(orderTime)}</b></div>
-                ${deliveryTime ? `<div style="color:#047857;"><i class="fa-solid fa-circle-check"></i> Delivered on: <b>${formatOrderDateTime(deliveryTime)}</b></div>` : ''}
+              <div style="margin-top:4px; font-size:0.68rem; color:var(--muted); display:flex; justify-content:space-between;">
+                <span><i class="fa-regular fa-clock"></i> ${formatOrderDateTime(orderTime)}</span>
+                ${deliveryTime ? `<span style="color:#047857; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(deliveryTime)}</span>` : ''}
               </div>
 
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px dashed #fbcfe8;">
-                <div style="font-size:0.73rem; color:var(--primary);">
-                  #<b>${localOrder.orderId}</b> • Status: ${statusBadge}
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px; padding-top:4px; border-top:1px dashed #fbcfe8;">
+                <div style="font-size:0.7rem; color:var(--primary);">
+                  #<b>${localOrder.orderId}</b> • ${statusBadge}
                 </div>
 
                 ${canCancel ? `
-                  <button onclick="cancelCustomerOrder('${localOrder.orderId}')" style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;">
-                    Cancel Order
+                  <button onclick="cancelCustomerOrder('${localOrder.orderId}')" style="background:#fee2e2; color:#b91c1c; border:none; padding:3px 7px; border-radius:5px; font-size:0.68rem; font-weight:700; cursor:pointer;">
+                    Cancel
                   </button>
                 ` : ''}
               </div>
