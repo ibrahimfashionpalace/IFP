@@ -292,8 +292,8 @@
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      padding: 0 14px;
+      gap: 10px;
+      padding: 0 12px;
     }
     .card {
       background: var(--card-bg);
@@ -340,22 +340,54 @@
       border-radius: 6px;
       font-weight: 800;
     }
+    /* Compact catalog card body */
     .card-body {
-      padding: 10px;
+      padding: 6px 8px 8px;
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
-      gap: 6px;
+      gap: 4px;
       background: #ffffff;
       position: relative;
       z-index: 1;
     }
-    .item-name { font-size: 0.85rem; font-weight: 700; color: #111827; }
-    .item-price { font-size: 1rem; font-weight: 800; color: #be123c; }
+    .item-name { 
+      font-size: 0.8rem; 
+      font-weight: 700; 
+      color: #111827; 
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .item-price { 
+      font-size: 0.92rem; 
+      font-weight: 800; 
+      color: #be123c; 
+      line-height: 1;
+    }
+    .variant-row {
+      display: flex;
+      gap: 5px;
+      width: 100%;
+      margin-top: 2px;
+    }
+    .variant-col {
+      flex: 1;
+      min-width: 0;
+    }
+    .variant-col label {
+      display: block;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
     .variant-select {
       width: 100%;
-      padding: 6px 8px;
-      font-size: 0.8rem;
+      padding: 4px 5px;
+      font-size: 0.74rem;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       outline: none;
@@ -368,27 +400,31 @@
       touch-action: manipulation;
       -webkit-appearance: menulist;
       appearance: menulist;
+      height: 28px;
     }
     .order-btn {
-      margin-top: 4px;
+      margin-top: 3px;
       background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff;
       border: none;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 0.8rem;
+      padding: 6px 0;
+      border-radius: 6px;
+      font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
+      width: 100%;
     }
     .delete-garment-btn {
       background: #fee2e2;
       color: #b91c1c;
       border: none;
-      padding: 5px;
-      border-radius: 6px;
-      font-size: 0.72rem;
+      padding: 4px;
+      border-radius: 5px;
+      font-size: 0.68rem;
       font-weight: 600;
       cursor: pointer;
+      margin-top: 2px;
+      width: 100%;
     }
     .modal-overlay {
       display: none;
@@ -1237,18 +1273,26 @@
             </span>
           </div>
           <div class="card-body">
-            <div class="item-name">${p.name}</div>
-            <div class="item-price">₹${p.price}</div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; gap:4px;">
+              <div class="item-name">${p.name}</div>
+              <div class="item-price">₹${p.price}</div>
+            </div>
             
-            <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Size:</label>
-            <select class="variant-select" id="sizeSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
-              ${sizesList.map(s => `<option value="${s}">${s}</option>`).join("")}
-            </select>
+            <div class="variant-row">
+              <div class="variant-col">
+                <label>Size</label>
+                <select class="variant-select" id="sizeSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
+                  ${sizesList.map(s => `<option value="${s}">${s}</option>`).join("")}
+                </select>
+              </div>
 
-            <label style="font-size:0.7rem; font-weight:700; color:var(--muted); margin-top:2px;">Color:</label>
-            <select class="variant-select" id="colorSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
-              ${colorsList.map(c => `<option value="${c}">${c}</option>`).join("")}
-            </select>
+              <div class="variant-col">
+                <label>Color</label>
+                <select class="variant-select" id="colorSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
+                  ${colorsList.map(c => `<option value="${c}">${c}</option>`).join("")}
+                </select>
+              </div>
+            </div>
 
             <button class="order-btn" style="${isOutOfStock ? 'background:#94a3b8; cursor:not-allowed;' : ''}" 
               ${isOutOfStock ? 'disabled' : `onclick="startOrder('${p.id}')"`}>
@@ -1374,6 +1418,7 @@
       }
     };
 
+    // Deletes ONLY from active orders queue (Permanent history is preserved)
     window.deleteOrderPermanently = async (firestoreId) => {
       if (!confirm("Delete this delivered order from the active queue? (Permanent history will be kept)")) return;
       try {
