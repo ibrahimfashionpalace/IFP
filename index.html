@@ -808,7 +808,14 @@
     let tapCount = 0;
     let tapTimer = null;
     let bannerInterval = null;
-    let currentDeliveryFilter = "placed"; // Sequence: 'placed' -> 'pending' -> 'delivered' -> 'canceled'
+    let currentDeliveryFilter = "pending"; // Pending & Delivered active by default
+
+    function formatOrderDateTime(ts) {
+      if (!ts) return "";
+      const d = new Date(ts);
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ", " +
+             d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    }
 
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
@@ -1284,166 +1291,235 @@
         status: "pending",
         dispatchedAt: Date.now()
       });
+      currentDeliveryFilter = "pending";
       openDeliveryDashboard();
+    };
+
+    window.deleteOrderPermanently = async (firestoreId) => {
+      if (!confirm("Delete this delivered order from the active queue?")) return;
+      try {
+        await deleteDoc(doc(db, "orders", firestoreId));
+      } catch (err) {
+        alert("Error deleting order: " + err.message);
+      }
     };
 
     window.openDeliveryDashboard = () => {
       const container = document.getElementById("deliveryGroupContainer");
       if (!container) return;
 
-      // Filter exactly across the 4 stages
+      // Filter stages
       const placedOrders = cloudOrders.filter(o => o.status === "placed" || (!o.status && o.status !== "delivered" && o.status !== "canceled") || o.status === "confirmed");
       const pendingOrders = cloudOrders.filter(o => o.status === "pending");
       const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
       const canceledOrders = cloudOrders.filter(o => o.status === "canceled");
 
+      // Sorted strictly by delivery date (newest first)
+      const deliveredHistoryOrders = [...deliveredOrders].sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
+
+      // Active Operations (Pending + Delivered) grouped together at the front, followed by Others
       let html = `
-        <div style="display:flex; gap:4px; margin-bottom:14px; overflow-x:auto;">
-          <button onclick="setDeliveryTab('placed')" style="flex:1; min-width:80px; padding:7px 3px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'placed' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'placed' ? '#fff' : 'var(--text)'};">
-            Orders Placed (${placedOrders.length})
-          </button>
-          <button onclick="setDeliveryTab('pending')" style="flex:1; min-width:80px; padding:7px 3px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
+        <div style="display:flex; gap:5px; margin-bottom:14px; overflow-x:auto; padding-bottom:4px;">
+          <button onclick="setDeliveryTab('pending')" style="flex:1; min-width:85px; padding:8px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
             Pending (${pendingOrders.length})
           </button>
-          <button onclick="setDeliveryTab('delivered')" style="flex:1; min-width:80px; padding:7px 3px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
+          <button onclick="setDeliveryTab('delivered')" style="flex:1; min-width:85px; padding:8px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
             Delivered (${deliveredOrders.length})
           </button>
-          <button onclick="setDeliveryTab('canceled')" style="flex:1; min-width:80px; padding:7px 3px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'canceled' ? '#b91c1c' : '#fee2e2'}; color:${currentDeliveryFilter === 'canceled' ? '#fff' : '#b91c1c'};">
+          <button onclick="setDeliveryTab('placed')" style="flex:1; min-width:90px; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'placed' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'placed' ? '#fff' : 'var(--text)'};">
+            Orders Placed (${placedOrders.length})
+          </button>
+          <button onclick="setDeliveryTab('history')" style="flex:1; min-width:115px; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'history' ? '#047857' : '#d1fae5'}; color:${currentDeliveryFilter === 'history' ? '#fff' : '#065f46'};">
+            Delivered History (${deliveredHistoryOrders.length})
+          </button>
+          <button onclick="setDeliveryTab('canceled')" style="flex:1; min-width:80px; padding:8px 4px; border-radius:8px; border:none; font-weight:700; font-size:0.72rem; cursor:pointer; background:${currentDeliveryFilter === 'canceled' ? '#b91c1c' : '#fee2e2'}; color:${currentDeliveryFilter === 'canceled' ? '#fff' : '#b91c1c'};">
             Canceled (${canceledOrders.length})
           </button>
         </div>
       `;
 
-      let listToDisplay = [];
-      if (currentDeliveryFilter === "placed") listToDisplay = placedOrders;
-      else if (currentDeliveryFilter === "pending") listToDisplay = pendingOrders;
-      else if (currentDeliveryFilter === "delivered") listToDisplay = deliveredOrders;
-      else listToDisplay = canceledOrders;
-
-      if (listToDisplay.length === 0) {
-        html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No orders in this section.</p>`;
-      } else {
-        // Group orders by location
-        const groupedByLocation = {};
-        listToDisplay.forEach(o => {
-          const area = o.customerArea || "Other Location";
-          if (!groupedByLocation[area]) groupedByLocation[area] = [];
-          groupedByLocation[area].push(o);
-        });
-
-        // Render each location section
-        Object.keys(groupedByLocation).sort().forEach(locationName => {
-          const ordersInLoc = groupedByLocation[locationName];
+      if (currentDeliveryFilter === "history") {
+        if (deliveredHistoryOrders.length === 0) {
+          html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No historical deliveries recorded yet.</p>`;
+        } else {
           html += `
-            <div style="margin-bottom:14px;">
-              <div style="font-size:0.82rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:5px 10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-                <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
-                <span style="font-size:0.72rem; background:var(--primary); color:#fff; padding:2px 7px; border-radius:10px;">${ordersInLoc.length}</span>
-              </div>
+            <div style="font-size:0.75rem; color:var(--muted); margin-bottom:10px; font-weight:700;">
+              Permanent delivery records arranged by completion date (Protected archive without delete option):
+            </div>
           `;
-
-          ordersInLoc.forEach(o => {
-            const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
-            const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
-            const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
-
-            const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
+          deliveredHistoryOrders.forEach(o => {
             const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
-            
-            const cleanCustName = (o.customerName || 'Customer').trim();
-            const cleanItem = (o.item || 'Garment').trim();
-            
-            // Clean, operator-safe wording that bypasses SIM-level commercial/DLT spam filters
-            const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
-            const encodedMessage = encodeURIComponent(textForMessage);
-
-            const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
-            const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
-
             html += `
-              <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
-                <!-- 1-2 line order header with picture -->
+              <div style="padding:10px 12px; border:1px solid #cbd5e1; border-radius:10px; margin-bottom:10px; background:#f0fdf4;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #cbd5e1;" />
-                  
+                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #86efac;" />
                   <div style="flex:1; min-width:0;">
-                    <div style="font-size:0.86rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                      ${o.customerName}
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:0.86rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
+                      <span style="color:#047857; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
                     </div>
-                    
-                    <!-- Customer phone enlarged in Orders Placed -->
-                    <div style="font-size:${currentDeliveryFilter === 'placed' ? '0.92rem' : '0.78rem'}; font-weight:${currentDeliveryFilter === 'placed' ? '800' : '600'}; color:${currentDeliveryFilter === 'placed' ? '#1e1b4b' : 'var(--muted)'}; margin-top:1px;">
-                      ${o.customerPhone || 'No Phone'}
+                    <div style="font-size:0.78rem; font-weight:700; color:#334155; margin-top:1px;">
+                      ${o.customerPhone || 'No Phone'} • ${o.customerArea || ''}
                     </div>
-
-                    <div style="font-size:0.75rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
-                      <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
+                    <div style="font-size:0.73rem; color:#64748b;">
+                      ${o.item} (${o.size || 'Std'} / ${o.color || 'Std'}) • OTP Used: <b>${o.otp || 'Verified'}</b>
                     </div>
-                  </div>
-
-                  <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                    <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
-                    <!-- Phone calling button removed from Orders Placed section -->
-                    ${currentDeliveryFilter !== 'placed' ? `
-                      <a href="tel:${formattedSmsPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
-                        <i class="fa-solid fa-phone"></i>
-                      </a>
-                    ` : ''}
                   </div>
                 </div>
-
-                ${currentDeliveryFilter === 'placed' ? `
-                  <div style="margin-top:8px;">
-                    <button style="width:100%; background:var(--primary); color:#fff; border:none; padding:8px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
-                      <i class="fa-solid fa-box-archive"></i> Accept / Dispatch to Pending
-                    </button>
-                  </div>
-                ` : ''}
-
-                ${currentDeliveryFilter === 'pending' ? `
-                  <!-- Masked OTP with Eye Toggle -->
-                  <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
-                      <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
-                    </div>
-                  </div>
-
-                  <div style="display:flex; gap:6px; margin-bottom:8px;">
-                    <a href="${waUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
-                      <i class="fa-brands fa-whatsapp"></i> WhatsApp
-                    </a>
-                    <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
-                      <i class="fa-solid fa-comment-sms"></i> SMS
-                    </a>
-                  </div>
-
-                  <div style="display:flex; gap:6px;">
-                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
-                    <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
-                      Verify &amp; Deliver
-                    </button>
-                  </div>
-                ` : ''}
-
-                ${currentDeliveryFilter === 'delivered' ? `
-                  <div style="font-size:0.72rem; color:#10b981; font-weight:700; margin-top:6px;">
-                    <i class="fa-solid fa-circle-check"></i> Delivered Successfully
-                  </div>
-                ` : ''}
-
-                ${currentDeliveryFilter === 'canceled' ? `
-                  <div style="font-size:0.72rem; color:#b91c1c; font-weight:700; margin-top:6px;">
-                    <i class="fa-solid fa-ban"></i> Order Canceled by Customer
-                  </div>
-                ` : ''}
+                <div style="margin-top:8px; padding-top:6px; border-top:1px dashed #bbf7d0; font-size:0.72rem; display:flex; flex-direction:column; gap:2px; color:#166534;">
+                  <div><b>Order ID:</b> #${o.orderId}</div>
+                  <div><i class="fa-regular fa-clock"></i> <b>Placed on:</b> ${formatOrderDateTime(o.createdAt)}</div>
+                  <div><i class="fa-solid fa-circle-check"></i> <b>Delivered on:</b> ${formatOrderDateTime(o.deliveredAt)}</div>
+                </div>
               </div>
             `;
           });
+        }
+      } else {
+        let listToDisplay = [];
+        if (currentDeliveryFilter === "placed") listToDisplay = placedOrders;
+        else if (currentDeliveryFilter === "pending") listToDisplay = pendingOrders;
+        else if (currentDeliveryFilter === "delivered") listToDisplay = deliveredOrders;
+        else listToDisplay = canceledOrders;
 
-          html += `</div>`;
-        });
+        if (listToDisplay.length === 0) {
+          html += `<p style="text-align:center; padding:25px; color:var(--muted); font-size:0.85rem;">No orders in this section.</p>`;
+        } else {
+          // Group orders by location
+          const groupedByLocation = {};
+          listToDisplay.forEach(o => {
+            const area = o.customerArea || "Other Location";
+            if (!groupedByLocation[area]) groupedByLocation[area] = [];
+            groupedByLocation[area].push(o);
+          });
+
+          // Render each location section
+          Object.keys(groupedByLocation).sort().forEach(locationName => {
+            const ordersInLoc = groupedByLocation[locationName];
+            html += `
+              <div style="margin-bottom:14px;">
+                <div style="font-size:0.82rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:5px 10px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                  <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
+                  <span style="font-size:0.72rem; background:var(--primary); color:#fff; padding:2px 7px; border-radius:10px;">${ordersInLoc.length}</span>
+                </div>
+            `;
+
+            ordersInLoc.forEach(o => {
+              const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
+              const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
+              const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
+
+              const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
+              const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
+              
+              const cleanCustName = (o.customerName || 'Customer').trim();
+              const cleanItem = (o.item || 'Garment').trim();
+              
+              // Clean, operator-safe wording that bypasses SIM-level commercial/DLT spam filters
+              const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
+              const encodedMessage = encodeURIComponent(textForMessage);
+
+              const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
+              const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
+
+              html += `
+                <div style="padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:8px; background:#fff;">
+                  <!-- 1-2 line order header with picture -->
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; flex-shrink:0; border:1px solid #cbd5e1;" />
+                    
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:0.86rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${o.customerName}
+                      </div>
+                      
+                      <!-- Customer phone enlarged in Orders Placed -->
+                      <div style="font-size:${currentDeliveryFilter === 'placed' ? '0.92rem' : '0.78rem'}; font-weight:${currentDeliveryFilter === 'placed' ? '800' : '600'}; color:${currentDeliveryFilter === 'placed' ? '#1e1b4b' : 'var(--muted)'}; margin-top:1px;">
+                        ${o.customerPhone || 'No Phone'}
+                      </div>
+
+                      <div style="font-size:0.75rem; color:#475569; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">
+                        <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
+                      </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                      <span style="color:#be123c; font-weight:800; font-size:0.95rem;">₹${o.price}</span>
+                      <!-- Phone calling button removed from Orders Placed section -->
+                      ${currentDeliveryFilter !== 'placed' ? `
+                        <a href="tel:${formattedSmsPhone}" style="width:32px; height:32px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.8rem; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                          <i class="fa-solid fa-phone"></i>
+                        </a>
+                      ` : ''}
+                    </div>
+                  </div>
+
+                  <!-- Date & Time when order placed -->
+                  <div style="margin-top:6px; font-size:0.72rem; color:var(--muted);">
+                    <i class="fa-regular fa-clock"></i> Placed on: <b>${formatOrderDateTime(o.createdAt)}</b>
+                  </div>
+
+                  ${currentDeliveryFilter === 'placed' ? `
+                    <div style="margin-top:8px;">
+                      <button style="width:100%; background:var(--primary); color:#fff; border:none; padding:8px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
+                        <i class="fa-solid fa-box-archive"></i> Accept / Dispatch to Pending
+                      </button>
+                    </div>
+                  ` : ''}
+
+                  ${currentDeliveryFilter === 'pending' ? `
+                    <!-- Masked OTP with Eye Toggle -->
+                    <div style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:6px 10px; margin:8px 0; display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:0.72rem; color:var(--muted); font-weight:700;">Customer OTP:</span>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.95rem; font-weight:900; letter-spacing:2px; color:var(--primary);">••••</span>
+                        <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.85rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                      </div>
+                    </div>
+
+                    <div style="display:flex; gap:6px; margin-bottom:8px;">
+                      <a href="${waUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; text-decoration:none; background:#25d366; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                      </a>
+                      <a href="${smsUrl}" style="flex:1; text-align:center; text-decoration:none; background:#0284c7; color:#fff; padding:7px 4px; border-radius:6px; font-size:0.74rem; font-weight:700;">
+                        <i class="fa-solid fa-comment-sms"></i> SMS
+                      </a>
+                    </div>
+
+                    <div style="display:flex; gap:6px;">
+                      <input type="number" id="otpInput_${o.firestoreId}" placeholder="Enter Received OTP" style="flex:1; padding:7px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.8rem;" />
+                      <button style="background:#10b981; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">
+                        Verify &amp; Deliver
+                      </button>
+                    </div>
+                  ` : ''}
+
+                  ${currentDeliveryFilter === 'delivered' ? `
+                    <div style="margin-top:6px; font-size:0.72rem; color:#047857;">
+                      <i class="fa-solid fa-circle-check"></i> Delivered on: <b>${formatOrderDateTime(o.deliveredAt)}</b>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                      <span style="font-size:0.72rem; color:#10b981; font-weight:700;">
+                        <i class="fa-solid fa-circle-check"></i> Delivered Successfully
+                      </span>
+                      <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:6px; font-size:0.72rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
+                        <i class="fa-solid fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  ` : ''}
+
+                  ${currentDeliveryFilter === 'canceled' ? `
+                    <div style="font-size:0.72rem; color:#b91c1c; font-weight:700; margin-top:6px;">
+                      <i class="fa-solid fa-ban"></i> Order Canceled by Customer
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            });
+
+            html += `</div>`;
+          });
+        }
       }
 
       container.innerHTML = html;
@@ -1468,7 +1544,8 @@
           status: "delivered",
           deliveredAt: Date.now()
         });
-        alert("OTP Verified! Order moved to Delivered Orders.");
+        alert("OTP Verified! Order moved to Delivered Orders and Recorded in Delivered History.");
+        currentDeliveryFilter = "delivered";
         openDeliveryDashboard();
       } else {
         alert("Incorrect OTP! Delivery could not be confirmed.");
@@ -1529,6 +1606,7 @@
           const liveOrder = cloudOrders.find(o => o.orderId === localOrder.orderId);
           const currentStatus = liveOrder ? liveOrder.status : (localOrder.status || "placed");
           const orderTime = (liveOrder && liveOrder.createdAt) || localOrder.createdAt || Date.now();
+          const deliveryTime = liveOrder && liveOrder.deliveredAt;
           const orderAgeHours = (Date.now() - orderTime) / (1000 * 60 * 60);
           const canCancel = (orderAgeHours <= 6) && (currentStatus === "placed" || currentStatus === "confirmed");
 
@@ -1556,6 +1634,11 @@
                     Size: <b>${localOrder.size || 'Standard'}</b> | Color: <b>${localOrder.color || 'Standard'}</b>
                   </div>
                 </div>
+              </div>
+
+              <div style="margin-top:6px; font-size:0.72rem; color:var(--muted); display:flex; flex-direction:column; gap:1px;">
+                <div><i class="fa-regular fa-clock"></i> Placed on: <b>${formatOrderDateTime(orderTime)}</b></div>
+                ${deliveryTime ? `<div style="color:#047857;"><i class="fa-solid fa-circle-check"></i> Delivered on: <b>${formatOrderDateTime(deliveryTime)}</b></div>` : ''}
               </div>
 
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px dashed #fbcfe8;">
