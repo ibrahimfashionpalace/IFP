@@ -530,8 +530,8 @@
         </div>
       </div>
 
-      <!-- More Options (Orders & Terms) -->
-      <div class="right-menu-container">
+      <!-- More Options (3 Dots Menu - Hidden when logged in as Owner) -->
+      <div class="right-menu-container" id="moreBtnContainer">
         <button class="nav-btn" id="moreBtn" onclick="toggleMoreMenu(event)">
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
@@ -857,6 +857,7 @@
     let allProducts = [];
     let displayedProducts = [];
     let cloudOrders = [];
+    let cloudHistory = [];
     let cloudBanners = [];
     let activeOrderData = null;
     let isMaintenanceActive = false;
@@ -889,6 +890,10 @@
       const aboutOrdersEl = document.getElementById("aboutOrdersWrapper");
       if (aboutOrdersEl) aboutOrdersEl.style.display = isAuth ? "block" : "none";
 
+      // Hide 3 dots menu container in owner mode, show for regular customers
+      const moreBtnContainer = document.getElementById("moreBtnContainer");
+      if (moreBtnContainer) moreBtnContainer.style.display = isAuth ? "none" : "block";
+
       const maintBtn = document.getElementById("maintToggleBtn");
       if (maintBtn) {
         maintBtn.innerHTML = isMaintenanceActive ? `<i class="fa-solid fa-circle-check"></i> Turn Maint OFF` : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maint ON`;
@@ -898,8 +903,6 @@
 
     window.toggleMoreMenu = (e) => { e?.stopPropagation(); document.getElementById("moreMenu")?.classList.toggle("active"); };
     window.closeMoreMenu = () => { document.getElementById("moreMenu")?.classList.remove("active"); };
-    window.toggleIfpDropdown = (e) => { e?.stopPropagation(); document.getElementById("ifpDropdown")?.classList.toggle("active"); };
-    window.closeIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.remove("active"); };
     window.toggleAboutOrdersMenu = (e) => { e?.stopPropagation(); document.getElementById("aboutOrdersMenu")?.classList.toggle("active"); };
     window.closeAboutOrdersMenu = () => { document.getElementById("aboutOrdersMenu")?.classList.remove("active"); };
 
@@ -986,12 +989,12 @@
         renderProducts();
       });
 
+      // Active orders listener
       onSnapshot(collection(db, "orders"), (snap) => {
         cloudOrders = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
         const pendingCount = cloudOrders.filter(o => o.status === "pending").length;
         document.getElementById("activeDeliveryBadge").innerText = pendingCount;
         
-        // Refresh modals if currently open
         if (document.getElementById("deliveryModal")?.classList.contains("active")) {
           openDeliveryDashboard();
         }
@@ -1003,6 +1006,14 @@
         }
         if (document.getElementById("myOrdersModal")?.classList.contains("active")) {
           openOrdersModal();
+        }
+      });
+
+      // Permanent Delivered History listener
+      onSnapshot(collection(db, "delivered_history"), (snap) => {
+        cloudHistory = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+        if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "history") {
+          renderAboutOrdersContent();
         }
       });
     }
@@ -1359,8 +1370,9 @@
       }
     };
 
+    // Deletes ONLY from active orders queue (Permanent history is preserved)
     window.deleteOrderPermanently = async (firestoreId) => {
-      if (!confirm("Delete this delivered order from the active queue?")) return;
+      if (!confirm("Delete this delivered order from the active queue? (Permanent history will be kept)")) return;
       try {
         await deleteDoc(doc(db, "orders", firestoreId));
       } catch (err) {
@@ -1604,9 +1616,18 @@
         }).join("");
 
       } else {
-        // Delivered History (Chronological by date, no delete option)
+        // Delivered History (Read from permanent collection, strictly ordered by delivery date, no delete option)
         titleEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:#047857; margin-right:6px;"></i> Delivered History`;
-        const deliveredHistoryOrders = cloudOrders.filter(o => o.status === "delivered").sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
+        
+        // Merge from permanent cloudHistory and any existing delivered records in cloudOrders
+        const allDelivered = [...cloudHistory];
+        cloudOrders.filter(o => o.status === "delivered").forEach(o => {
+          if (!allDelivered.some(h => h.orderId === o.orderId)) {
+            allDelivered.push(o);
+          }
+        });
+
+        const deliveredHistoryOrders = allDelivered.sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
 
         if (deliveredHistoryOrders.length === 0) {
           container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No delivered history records found.</p>`;
@@ -1665,11 +1686,24 @@
       const expectedOtp = String(targetOrder.otp || (targetOrder.orderId ? targetOrder.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234")).trim();
 
       if (expectedOtp === enteredOtp) {
+        const now = Date.now();
+
+        // 1. Update status in active orders
         await updateDoc(doc(db, "orders", firestoreId), { 
           status: "delivered",
-          deliveredAt: Date.now()
+          deliveredAt: now
         });
-        alert("OTP Verified! Order moved to Delivered tab and recorded in Delivered History.");
+
+        // 2. Mirror into permanent delivered_history collection
+        try {
+          const historyRecord = { ...targetOrder, status: "delivered", deliveredAt: now };
+          delete historyRecord.firestoreId;
+          await addDoc(collection(db, "delivered_history"), historyRecord);
+        } catch (e) {
+          console.warn("History mirror notice:", e.message);
+        }
+
+        alert("OTP Verified! Order moved to Delivered tab and permanently archived in Delivered History.");
         currentDeliveryFilter = "delivered";
         openDeliveryDashboard();
       } else {
