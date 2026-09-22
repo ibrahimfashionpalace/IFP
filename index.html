@@ -371,7 +371,7 @@
       font-size: 0.88rem; 
       font-weight: 800; 
       color: #be123c; 
-      line-height: 1;
+      line-height: 1; 
       flex-shrink: 0;
     }
     /* SIDE-BY-SIDE DROPDOWNS */
@@ -551,7 +551,7 @@
         <div class="ifp-dropdown-item" onclick="openTermsModal(); closeIfpDropdown();">
           <i class="fa-solid fa-file-contract" style="color:var(--accent);"></i> Terms &amp; Conditions
         </div>
-        <div class="ifp-dropdown-item" onclick="alert('Owner: Aamir Rashid\nContact: 6005757393'); closeIfpDropdown();">
+        <div class="ifp-dropdown-item" onclick="openAboutOwnerModal(); closeIfpDropdown();">
           <i class="fa-solid fa-user-tie" style="color:var(--primary);"></i> About Owner
         </div>
       </div>
@@ -858,6 +858,43 @@
         </div>
       </div>
       <button class="confirm-btn" style="background:var(--primary); margin-top:16px;" onclick="closeModal('termsModal')">Understood</button>
+    </div>
+  </div>
+
+  <!-- About Owner Modal -->
+  <div class="modal-overlay" id="aboutOwnerModal">
+    <div class="modal-sheet" style="border-radius: 20px; text-align: center; padding: 22px 18px;">
+      <div class="modal-head">
+        <h3>About Owner</h3>
+        <button class="close-btn" onclick="closeModal('aboutOwnerModal')">&times;</button>
+      </div>
+      <div style="margin: 18px 0;">
+        <div style="width:68px; height:68px; margin: 0 auto 12px; border-radius:50%; background: linear-gradient(135deg, #312e81, #4c0519); display:flex; align-items:center; justify-content:center; color:#fbbf24; font-size:1.8rem; box-shadow: 0 4px 12px rgba(49, 46, 129, 0.25);">
+          <i class="fa-solid fa-user-tie"></i>
+        </div>
+        <h3 style="color: var(--primary); font-size: 1.18rem; font-weight: 800; margin-bottom: 2px;">Aamir Rashid</h3>
+        <p style="color: var(--muted); font-size: 0.8rem; font-weight:600; margin-bottom: 14px;">Proprietor &amp; Founder</p>
+        
+        <div style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 10px; padding: 12px; text-align: left; font-size: 0.82rem; color: #334155; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-store" style="color:var(--primary); width:16px;"></i>
+            <span><b>Store:</b> IBRAHIM FASHION PALACE</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-location-dot" style="color:var(--accent-pink); width:16px;"></i>
+            <span><b>Location:</b> Malapora, Charar-i-Sharief, Budgam</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-phone" style="color:var(--accent); width:16px;"></i>
+            <span><b>Phone:</b> <a href="tel:6005757393" style="color:var(--primary); font-weight:700; text-decoration:none;">6005757393</a></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-envelope" style="color:var(--accent); width:16px;"></i>
+            <span><b>Email:</b> <a href="mailto:aamir757393@gmail.com" style="color:var(--primary); font-weight:700; text-decoration:none;">aamir757393@gmail.com</a></span>
+          </div>
+        </div>
+      </div>
+      <button class="confirm-btn" style="background: var(--primary);" onclick="closeModal('aboutOwnerModal')">Close</button>
     </div>
   </div>
 
@@ -1871,6 +1908,7 @@
       document.getElementById("myOrdersModal").classList.add("active");
     };
 
+    window.openAboutOwnerModal = () => document.getElementById("aboutOwnerModal")?.classList.add("active");
     window.openTermsModal = () => document.getElementById("termsModal")?.classList.add("active");
     window.closeModal = (id) => document.getElementById(id)?.classList.remove("active");
 
@@ -1882,7 +1920,7 @@
   </script>
 
   <!-- Service Worker Registration Guard -->
-<script>
+  <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       for (let registration of registrations) {
@@ -1890,6 +1928,6 @@
       }
     });
   }
-</script>
+  </script>
 </body>
 </html>
