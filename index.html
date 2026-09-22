@@ -865,8 +865,8 @@
     let tapCount = 0;
     let tapTimer = null;
     let bannerInterval = null;
-    let currentDeliveryFilter = "pending"; // Van Hub toggles between 'pending' & 'delivered'
-    let currentAboutOrdersView = "history"; // 'history' or 'canceled'
+    let currentDeliveryFilter = "pending"; 
+    let currentAboutOrdersView = "history"; 
 
     function formatOrderDateTime(ts) {
       if (!ts) return "";
@@ -890,9 +890,15 @@
       const aboutOrdersEl = document.getElementById("aboutOrdersWrapper");
       if (aboutOrdersEl) aboutOrdersEl.style.display = isAuth ? "block" : "none";
 
-      // Hide 3 dots menu container in owner mode, show for regular customers
+      // Strict !important styling to override any responsive CSS keeping it visible
       const moreBtnContainer = document.getElementById("moreBtnContainer");
-      if (moreBtnContainer) moreBtnContainer.style.display = isAuth ? "none" : "block";
+      if (moreBtnContainer) {
+        if (isAuth) {
+          moreBtnContainer.style.setProperty("display", "none", "important");
+        } else {
+          moreBtnContainer.style.setProperty("display", "block", "important");
+        }
+      }
 
       const maintBtn = document.getElementById("maintToggleBtn");
       if (maintBtn) {
@@ -905,6 +911,8 @@
     window.closeMoreMenu = () => { document.getElementById("moreMenu")?.classList.remove("active"); };
     window.toggleAboutOrdersMenu = (e) => { e?.stopPropagation(); document.getElementById("aboutOrdersMenu")?.classList.toggle("active"); };
     window.closeAboutOrdersMenu = () => { document.getElementById("aboutOrdersMenu")?.classList.remove("active"); };
+    window.toggleIfpDropdown = (e) => { e?.stopPropagation(); document.getElementById("ifpDropdown")?.classList.toggle("active"); };
+    window.closeIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.remove("active"); };
 
     // Secret Owner Login on IFP badge (Triple Tap)
     const badgeEl = document.getElementById("ifpBadge");
@@ -1001,7 +1009,7 @@
         if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) {
           openOrdersPlacedModal();
         }
-        if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active")) {
+        if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "canceled") {
           renderAboutOrdersContent();
         }
         if (document.getElementById("myOrdersModal")?.classList.contains("active")) {
@@ -1009,7 +1017,7 @@
         }
       });
 
-      // Permanent Delivered History listener
+      // Permanent Delivered History listener (Completely isolated storage)
       onSnapshot(collection(db, "delivered_history"), (snap) => {
         cloudHistory = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
         if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "history") {
@@ -1316,7 +1324,7 @@
         customerPhone: document.getElementById("custPhone").value.trim(),
         customerArea: document.getElementById("custArea").value,
         customerStreet: document.getElementById("custStreet").value.trim(),
-        status: "placed", // Enters 'Orders Placed' section
+        status: "placed",
         createdAt: Date.now()
       };
 
@@ -1616,18 +1624,10 @@
         }).join("");
 
       } else {
-        // Delivered History (Read from permanent collection, strictly ordered by delivery date, no delete option)
+        // Read strictly from cloudHistory so deletion in active orders NEVER touches this list
         titleEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:#047857; margin-right:6px;"></i> Delivered History`;
         
-        // Merge from permanent cloudHistory and any existing delivered records in cloudOrders
-        const allDelivered = [...cloudHistory];
-        cloudOrders.filter(o => o.status === "delivered").forEach(o => {
-          if (!allDelivered.some(h => h.orderId === o.orderId)) {
-            allDelivered.push(o);
-          }
-        });
-
-        const deliveredHistoryOrders = allDelivered.sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
+        const deliveredHistoryOrders = [...cloudHistory].sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
 
         if (deliveredHistoryOrders.length === 0) {
           container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--muted); font-size:0.85rem;">No delivered history records found.</p>`;
@@ -1694,13 +1694,28 @@
           deliveredAt: now
         });
 
-        // 2. Mirror into permanent delivered_history collection
+        // 2. Cleanly mirror into permanent delivered_history collection (No undefined values)
         try {
-          const historyRecord = { ...targetOrder, status: "delivered", deliveredAt: now };
-          delete historyRecord.firestoreId;
+          const historyRecord = {
+            orderId: targetOrder.orderId || "",
+            garmentId: targetOrder.garmentId || "",
+            otp: targetOrder.otp || expectedOtp,
+            item: targetOrder.item || "Garment",
+            image: targetOrder.image || "",
+            size: targetOrder.size || "Standard",
+            color: targetOrder.color || "Standard",
+            price: Number(targetOrder.price) || 0,
+            customerName: targetOrder.customerName || "",
+            customerPhone: targetOrder.customerPhone || "",
+            customerArea: targetOrder.customerArea || "",
+            customerStreet: targetOrder.customerStreet || "",
+            status: "delivered",
+            createdAt: targetOrder.createdAt || now,
+            deliveredAt: now
+          };
           await addDoc(collection(db, "delivered_history"), historyRecord);
         } catch (e) {
-          console.warn("History mirror notice:", e.message);
+          console.error("Delivered history archive error:", e);
         }
 
         alert("OTP Verified! Order moved to Delivered tab and permanently archived in Delivered History.");
