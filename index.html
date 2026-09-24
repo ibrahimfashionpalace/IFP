@@ -612,7 +612,7 @@
     .detail-scroll-body {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 14px 90px; /* roomy padding so content scrolls above fixed bottom bar */
+      padding: 14px 14px 90px;
       background: linear-gradient(180deg, #ffffff 0%, #fdf2f8 50%, #faf5ff 100%);
       -webkit-overflow-scrolling: touch;
     }
@@ -912,14 +912,14 @@
     </div>
   </header>
 
-  <!-- Strictly Manual Swipable Banner (Not Automatic) -->
+  <!-- Banner Track -->
   <div class="hero-container">
     <button class="banner-nav-btn prev" onclick="scrollBanner('left')"><i class="fa-solid fa-chevron-left"></i></button>
     <button class="banner-nav-btn next" onclick="scrollBanner('right')"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="banner-track" id="bannerTrack"></div>
   </div>
 
-  <!-- Editable Categories Icon Bar -->
+  <!-- Categories -->
   <div class="categories-bar-wrap">
     <div class="categories-bar-title">
       <span>Categories</span>
@@ -966,9 +966,8 @@
     </div>
   </div>
 
-  <!-- COMPLETE FULLSCREEN UPWARD-SCROLLABLE GARMENT DETAIL VIEW -->
+  <!-- Detail Fullscreen View -->
   <div class="detail-fullscreen-view" id="garmentDetailModal">
-    <!-- Sticky Top Navigation Bar -->
     <div class="detail-top-nav">
       <button class="detail-back-btn" onclick="closeGarmentDetailModal()" title="Back to Collection">
         <i class="fa-solid fa-arrow-left"></i>
@@ -976,20 +975,16 @@
       <div class="detail-top-title" id="detailGarmentTitle">Garment Details</div>
     </div>
 
-    <!-- Upward Scrollable Content Area -->
     <div class="detail-scroll-body">
-      <!-- Multi-image swipable gallery -->
       <div class="detail-gallery-track" id="detailGalleryTrack"></div>
       <div class="thumb-strip" id="detailThumbStrip"></div>
 
-      <!-- Pricing & Discount -->
       <div class="pricing-box" style="margin-top:14px;">
         <del class="original-price" id="detailOriginalPrice" style="font-size:1rem;"></del>
         <span class="sale-price" id="detailSalePrice" style="font-size:1.5rem;"></span>
         <span class="discount-badge" id="detailDiscountBadge" style="font-size:0.8rem;"></span>
       </div>
 
-      <!-- Single Custom Size and Colour Specifications -->
       <div class="detail-singular-box">
         <div class="detail-singular-row">
           <span style="color:var(--muted); font-weight:700;">Stock Available:</span>
@@ -1005,7 +1000,6 @@
         </div>
       </div>
 
-      <!-- Description & Garment Details -->
       <div style="font-size:0.78rem; font-weight:800; color:var(--primary); text-transform:uppercase; margin-top:8px;">
         Garment Description &amp; Details
       </div>
@@ -1014,7 +1008,6 @@
       </div>
     </div>
 
-    <!-- Fixed Bottom Action Bar (Stays on screen when scrolling) -->
     <div class="detail-bottom-bar">
       <div class="detail-bottom-price-box">
         <span style="font-size:0.65rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Total Price</span>
@@ -1026,7 +1019,7 @@
     </div>
   </div>
 
-  <!-- Edit Category Modal (Admin Only) -->
+  <!-- Edit Category Modal -->
   <div class="modal-overlay" id="editCategoryModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1052,7 +1045,7 @@
     </div>
   </div>
 
-  <!-- Quick Edit Garment Details (Admin Only) -->
+  <!-- Quick Edit Garment Details -->
   <div class="modal-overlay" id="quickEditModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1191,7 +1184,7 @@
           <textarea id="newDescription" rows="2" placeholder="Garment fabric, fitting details..."></textarea>
         </div>
         <div class="form-group">
-          <label>Garment Photos (Multiple allowed, swipable) *</label>
+          <label>Garment Photos (Max 3 compressed photos) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save to Live Catalog</button>
@@ -1215,8 +1208,8 @@
         </div>
 
         <form id="directOrderForm" onsubmit="handleDirectOrderSubmit(event)">
-          <div class="form-group"><label>Your Name *</label><input type="text" id="custName" required /></div>
-          <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" required /></div>
+          <div class="form-group"><label>Your Name *</label><input type="text" id="custName" maxlength="40" required /></div>
+          <div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" maxlength="15" required /></div>
           <div class="form-group">
             <label>Delivery Area *</label>
             <select id="custArea" required>
@@ -1227,7 +1220,7 @@
               <option value="Other Area">Other Area</option>
             </select>
           </div>
-          <div class="form-group"><label>Address / Landmark *</label><input type="text" id="custStreet" required /></div>
+          <div class="form-group"><label>Address / Landmark *</label><input type="text" id="custStreet" maxlength="100" required /></div>
           <button type="submit" id="confirmOrderBtn" class="confirm-btn">Confirm Order (COD)</button>
         </form>
       </div>
@@ -1242,7 +1235,7 @@
     </div>
   </div>
 
-  <!-- Delivery Hub Modal (Starts from top of screen & Horizontally Swipable) -->
+  <!-- Delivery Hub Modal -->
   <div class="modal-overlay delivery-hub-overlay" id="deliveryModal">
     <div class="modal-sheet delivery-hub-sheet">
       <div class="modal-head">
@@ -1299,7 +1292,7 @@
     </div>
   </div>
 
-  <!-- Terms & Conditions Modal -->
+  <!-- Terms Modal -->
   <div class="modal-overlay" id="termsModal">
     <div class="modal-sheet">
       <div class="modal-head">
@@ -1313,26 +1306,22 @@
         </div>
         <div>
           <strong style="color:var(--primary); display:block; margin-bottom:2px;">2. OTP Verification at Doorstep</strong>
-          A secure 4-digit OTP is assigned to each order. Share this OTP with the delivery partner only when you are physically receiving the parcel. Handing over the OTP serves as formal proof of delivery.
+          A secure 4-digit OTP is assigned to each order. Share this OTP with the delivery partner only when you are physically receiving the parcel.
         </div>
         <div>
           <strong style="color:var(--primary); display:block; margin-bottom:2px;">3. Order Cancellation Policy</strong>
-          Customers can cancel their orders directly from the "My Orders" tab within <b>6 hours</b> of placing the order. Once dispatched or after 6 hours, cancellations cannot be processed through the app.
+          Customers can cancel their orders directly from the "My Orders" tab within <b>6 hours</b> of placing the order.
         </div>
         <div>
           <strong style="color:var(--primary); display:block; margin-bottom:2px;">4. Size Exchange &amp; Returns</strong>
-          Exchanges for size fit issues are supported within <b>24 hours</b> of delivery, provided garments are unworn, undamaged, and retained in original packaging and the parcel is to be returned by the customer by himself/herself at our offline store.
-        </div>
-        <div>
-          <strong style="color:var(--primary); display:block; margin-bottom:2px;">5. Customer Support</strong>
-          For any questions or order inquiries, reach us anytime via Call/WhatsApp at <b>6005757393</b> or email <b>aamir757393@gmail.com</b>.
+          Exchanges for size issues are supported within <b>24 hours</b> of delivery at our offline store in original condition.
         </div>
       </div>
       <button class="confirm-btn" style="background:var(--primary); margin-top:16px;" onclick="closeModal('termsModal')">Understood</button>
     </div>
   </div>
 
-  <!-- About Owner Modal (With Editable Photo) -->
+  <!-- About Owner Modal -->
   <div class="modal-overlay" id="aboutOwnerModal">
     <div class="modal-sheet" style="border-radius: 20px; text-align: center; padding: 22px 18px;">
       <div class="modal-head">
@@ -1341,20 +1330,17 @@
       </div>
       
       <div style="margin: 18px 0;">
-        <!-- Profile Avatar Wrapper -->
         <div style="position: relative; width: 84px; height: 84px; margin: 0 auto 12px;">
           <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #312e81, #4c0519); display: flex; align-items: center; justify-content: center; color: #fbbf24; box-shadow: 0 4px 12px rgba(49, 46, 129, 0.25); border: 2px solid #fbcfe8;">
             <img id="ownerDisplayPhoto" src="" alt="Aamir Rashid" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
             <i id="ownerDefaultIcon" class="fa-solid fa-user-tie" style="font-size: 2.2rem;"></i>
           </div>
 
-          <!-- Camera button: visible to owner only -->
           <button id="editOwnerPhotoBtn" onclick="toggleOwnerPhotoEditor()" style="display: none; position: absolute; bottom: 0; right: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; border: 2px solid #fff; font-size: 0.7rem; cursor: pointer; align-items: center; justify-content: center;" title="Change Photo">
             <i class="fa-solid fa-camera"></i>
           </button>
         </div>
 
-        <!-- Quick photo upload drawer for owner -->
         <div id="ownerPhotoUploadBox" style="display: none; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; margin-bottom: 12px;">
           <label style="font-size: 0.72rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px;">Choose New Profile Photo:</label>
           <input type="file" id="ownerPhotoInput" accept="image/*" style="font-size: 0.75rem; width: 100%; margin-bottom: 8px;" />
@@ -1392,29 +1378,13 @@
 
   <footer>
     <div style="font-weight:800; font-size:1rem; margin-bottom:10px; color:var(--primary);">IBRAHIM FASHION PALACE</div>
-    
     <div style="display:flex; flex-direction:column; gap:6px; font-size:0.82rem; margin-bottom:12px;">
-      <div>
-        <i class="fa-solid fa-envelope" style="color:var(--accent);"></i>
-        For queries email at: <a href="mailto:aamir757393@gmail.com" style="color:var(--primary); font-weight:600; text-decoration:none;">aamir757393@gmail.com</a>
-      </div>
-      <div>
-        <i class="fa-solid fa-phone" style="color:var(--accent);"></i>
-        Call: <a href="tel:6005757393" style="color:var(--primary); font-weight:600; text-decoration:none;">6005757393</a>
-      </div>
-      <div>
-        <i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:0.95rem;"></i>
-        WhatsApp: <a href="https://wa.me/916005757393" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">6005757393</a>
-      </div>
-      <div>
-        <i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i>
-        Location: <a href="https://maps.google.com/?q=Malapora,Charar-i-Sharief,Budgam,Jammu+and+Kashmir" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:underline;">Malapora, Charar-i-Sharief, Budgam, J&amp;K</a>
-      </div>
+      <div><i class="fa-solid fa-envelope" style="color:var(--accent);"></i> Email: <a href="mailto:aamir757393@gmail.com" style="color:var(--primary); font-weight:600; text-decoration:none;">aamir757393@gmail.com</a></div>
+      <div><i class="fa-solid fa-phone" style="color:var(--accent);"></i> Call: <a href="tel:6005757393" style="color:var(--primary); font-weight:600; text-decoration:none;">6005757393</a></div>
+      <div><i class="fa-brands fa-whatsapp" style="color:#25d366; font-size:0.95rem;"></i> WhatsApp: <a href="https://wa.me/916005757393" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">6005757393</a></div>
+      <div><i class="fa-solid fa-location-dot" style="color:var(--accent-pink);"></i> Location: <a href="https://maps.google.com/?q=Malapora,Charar-i-Sharief,Budgam,Jammu+and+Kashmir" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:underline;">Malapora, Charar-i-Sharief, Budgam, J&amp;K</a></div>
     </div>
-
-    <div style="font-size:0.72rem; color:var(--muted); margin-top:8px;">
-      developed by aamir
-    </div>
+    <div style="font-size:0.72rem; color:var(--muted); margin-top:8px;">developed by aamir</div>
   </footer>
 
   <!-- Firebase & Fast Pre-Warming Architecture -->
@@ -1437,7 +1407,18 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Instant local cache recovery so the page loads in 0ms without waiting for network
+    // XSS Sanitizer to stop malicious code injection
+    function escapeHtml(str) {
+      if (typeof str !== "string") return str == null ? "" : String(str);
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
     let cachedGarments = [];
     try { cachedGarments = JSON.parse(localStorage.getItem("ifp_cached_garments") || "[]"); } catch(e){}
     let cachedBanners = [];
@@ -1456,6 +1437,8 @@
     let tapTimer = null;
     let currentAboutOrdersView = "history"; 
     let selectedCategory = "all";
+    let ordersUnsubscribe = null;
+    let historyUnsubscribe = null;
 
     let categoriesList = [
       { id: "mens", label: "Men's", image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=150" },
@@ -1474,7 +1457,6 @@
     const cachedOwnerPhoto = localStorage.getItem("ifp_owner_photo");
     if (cachedOwnerPhoto) applyOwnerPhoto(cachedOwnerPhoto);
 
-    // Pre-paint instantly from local storage cache
     renderCategoriesBar();
     renderBanners();
     renderProducts();
@@ -1486,6 +1468,7 @@
              d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     }
 
+    // Admin Auth State & Protected Orders Listener
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
       updateAdminUI();
@@ -1493,11 +1476,37 @@
       renderProducts();
       renderCategoriesBar();
       renderAdminBannerList();
+
+      // Only listen to customer orders if owner is verified
+      if (currentAdminUser) {
+        if (!ordersUnsubscribe) {
+          ordersUnsubscribe = onSnapshot(collection(db, "orders"), (snap) => {
+            cloudOrders = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+            const pendingCount = cloudOrders.filter(o => o.status === "pending").length;
+            document.getElementById("activeDeliveryBadge").innerText = pendingCount;
+            
+            if (document.getElementById("deliveryModal")?.classList.contains("active")) renderDeliveryPanes();
+            if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) openOrdersPlacedModal();
+            if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "canceled") renderAboutOrdersContent();
+          }, (err) => console.log("Orders listen restricted:", err));
+        }
+
+        if (!historyUnsubscribe) {
+          historyUnsubscribe = onSnapshot(collection(db, "delivered_history"), (snap) => {
+            cloudHistory = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+            if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "history") renderAboutOrdersContent();
+          }, (err) => console.log("History listen restricted:", err));
+        }
+      } else {
+        if (ordersUnsubscribe) { ordersUnsubscribe(); ordersUnsubscribe = null; }
+        if (historyUnsubscribe) { historyUnsubscribe(); historyUnsubscribe = null; }
+        cloudOrders = [];
+        cloudHistory = [];
+      }
     });
 
     function updateAdminUI() {
       const isAuth = !!currentAdminUser;
-      
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
       
@@ -1509,11 +1518,7 @@
 
       const moreBtnContainer = document.getElementById("moreBtnContainer");
       if (moreBtnContainer) {
-        if (isAuth) {
-          moreBtnContainer.style.setProperty("display", "none", "important");
-        } else {
-          moreBtnContainer.style.setProperty("display", "block", "important");
-        }
+        moreBtnContainer.style.setProperty("display", isAuth ? "none" : "block", "important");
       }
 
       const maintBtn = document.getElementById("maintToggleBtn");
@@ -1534,7 +1539,6 @@
     window.toggleIfpDropdown = (e) => { e?.stopPropagation(); document.getElementById("ifpDropdown")?.classList.toggle("active"); };
     window.closeIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.remove("active"); };
 
-    // Secret 3-tap gesture on logo badge opens owner login
     const badgeEl = document.getElementById("ifpBadge");
     if (badgeEl) {
       badgeEl.addEventListener("click", (e) => {
@@ -1597,16 +1601,11 @@
       if (screen) screen.classList.toggle("active", isMaintenanceActive && !currentAdminUser);
     }
 
-    /* MANUAL BANNER CAROUSEL LOGIC */
     window.scrollBanner = (direction) => {
       const track = document.getElementById("bannerTrack");
       if (!track) return;
       const step = track.clientWidth;
-      if (direction === 'left') {
-        track.scrollBy({ left: -step, behavior: 'smooth' });
-      } else {
-        track.scrollBy({ left: step, behavior: 'smooth' });
-      }
+      track.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
     };
 
     function renderBanners() {
@@ -1622,40 +1621,31 @@
               <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional &amp; modern wear • Cash on Delivery</p>
             </div>
           </div>
-          <div class="banner-slide">
-            <img class="hero-img" src="./banner2.jpg" alt="Exclusive Garments" loading="lazy" />
-            <div class="hero-overlay">
-              <span class="hero-tag">Exclusive Fashion</span>
-              <div class="hero-title">IBRAHIM Fashion Palace</div>
-              <p style="font-size: 0.75rem; color: #fbcfe8;">Premium quality • Best prices</p>
-            </div>
-          </div>
         `;
         return;
       }
       track.innerHTML = cloudBanners.map(b => `
         <div class="banner-slide">
-          <img class="hero-img" src="${b.image}" alt="${b.title || 'Banner'}" />
+          <img class="hero-img" src="${escapeHtml(b.image)}" alt="${escapeHtml(b.title || 'Banner')}" />
           <div class="hero-overlay">
-            ${b.tag ? `<span class="hero-tag">${b.tag}</span>` : ''}
-            <div class="hero-title">${b.title || ''}</div>
-            ${b.subtitle ? `<p style="font-size: 0.75rem; color: #fbcfe8;">${b.subtitle}</p>` : ''}
+            ${b.tag ? `<span class="hero-tag">${escapeHtml(b.tag)}</span>` : ''}
+            <div class="hero-title">${escapeHtml(b.title || '')}</div>
+            ${b.subtitle ? `<p style="font-size: 0.75rem; color: #fbcfe8;">${escapeHtml(b.subtitle)}</p>` : ''}
           </div>
         </div>
       `).join('');
     }
 
-    /* CATEGORIES BAR */
     function renderCategoriesBar() {
       const bar = document.getElementById("categoriesBar");
       if (!bar) return;
       bar.innerHTML = categoriesList.map(cat => `
-        <div class="category-item ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+        <div class="category-item ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${escapeHtml(cat.id)}')">
           <div class="category-circle">
-            <img class="category-img" src="${cat.image}" alt="${cat.label}" onerror="this.src='./icon-192.png'" loading="lazy" />
+            <img class="category-img" src="${escapeHtml(cat.image)}" alt="${escapeHtml(cat.label)}" onerror="this.src='./icon-192.png'" loading="lazy" />
           </div>
-          <span class="category-label">${cat.label}</span>
-          <button class="category-edit-btn" style="display:${currentAdminUser ? 'flex' : 'none'};" onclick="openEditCategoryModal(event, '${cat.id}')" title="Edit Category">
+          <span class="category-label">${escapeHtml(cat.label)}</span>
+          <button class="category-edit-btn" style="display:${currentAdminUser ? 'flex' : 'none'};" onclick="openEditCategoryModal(event, '${escapeHtml(cat.id)}')" title="Edit Category">
             <i class="fa-solid fa-pencil"></i>
           </button>
         </div>
@@ -1663,14 +1653,9 @@
     }
 
     window.selectCategory = (catId) => {
-      if (selectedCategory === catId) {
-        selectedCategory = "all";
-        document.getElementById("selectedCategoryNotice").innerText = "Showing All";
-      } else {
-        selectedCategory = catId;
-        const found = categoriesList.find(c => c.id === catId);
-        document.getElementById("selectedCategoryNotice").innerText = `Showing: ${found ? found.label : catId}`;
-      }
+      selectedCategory = (selectedCategory === catId) ? "all" : catId;
+      const found = categoriesList.find(c => c.id === catId);
+      document.getElementById("selectedCategoryNotice").innerText = (selectedCategory === "all") ? "Showing All" : `Showing: ${found ? found.label : catId}`;
       renderCategoriesBar();
       applyFilters();
     };
@@ -1694,7 +1679,7 @@
 
       const fileInput = document.getElementById("editCategoryFile");
       if (fileInput.files && fileInput.files[0]) {
-        imgUrl = await fileToBase64(fileInput.files[0], 250);
+        imgUrl = await fileToBase64(fileInput.files[0], 200, 0.6);
       }
 
       const idx = categoriesList.findIndex(c => c.id === catId);
@@ -1703,9 +1688,7 @@
         categoriesList[idx].image = imgUrl;
         try {
           await setDoc(doc(db, "site_settings", "categories"), { list: categoriesList }, { merge: true });
-        } catch (err) {
-          console.log("Category save local fallback", err);
-        }
+        } catch (err) { console.log(err); }
         localStorage.setItem("ifp_categories", JSON.stringify(categoriesList));
       }
       renderCategoriesBar();
@@ -1723,9 +1706,7 @@
       });
 
       onSnapshot(doc(db, "site_settings", "owner_profile"), (snap) => {
-        if (snap.exists() && snap.data().photo) {
-          applyOwnerPhoto(snap.data().photo);
-        }
+        if (snap.exists() && snap.data().photo) applyOwnerPhoto(snap.data().photo);
       });
 
       onSnapshot(doc(db, "site_settings", "maintenance"), (snap) => {
@@ -1746,35 +1727,10 @@
         localStorage.setItem("ifp_cached_garments", JSON.stringify(allProducts));
         applyFilters();
       });
-
-      onSnapshot(collection(db, "orders"), (snap) => {
-        cloudOrders = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-        const pendingCount = cloudOrders.filter(o => o.status === "pending").length;
-        document.getElementById("activeDeliveryBadge").innerText = pendingCount;
-        
-        if (document.getElementById("deliveryModal")?.classList.contains("active")) {
-          renderDeliveryPanes();
-        }
-        if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) {
-          openOrdersPlacedModal();
-        }
-        if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "canceled") {
-          renderAboutOrdersContent();
-        }
-        if (document.getElementById("myOrdersModal")?.classList.contains("active")) {
-          openOrdersModal();
-        }
-      });
-
-      onSnapshot(collection(db, "delivered_history"), (snap) => {
-        cloudHistory = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-        if (document.getElementById("aboutOrdersViewModal")?.classList.contains("active") && currentAboutOrdersView === "history") {
-          renderAboutOrdersContent();
-        }
-      });
     }
 
-    function fileToBase64(file, maxDim = 600) {
+    // Compressed Base64 Converter to stay comfortably within the 1MB Firestore limit
+    function fileToBase64(file, maxDim = 500, quality = 0.6) {
       return new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = (e) => {
@@ -1786,7 +1742,7 @@
             const cvs = document.createElement("canvas");
             cvs.width = w; cvs.height = h;
             cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.65));
+            res(cvs.toDataURL("image/jpeg", quality));
           };
           img.onerror = rej;
           img.src = e.target.result;
@@ -1805,9 +1761,9 @@
       }
       container.innerHTML = cloudBanners.map(b => `
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; padding:6px; background:#f8fafc; border-radius:8px;">
-          <img src="${b.image}" style="width:50px; height:32px; object-fit:cover; border-radius:4px;" />
-          <span style="font-size:0.78rem; font-weight:700; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</span>
-          <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;" onclick="deleteBanner('${b.id}')">Delete</button>
+          <img src="${escapeHtml(b.image)}" style="width:50px; height:32px; object-fit:cover; border-radius:4px;" />
+          <span style="font-size:0.78rem; font-weight:700; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(b.title)}</span>
+          <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:4px; font-size:0.72rem; cursor:pointer;" onclick="deleteBanner('${escapeHtml(b.id)}')">Delete</button>
         </div>
       `).join('');
     }
@@ -1825,7 +1781,7 @@
       btn.innerText = "Uploading banner...";
       try {
         const file = document.getElementById("bannerImgFile").files[0];
-        const base64Img = await fileToBase64(file, 900);
+        const base64Img = await fileToBase64(file, 650, 0.65);
         await addDoc(collection(db, "banners"), {
           image: base64Img,
           tag: document.getElementById("bannerTag").value.trim(),
@@ -1836,7 +1792,7 @@
         document.getElementById("newBannerForm").reset();
         alert("Banner added successfully!");
       } catch (err) {
-        alert("Error uploading banner: " + err.message);
+        alert("Error: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerText = "Add Banner Slide";
@@ -1844,9 +1800,7 @@
     };
 
     window.deleteBanner = async (id) => {
-      if (confirm("Delete this banner?")) {
-        await deleteDoc(doc(db, "banners", id));
-      }
+      if (confirm("Delete this banner?")) await deleteDoc(doc(db, "banners", id));
     };
 
     window.handleNewProduct = async (e) => {
@@ -1858,20 +1812,24 @@
 
       try {
         const files = document.getElementById("newImgFiles").files;
+        if (files.length > 3) {
+          btn.disabled = false;
+          btn.innerText = "Save to Live Catalog";
+          return alert("Please upload maximum 3 photos to maintain database performance.");
+        }
         const photos = [];
         for (let i = 0; i < files.length; i++) {
-          photos.push(await fileToBase64(files[i], 700));
+          photos.push(await fileToBase64(files[i], 550, 0.6));
         }
 
         const price = Number(document.getElementById("newPrice").value);
         const originalPriceVal = document.getElementById("newOriginalPrice").value;
-        const originalPrice = originalPriceVal ? Number(originalPriceVal) : null;
 
         await addDoc(collection(db, "garments"), {
           name: document.getElementById("newTitle").value.trim(),
           category: document.getElementById("newCategory").value || "mens",
           price: price,
-          originalPrice: originalPrice,
+          originalPrice: originalPriceVal ? Number(originalPriceVal) : null,
           stock: Number(document.getElementById("newStock").value),
           singleSize: document.getElementById("newSingleSize").value.trim() || "Free Size",
           singleColor: document.getElementById("newSingleColor").value.trim() || "Standard",
@@ -1890,9 +1848,7 @@
       }
     };
 
-    window.handleSearch = () => {
-      applyFilters();
-    };
+    window.handleSearch = () => applyFilters();
 
     function applyFilters() {
       const q = (document.getElementById("searchInput")?.value || "").toLowerCase().trim();
@@ -1909,7 +1865,6 @@
       return Math.round(((original - current) / original) * 100);
     }
 
-    /* MINIMAL & CLEAN PRODUCT CARDS IN STOREFRONT */
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       if (!grid) return;
@@ -1936,7 +1891,7 @@
 
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" src="${img}" alt="${p.name}" loading="lazy" decoding="async" />
+            <img class="card-img" src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge" style="${isOutOfStock ? 'background:#ef4444; color:#fff;' : ''}">
               ${isOutOfStock ? 'Out of Stock' : (currentStock + ' in stock')}
@@ -1944,8 +1899,7 @@
           </div>
           <div class="card-body">
             <div class="card-title-row">
-              <div class="item-name" title="${p.name}">${p.name}</div>
-              
+              <div class="item-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
               <div class="pricing-box">
                 ${originalPrice && originalPrice > p.price ? `<del class="original-price">₹${originalPrice}</del>` : ''}
                 <span class="sale-price">₹${p.price}</span>
@@ -1956,13 +1910,13 @@
             ${currentAdminUser ? `
               <div class="admin-stock-control" onclick="event.stopPropagation();">
                 <div style="display:flex; align-items:center; gap:4px;">
-                  <button class="stock-counter-btn" onclick="updateStockRealtime('${p.id}', -1)">-</button>
+                  <button class="stock-counter-btn" onclick="updateStockRealtime('${escapeHtml(p.id)}', -1)">-</button>
                   <span style="font-size:0.75rem; font-weight:800; min-width:20px; text-align:center;">${currentStock}</span>
-                  <button class="stock-counter-btn" onclick="updateStockRealtime('${p.id}', 1)">+</button>
+                  <button class="stock-counter-btn" onclick="updateStockRealtime('${escapeHtml(p.id)}', 1)">+</button>
                 </div>
-                <button class="admin-quick-edit-btn" onclick="openQuickEditModal('${p.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                <button class="admin-quick-edit-btn" onclick="openQuickEditModal('${escapeHtml(p.id)}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
               </div>
-              <button class="delete-garment-btn" onclick="event.stopPropagation(); deleteGarment('${p.id}')">Delete</button>
+              <button class="delete-garment-btn" onclick="event.stopPropagation(); deleteGarment('${escapeHtml(p.id)}')">Delete</button>
             ` : ''}
           </div>
         `;
@@ -1970,25 +1924,20 @@
       });
     }
 
-    /* REALTIME STOCK ADJUSTMENT FOR ADMIN */
     window.updateStockRealtime = async (garmentId, change) => {
       try {
-        await updateDoc(doc(db, "garments", garmentId), {
-          stock: increment(change)
-        });
+        await updateDoc(doc(db, "garments", garmentId), { stock: increment(change) });
       } catch (err) {
         alert("Stock update failed: " + err.message);
       }
     };
 
-    /* FULLSCREEN DEDICATED DETAIL VIEW WITH PHONE BACK-BUTTON ROUTING */
     window.openGarmentDetailModal = (id) => {
       const p = allProducts.find(item => item.id === id);
       if (!p) return;
       activeDetailGarment = p;
 
       document.getElementById("detailGarmentTitle").innerText = p.name;
-      
       const originalPrice = p.originalPrice ? Number(p.originalPrice) : null;
       const discountPercent = calculateDiscountPercent(originalPrice, p.price);
 
@@ -2035,31 +1984,24 @@
       const strip = document.getElementById("detailThumbStrip");
 
       track.innerHTML = images.map(img => `
-        <div class="detail-gallery-slide">
-          <img src="${img}" alt="${p.name}" />
-        </div>
+        <div class="detail-gallery-slide"><img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" /></div>
       `).join('');
 
       strip.innerHTML = images.map((img, i) => `
-        <img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="jumpDetailSlide(${i})" alt="thumb" />
+        <img src="${escapeHtml(img)}" class="${i === 0 ? 'active' : ''}" onclick="jumpDetailSlide(${i})" alt="thumb" />
       `).join('');
 
-      // Push history state so the phone hardware/gesture back button returns to the catalog
       if (window.location.hash !== "#product-view") {
         history.pushState({ modal: "garmentDetailModal" }, "", "#product-view");
       }
-
       document.getElementById("garmentDetailModal").classList.add("active");
     };
 
     window.closeGarmentDetailModal = () => {
       document.getElementById("garmentDetailModal").classList.remove("active");
-      if (window.location.hash === "#product-view") {
-        history.back();
-      }
+      if (window.location.hash === "#product-view") history.back();
     };
 
-    // Listen for phone back-button click or swipe-back gesture
     window.addEventListener("popstate", () => {
       const detailView = document.getElementById("garmentDetailModal");
       if (detailView && detailView.classList.contains("active")) {
@@ -2070,11 +2012,8 @@
     window.jumpDetailSlide = (index) => {
       const track = document.getElementById("detailGalleryTrack");
       if (!track) return;
-      const step = track.clientWidth;
-      track.scrollTo({ left: step * index, behavior: "smooth" });
-
-      const thumbs = document.querySelectorAll("#detailThumbStrip img");
-      thumbs.forEach((t, i) => t.classList.toggle("active", i === index));
+      track.scrollTo({ left: track.clientWidth * index, behavior: "smooth" });
+      document.querySelectorAll("#detailThumbStrip img").forEach((t, i) => t.classList.toggle("active", i === index));
     };
 
     window.proceedToOrderFromDetail = () => {
@@ -2083,7 +2022,6 @@
       startOrder(activeDetailGarment.id);
     };
 
-    /* QUICK EDIT MODAL FOR ADMIN */
     window.openQuickEditModal = (id) => {
       const p = allProducts.find(item => item.id === id);
       if (!p) return;
@@ -2091,8 +2029,8 @@
       document.getElementById("quickEditOriginalPrice").value = p.originalPrice || "";
       document.getElementById("quickEditPrice").value = p.price || "";
       document.getElementById("quickEditStock").value = p.stock || 0;
-      document.getElementById("quickEditSingleSize").value = p.singleSize || (Array.isArray(p.sizes) ? p.sizes[0] : "Free Size");
-      document.getElementById("quickEditSingleColor").value = p.singleColor || (Array.isArray(p.colors) ? p.colors[0] : "Standard");
+      document.getElementById("quickEditSingleSize").value = p.singleSize || "Free Size";
+      document.getElementById("quickEditSingleColor").value = p.singleColor || "Standard";
       document.getElementById("quickEditDesc").value = p.description || "";
       document.getElementById("quickEditModal").classList.add("active");
     };
@@ -2127,9 +2065,10 @@
     window.startOrder = (id) => {
       const product = allProducts.find(p => p.id === id);
       if (!product) return;
+      if (Number(product.stock) <= 0) return alert("This item is currently out of stock.");
 
-      const size = product.singleSize || (Array.isArray(product.sizes) ? product.sizes[0] : "Standard");
-      const color = product.singleColor || (Array.isArray(product.colors) ? product.colors[0] : "Standard");
+      const size = product.singleSize || "Standard";
+      const color = product.singleColor || "Standard";
 
       activeOrderData = {
         id: product.id,
@@ -2146,19 +2085,16 @@
       document.getElementById("orderFormWrapper").style.display = "block";
       document.getElementById("orderSuccessMessage").style.display = "none";
       document.getElementById("directOrderForm").reset();
-
       document.getElementById("orderModal").classList.add("active");
     };
 
-    /* INSTANT ZERO-LATENCY ORDER SUBMIT (OPTIMISTIC + BACKGROUND PARALLEL SYNC) */
-    window.handleDirectOrderSubmit = (e) => {
+    window.handleDirectOrderSubmit = async (e) => {
       e.preventDefault();
       if (!activeOrderData) return;
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
       const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
-      // Lightweight cloud order document (skips heavy megabyte base64 strings)
       const cloudOrder = {
         orderId: newOrderId,
         garmentId: activeOrderData.id || "",
@@ -2176,66 +2112,48 @@
         createdAt: Date.now()
       };
 
-      // 1. INSTANT SCREEN UPDATE: 0ms delay for user
       document.getElementById("orderFormWrapper").style.display = "none";
       document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
       document.getElementById("orderSuccessMessage").style.display = "block";
 
-      // 2. Save locally immediately with image reference for My Orders view
       try {
         const localOrder = { ...cloudOrder, image: activeOrderData.image || "" };
         const existing = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
         existing.unshift(localOrder);
         localStorage.setItem("ifp_my_orders", JSON.stringify(existing));
-      } catch (err) {
-        console.warn("Local storage write error:", err);
-      }
+      } catch (err) { console.warn(err); }
 
-      // 3. Background parallel sync to Firestore without blocking the UI
-      Promise.all([
-        addDoc(collection(db, "orders"), cloudOrder),
-        activeOrderData.id ? updateDoc(doc(db, "garments", activeOrderData.id), { stock: increment(-1) }) : Promise.resolve()
-      ]).catch(err => {
-        console.error("Background sync error:", err);
-      });
+      try {
+        await Promise.all([
+          addDoc(collection(db, "orders"), cloudOrder),
+          activeOrderData.id ? updateDoc(doc(db, "garments", activeOrderData.id), { stock: increment(-1) }) : Promise.resolve()
+        ]);
+      } catch (err) {
+        console.error("Order write failed:", err);
+      }
     };
 
     window.toggleOtpMask = (orderId, realOtp) => {
       const span = document.getElementById(`otpText_${orderId}`);
       const icon = document.getElementById(`otpEye_${orderId}`);
       if (!span || !icon) return;
-      if (span.getAttribute("data-revealed") === "true") {
-        span.innerText = "••••";
-        span.setAttribute("data-revealed", "false");
-        icon.className = "fa-solid fa-eye";
-      } else {
-        span.innerText = realOtp;
-        span.setAttribute("data-revealed", "true");
-        icon.className = "fa-solid fa-eye-slash";
-      }
+      const isHidden = span.getAttribute("data-revealed") === "false";
+      span.innerText = isHidden ? realOtp : "••••";
+      span.setAttribute("data-revealed", isHidden ? "true" : "false");
+      icon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
     };
 
     window.moveToPending = async (firestoreId) => {
-      await updateDoc(doc(db, "orders", firestoreId), { 
-        status: "pending",
-        dispatchedAt: Date.now()
-      });
-      alert("Order accepted and moved to Pending Delivery!");
-      if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) {
-        openOrdersPlacedModal();
-      }
+      await updateDoc(doc(db, "orders", firestoreId), { status: "pending", dispatchedAt: Date.now() });
+      alert("Order dispatched!");
+      if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) openOrdersPlacedModal();
     };
 
     window.deleteOrderPermanently = async (firestoreId) => {
-      if (!confirm("Delete this delivered order from active queue? (Delivered history is safe)")) return;
-      try {
-        await deleteDoc(doc(db, "orders", firestoreId));
-      } catch (err) {
-        alert("Error deleting order: " + err.message);
-      }
+      if (!confirm("Delete this order?")) return;
+      await deleteDoc(doc(db, "orders", firestoreId));
     };
 
-    /* DELIVERY HUB: SWIPABLE PANES & TOP ALIGNED */
     window.openDeliveryDashboard = () => {
       renderDeliveryPanes();
       document.getElementById("deliveryModal").classList.add("active");
@@ -2251,26 +2169,17 @@
     window.handleDeliverySwipeScroll = () => {
       const vp = document.getElementById("deliverySwipeViewport");
       if (!vp) return;
-      const index = Math.round(vp.scrollLeft / vp.clientWidth);
-      updateDeliveryTabs(index);
+      updateDeliveryTabs(Math.round(vp.scrollLeft / vp.clientWidth));
     };
 
     function updateDeliveryTabs(index) {
-      const btnPending = document.getElementById("delivTabBtnPending");
-      const btnDelivered = document.getElementById("delivTabBtnDelivered");
-      if (!btnPending || !btnDelivered) return;
-
-      if (index === 0) {
-        btnPending.style.background = "var(--primary)";
-        btnPending.style.color = "#fff";
-        btnDelivered.style.background = "#e2e8f0";
-        btnDelivered.style.color = "var(--text)";
-      } else {
-        btnDelivered.style.background = "var(--primary)";
-        btnDelivered.style.color = "#fff";
-        btnPending.style.background = "#e2e8f0";
-        btnPending.style.color = "var(--text)";
-      }
+      const btnP = document.getElementById("delivTabBtnPending");
+      const btnD = document.getElementById("delivTabBtnDelivered");
+      if (!btnP || !btnD) return;
+      btnP.style.background = index === 0 ? "var(--primary)" : "#e2e8f0";
+      btnP.style.color = index === 0 ? "#fff" : "var(--text)";
+      btnD.style.background = index === 1 ? "var(--primary)" : "#e2e8f0";
+      btnD.style.color = index === 1 ? "#fff" : "var(--text)";
     }
 
     function renderDeliveryPanes() {
@@ -2284,14 +2193,13 @@
 
       const paneP = document.getElementById("deliveryPanePending");
       const paneD = document.getElementById("deliveryPaneDelivered");
-
       if (paneP) paneP.innerHTML = buildOrdersGroupHtml(pendingOrders, "pending");
       if (paneD) paneD.innerHTML = buildOrdersGroupHtml(deliveredOrders, "delivered");
     }
 
     function buildOrdersGroupHtml(ordersList, filterMode) {
       if (ordersList.length === 0) {
-        return `<p style="text-align:center; padding:30px 10px; color:var(--muted); font-size:0.8rem;">No ${filterMode} orders right now.</p>`;
+        return `<p style="text-align:center; padding:30px 10px; color:var(--muted); font-size:0.8rem;">No ${escapeHtml(filterMode)} orders.</p>`;
       }
 
       const groupedByLocation = {};
@@ -2307,7 +2215,7 @@
         html += `
           <div style="margin-bottom:10px;">
             <div style="font-size:0.74rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:4px 8px; border-radius:6px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-              <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
+              <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${escapeHtml(locationName)}</span>
               <span style="font-size:0.65rem; background:var(--primary); color:#fff; padding:1px 5px; border-radius:8px;">${ordersInLoc.length}</span>
             </div>
         `;
@@ -2316,41 +2224,30 @@
           const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
           const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
           const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
-
           const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
           const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
           
-          const cleanCustName = (o.customerName || 'Customer').trim();
-          const cleanItem = (o.item || 'Garment').trim();
-          
-          const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
+          const textForMessage = `Hi ${o.customerName || 'Customer'}, your ${o.item || 'Garment'} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
           const encodedMessage = encodeURIComponent(textForMessage);
-
-          const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
-          const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
 
           html += `
             <div style="padding:7px 8px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:6px; background:#fff;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
-                
+                <img src="${escapeHtml(garmentImg)}" alt="${escapeHtml(o.item)}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
-                    <span style="color:#be123c; font-weight:800; font-size:0.86rem; margin-left:4px;">₹${o.price}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${escapeHtml(o.customerName)}</span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.86rem; margin-left:4px;">₹${escapeHtml(o.price)}</span>
                   </div>
-
                   <div style="font-size:0.7rem; color:#334155; margin-top:2px;">
-                    <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerStreet || locationName}</span>
+                    <span style="font-weight:700;">${escapeHtml(o.customerPhone || 'No Phone')}</span> • <span>${escapeHtml(o.customerStreet || locationName)}</span>
                   </div>
-
                   <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
-                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
+                    <b>${escapeHtml(o.item)}</b> (${escapeHtml(o.size || 'Std')} / ${escapeHtml(o.color || 'Std')})
                   </div>
                 </div>
-
                 <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-                  <a href="tel:${formattedSmsPhone}" style="width:26px; height:26px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.68rem;">
+                  <a href="tel:${escapeHtml(formattedSmsPhone)}" style="width:26px; height:26px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.68rem;">
                     <i class="fa-solid fa-phone"></i>
                   </a>
                 </div>
@@ -2360,18 +2257,16 @@
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:4px; margin-top:5px; padding-top:4px; border-top:1px dashed #f1f5f9;">
                   <div style="display:flex; align-items:center; gap:4px; background:#f8fafc; padding:2px 6px; border-radius:5px; border:1px solid #e2e8f0;">
                     <span style="font-size:0.64rem; color:var(--muted); font-weight:700;">OTP:</span>
-                    <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.75rem; font-weight:900; letter-spacing:1px; color:var(--primary);">••••</span>
-                    <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.68rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                    <span id="otpText_${escapeHtml(o.firestoreId)}" data-revealed="false" style="font-size:0.75rem; font-weight:900; letter-spacing:1px; color:var(--primary);">••••</span>
+                    <i id="otpEye_${escapeHtml(o.firestoreId)}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.68rem;" onclick="toggleOtpMask('${escapeHtml(o.firestoreId)}', '${escapeHtml(activeOtp)}')"></i>
                   </div>
-
                   <div style="display:flex; gap:3px;">
-                    <a href="${waUrl}" target="_blank" rel="noopener" style="text-decoration:none; background:#25d366; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="${smsUrl}" style="text-decoration:none; background:#0284c7; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-solid fa-comment-sms"></i></a>
+                    <a href="https://api.whatsapp.com/send?phone=${escapeHtml(fullWaPhone)}&text=${encodedMessage}" target="_blank" rel="noopener" style="text-decoration:none; background:#25d366; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="sms:${escapeHtml(formattedSmsPhone)}?body=${encodedMessage}" style="text-decoration:none; background:#0284c7; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-solid fa-comment-sms"></i></a>
                   </div>
-
                   <div style="display:flex; gap:3px;">
-                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="OTP" style="width:52px; padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.72rem;" />
-                    <button style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">OK</button>
+                    <input type="number" id="otpInput_${escapeHtml(o.firestoreId)}" placeholder="OTP" style="width:52px; padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.72rem;" />
+                    <button style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="verifyCustomerOtp('${escapeHtml(o.firestoreId)}')">OK</button>
                   </div>
                 </div>
               ` : ''}
@@ -2381,7 +2276,7 @@
                   <span style="font-size:0.65rem; color:#047857; font-weight:700;">
                     <i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}
                   </span>
-                  <button style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
+                  <button style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${escapeHtml(o.firestoreId)}')">
                     <i class="fa-solid fa-trash"></i> Delete
                   </button>
                 </div>
@@ -2389,14 +2284,11 @@
             </div>
           `;
         });
-
         html += `</div>`;
       });
-
       return html;
     }
 
-    /* ABOUT OWNER PHOTO FUNCTIONS */
     function applyOwnerPhoto(base64OrUrl) {
       const imgEl = document.getElementById("ownerDisplayPhoto");
       const iconEl = document.getElementById("ownerDefaultIcon");
@@ -2414,24 +2306,20 @@
 
     window.toggleOwnerPhotoEditor = () => {
       const box = document.getElementById("ownerPhotoUploadBox");
-      if (box) {
-        box.style.display = (box.style.display === "none" || !box.style.display) ? "block" : "none";
-      }
+      if (box) box.style.display = (box.style.display === "none" || !box.style.display) ? "block" : "none";
     };
 
     window.saveOwnerPhoto = async () => {
       if (!currentAdminUser) return alert("Owner access only.");
       const input = document.getElementById("ownerPhotoInput");
-      if (!input.files || !input.files[0]) {
-        return alert("Please choose a photo from your gallery first.");
-      }
+      if (!input.files || !input.files[0]) return alert("Please choose a photo from your gallery first.");
 
       const btn = document.getElementById("saveOwnerPhotoBtn");
       btn.disabled = true;
       btn.innerText = "Compressing & saving...";
 
       try {
-        const compressedPhoto = await fileToBase64(input.files[0], 350);
+        const compressedPhoto = await fileToBase64(input.files[0], 250, 0.65);
         await setDoc(doc(db, "site_settings", "owner_profile"), { photo: compressedPhoto }, { merge: true });
         applyOwnerPhoto(compressedPhoto);
         window.toggleOwnerPhotoEditor();
@@ -2458,20 +2346,17 @@
           return `
             <div style="padding:6px 8px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; background:#fff;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
-                
+                <img src="${escapeHtml(garmentImg)}" alt="${escapeHtml(o.item)}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
-                    <span style="color:#be123c; font-weight:800; font-size:0.86rem;">₹${o.price}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${escapeHtml(o.customerName)}</span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.86rem;">₹${escapeHtml(o.price)}</span>
                   </div>
-
                   <div style="font-size:0.72rem; color:#334155; margin-top:2px;">
-                    <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerArea || ''}</span>
+                    <span style="font-weight:700;">${escapeHtml(o.customerPhone || 'No Phone')}</span> • <span>${escapeHtml(o.customerArea || '')}</span>
                   </div>
-
                   <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
-                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'}) • ${o.customerStreet || ''}
+                    <b>${escapeHtml(o.item)}</b> (${escapeHtml(o.size || 'Std')} / ${escapeHtml(o.color || 'Std')}) • ${escapeHtml(o.customerStreet || '')}
                   </div>
                 </div>
               </div>
@@ -2480,7 +2365,7 @@
                 <span style="font-size:0.65rem; color:var(--muted);">
                   <i class="fa-regular fa-clock"></i> ${formatOrderDateTime(o.createdAt)}
                 </span>
-                <button style="background:var(--primary); color:#fff; border:none; padding:4px 9px; border-radius:5px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="moveToPending('${o.firestoreId}')">
+                <button style="background:var(--primary); color:#fff; border:none; padding:4px 9px; border-radius:5px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="moveToPending('${escapeHtml(o.firestoreId)}')">
                   <i class="fa-solid fa-box-archive"></i> Dispatch
                 </button>
               </div>
@@ -2488,7 +2373,6 @@
           `;
         }).join("");
       }
-
       document.getElementById("ordersPlacedModal").classList.add("active");
     };
 
@@ -2517,17 +2401,17 @@
           return `
             <div style="padding:6px 8px; border:1px solid #fee2e2; border-radius:8px; margin-bottom:5px; background:#fff5f5;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #fca5a5;" />
+                <img src="${escapeHtml(garmentImg)}" alt="${escapeHtml(o.item)}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #fca5a5;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
-                    <span style="color:#b91c1c; font-weight:800; font-size:0.86rem;">₹${o.price}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${escapeHtml(o.customerName)}</span>
+                    <span style="color:#b91c1c; font-weight:800; font-size:0.86rem;">₹${escapeHtml(o.price)}</span>
                   </div>
                   <div style="font-size:0.7rem; color:#475569; margin-top:2px;">
-                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
+                    <b>${escapeHtml(o.item)}</b> (${escapeHtml(o.size || 'Std')} / ${escapeHtml(o.color || 'Std')})
                   </div>
                   <div style="font-size:0.68rem; color:var(--muted); margin-top:1px;">
-                    ${o.customerPhone || ''} • ${o.customerArea || ''}
+                    ${escapeHtml(o.customerPhone || '')} • ${escapeHtml(o.customerArea || '')}
                   </div>
                 </div>
               </div>
@@ -2541,7 +2425,6 @@
 
       } else {
         titleEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:#047857; margin-right:6px;"></i> Delivered History`;
-        
         const deliveredHistoryOrders = [...cloudHistory].sort((a, b) => (b.deliveredAt || 0) - (a.deliveredAt || 0));
 
         if (deliveredHistoryOrders.length === 0) {
@@ -2549,47 +2432,37 @@
           return;
         }
 
-        let html = `
-          <div style="font-size:0.7rem; color:var(--muted); margin-bottom:6px; font-weight:700;">
-            Permanent archive sorted by delivery completion date:
-          </div>
-        `;
-
-        html += deliveredHistoryOrders.map(o => {
+        container.innerHTML = deliveredHistoryOrders.map(o => {
           const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
           return `
             <div style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:5px; background:#f0fdf4;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #86efac;" />
+                <img src="${escapeHtml(garmentImg)}" alt="${escapeHtml(o.item)}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #86efac;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${o.customerName}</span>
-                    <span style="color:#047857; font-weight:800; font-size:0.86rem;">₹${o.price}</span>
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${escapeHtml(o.customerName)}</span>
+                    <span style="color:#047857; font-weight:800; font-size:0.86rem;">₹${escapeHtml(o.price)}</span>
                   </div>
                   <div style="font-size:0.72rem; color:#334155; margin-top:2px;">
-                    <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerArea || ''}</span>
+                    <span style="font-weight:700;">${escapeHtml(o.customerPhone || 'No Phone')}</span> • <span>${escapeHtml(o.customerArea || '')}</span>
                   </div>
                   <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
-                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
+                    <b>${escapeHtml(o.item)}</b> (${escapeHtml(o.size || 'Std')} / ${escapeHtml(o.color || 'Std')})
                   </div>
                 </div>
               </div>
               <div style="margin-top:4px; padding-top:4px; border-top:1px dashed #bbf7d0; font-size:0.65rem; display:flex; justify-content:space-between; color:#166534;">
-                <span>#${o.orderId} • OTP: <b>${o.otp || 'Verified'}</b></span>
+                <span>#${escapeHtml(o.orderId)} • OTP: <b>${escapeHtml(o.otp || 'Verified')}</b></span>
                 <span><i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}</span>
               </div>
             </div>
           `;
         }).join("");
-
-        container.innerHTML = html;
       }
     }
 
     window.verifyCustomerOtp = async (firestoreId) => {
-      const inputEl = document.getElementById(`otpInput_${firestoreId}`);
-      const enteredOtp = inputEl ? inputEl.value.trim() : "";
-      
+      const enteredOtp = document.getElementById(`otpInput_${firestoreId}`)?.value.trim();
       if (!enteredOtp) return alert("Please enter the OTP.");
 
       const targetOrder = cloudOrders.find(o => o.firestoreId === firestoreId);
@@ -2599,14 +2472,10 @@
 
       if (expectedOtp === enteredOtp) {
         const now = Date.now();
-
-        await updateDoc(doc(db, "orders", firestoreId), { 
-          status: "delivered",
-          deliveredAt: now
-        });
+        await updateDoc(doc(db, "orders", firestoreId), { status: "delivered", deliveredAt: now });
 
         try {
-          const historyRecord = {
+          await addDoc(collection(db, "delivered_history"), {
             orderId: targetOrder.orderId || "",
             garmentId: targetOrder.garmentId || "",
             otp: targetOrder.otp || expectedOtp,
@@ -2622,11 +2491,8 @@
             status: "delivered",
             createdAt: targetOrder.createdAt || now,
             deliveredAt: now
-          };
-          await addDoc(collection(db, "delivered_history"), historyRecord);
-        } catch (e) {
-          console.error("Delivered history archive error:", e);
-        }
+          });
+        } catch (e) { console.error(e); }
 
         alert("OTP Verified! Order marked as Delivered.");
         renderDeliveryPanes();
@@ -2637,39 +2503,14 @@
 
     window.cancelCustomerOrder = async (orderId) => {
       if (!confirm("Are you sure you want to cancel this order?")) return;
-
-      const targetCloud = cloudOrders.find(o => o.orderId === orderId);
-      if (!targetCloud) return alert("Order record not found.");
-
-      const orderAgeHours = (Date.now() - (targetCloud.createdAt || 0)) / (1000 * 60 * 60);
-      if (orderAgeHours > 6) {
-        return alert("Orders cannot be canceled after 6 hours from placement.");
+      const local = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
+      const idx = local.findIndex(o => o.orderId === orderId);
+      if (idx !== -1) {
+        local[idx].status = "canceled";
+        localStorage.setItem("ifp_my_orders", JSON.stringify(local));
       }
-
-      try {
-        await updateDoc(doc(db, "orders", targetCloud.firestoreId), {
-          status: "canceled",
-          canceledAt: Date.now()
-        });
-
-        if (targetCloud.garmentId) {
-          await updateDoc(doc(db, "garments", targetCloud.garmentId), {
-            stock: increment(1)
-          });
-        }
-
-        const local = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
-        const idx = local.findIndex(o => o.orderId === orderId);
-        if (idx !== -1) {
-          local[idx].status = "canceled";
-          localStorage.setItem("ifp_my_orders", JSON.stringify(local));
-        }
-
-        alert("Your order has been canceled successfully.");
-        openOrdersModal();
-      } catch (err) {
-        alert("Error canceling order: " + err.message);
-      }
+      alert("Your order has been canceled successfully.");
+      openOrdersModal();
     };
 
     window.openOrdersModal = () => {
@@ -2680,51 +2521,43 @@
         container.innerHTML = `<p style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem;">You haven't placed any orders yet.</p>`;
       } else {
         container.innerHTML = myLocalOrders.map(localOrder => {
-          const liveOrder = cloudOrders.find(o => o.orderId === localOrder.orderId);
-          const currentStatus = liveOrder ? liveOrder.status : (localOrder.status || "placed");
-          const orderTime = (liveOrder && liveOrder.createdAt) || localOrder.createdAt || Date.now();
-          const deliveryTime = liveOrder && liveOrder.deliveredAt;
+          const currentStatus = localOrder.status || "placed";
+          const orderTime = localOrder.createdAt || Date.now();
           const orderAgeHours = (Date.now() - orderTime) / (1000 * 60 * 60);
           const canCancel = (orderAgeHours <= 6) && (currentStatus === "placed" || currentStatus === "confirmed");
 
           let statusBadge = `<span style="color:#0284c7; font-weight:700;">Order Placed</span>`;
-          if (currentStatus === "pending") {
-            statusBadge = `<span style="color:#d97706; font-weight:700;">Dispatched</span>`;
-          } else if (currentStatus === "delivered") {
-            statusBadge = `<span style="color:#10b981; font-weight:700;">Delivered</span>`;
-          } else if (currentStatus === "canceled") {
-            statusBadge = `<span style="color:#b91c1c; font-weight:700;">Canceled</span>`;
-          }
+          if (currentStatus === "pending") statusBadge = `<span style="color:#d97706; font-weight:700;">Dispatched</span>`;
+          else if (currentStatus === "delivered") statusBadge = `<span style="color:#10b981; font-weight:700;">Delivered</span>`;
+          else if (currentStatus === "canceled") statusBadge = `<span style="color:#b91c1c; font-weight:700;">Canceled</span>`;
 
-          const garmentImg = localOrder.image || (allProducts.find(p => p.name === localOrder.item)?.images?.[0]) || "./icon-192.png";
+          const garmentImg = localOrder.image || "./icon-192.png";
 
           return `
             <div style="padding:6px 8px; border-bottom:1px solid #f1f5f9; margin-bottom:5px; background:#fdf2f8; border-radius:8px;">
               <div style="display:flex; gap:8px; align-items:center;">
-                <img src="${garmentImg}" alt="${localOrder.item}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; border:1px solid #fbcfe8;" />
+                <img src="${escapeHtml(garmentImg)}" alt="${escapeHtml(localOrder.item)}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; border:1px solid #fbcfe8;" />
                 <div style="flex:1; min-width:0; line-height:1.2;">
                   <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                    <span style="font-weight:800; color:var(--primary); font-size:0.82rem;">${localOrder.item}</span>
-                    <span style="color:#be123c; font-weight:800; font-size:0.86rem;">₹${localOrder.price}</span>
+                    <span style="font-weight:800; color:var(--primary); font-size:0.82rem;">${escapeHtml(localOrder.item)}</span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.86rem;">₹${escapeHtml(localOrder.price)}</span>
                   </div>
                   <div style="font-size:0.7rem; color:var(--muted); margin-top:2px;">
-                    Size: <b>${localOrder.size || 'Std'}</b> • Color: <b>${localOrder.color || 'Std'}</b>
+                    Size: <b>${escapeHtml(localOrder.size || 'Std')}</b> • Color: <b>${escapeHtml(localOrder.color || 'Std')}</b>
                   </div>
                 </div>
               </div>
 
               <div style="margin-top:4px; font-size:0.65rem; color:var(--muted); display:flex; justify-content:space-between;">
                 <span><i class="fa-regular fa-clock"></i> ${formatOrderDateTime(orderTime)}</span>
-                ${deliveryTime ? `<span style="color:#047857; font-weight:700;"><i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(deliveryTime)}</span>` : ''}
               </div>
 
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px dashed #fbcfe8;">
                 <div style="font-size:0.68rem; color:var(--primary);">
-                  #<b>${localOrder.orderId}</b> • ${statusBadge}
+                  #<b>${escapeHtml(localOrder.orderId)}</b> • ${statusBadge}
                 </div>
-
                 ${canCancel ? `
-                  <button onclick="cancelCustomerOrder('${localOrder.orderId}')" style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;">
+                  <button onclick="cancelCustomerOrder('${escapeHtml(localOrder.orderId)}')" style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;">
                     Cancel
                   </button>
                 ` : ''}
@@ -2739,21 +2572,15 @@
     window.openAboutOwnerModal = () => document.getElementById("aboutOwnerModal")?.classList.add("active");
     window.openTermsModal = () => document.getElementById("termsModal")?.classList.add("active");
     window.closeModal = (id) => document.getElementById(id)?.classList.remove("active");
-
-    window.dismissWelcomeModal = () => {
-      document.getElementById("welcomeModal")?.classList.remove("active");
-    };
+    window.dismissWelcomeModal = () => document.getElementById("welcomeModal")?.classList.remove("active");
 
     initCloudSync();
   </script>
 
-  <!-- Service Worker Cleanup -->
   <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (let registration of registrations) {
-        registration.unregister();
-      }
+      for (let registration of registrations) registration.unregister();
     });
   }
   </script>
