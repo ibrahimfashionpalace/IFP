@@ -705,6 +705,23 @@
       flex-direction: column;
       min-width: 80px;
     }
+    .order-btn {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(219, 39, 119, 0.3);
+      transition: all 0.2s ease;
+    }
+    .order-btn:hover {
+      background: linear-gradient(135deg, #db2777, #be185d);
+      box-shadow: 0 6px 16px rgba(219, 39, 119, 0.4);
+    }
+    .order-btn:active {
+      transform: scale(0.98);
+    }
     .detail-bottom-bar .order-btn {
       flex: 1;
       margin-top: 0;
@@ -2004,10 +2021,12 @@
       if (stockCount <= 0) {
         orderBtn.disabled = true;
         orderBtn.style.background = "#94a3b8";
+        orderBtn.style.boxShadow = "none";
         orderBtn.innerText = "Sold Out";
       } else {
         orderBtn.disabled = false;
-        orderBtn.style.background = "linear-gradient(135deg, #1e1b4b, #312e81)";
+        orderBtn.style.background = "linear-gradient(135deg, #ec4899, #db2777)";
+        orderBtn.style.boxShadow = "0 4px 12px rgba(219, 39, 119, 0.3)";
         orderBtn.innerText = "Place Order (COD)";
       }
 
