@@ -414,6 +414,8 @@
       min-height: 400px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       cursor: pointer;
+      content-visibility: auto;
+      contain-intrinsic-size: 400px;
     }
     .card-img-wrap {
       position: relative;
@@ -647,7 +649,37 @@
       margin: 10px 0;
     }
 
-    /* MODALS */
+    /* FULLSCREEN TOP-ALIGNED DELIVERY HUB MODAL WITH SWIPE VIEW */
+    .modal-overlay.delivery-hub-overlay {
+      align-items: flex-start !important;
+    }
+    .modal-sheet.delivery-hub-sheet {
+      border-radius: 0 0 20px 20px !important;
+      max-height: 100vh !important;
+      height: 100vh !important;
+      display: flex;
+      flex-direction: column;
+      padding: 14px 14px 20px !important;
+    }
+    .delivery-swipe-viewport {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      width: 100%;
+      gap: 14px;
+    }
+    .delivery-swipe-viewport::-webkit-scrollbar { display: none; }
+    .delivery-pane {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      overflow-y: auto;
+      padding-bottom: 20px;
+    }
+
+    /* STANDARD MODALS */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -726,14 +758,11 @@
 
   <!-- Maintenance Mode Screen -->
   <div id="maintenanceScreen">
-    <div style="font-size:3rem; color:#fbbf24; margin-bottom:12px; cursor:pointer;" onclick="promptOwnerLogin()" title="Owner Login">
+    <div style="font-size:3.2rem; color:#fbbf24; margin-bottom:12px; cursor:pointer;" onclick="promptOwnerLogin()" title="Owner Console">
       <i class="fa-solid fa-wrench"></i>
     </div>
     <div style="font-size:1.3rem; font-weight:800; margin-bottom:8px;">Website Under Maintenance</div>
     <div style="font-size:0.9rem; color:#fbcfe8; margin-bottom:20px;">Updating our garment collection. Back shortly!</div>
-    <button style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.1rem; cursor:pointer;" onclick="promptOwnerLogin()" title="Admin Auth">
-      <i class="fa-solid fa-wrench"></i>
-    </button>
   </div>
 
   <!-- Header -->
@@ -768,8 +797,8 @@
     </div>
 
     <div class="header-actions">
-      <!-- Discrete Wrench icon for Owner Login -->
-      <button class="nav-btn" style="padding: 7px 9px;" onclick="promptOwnerLogin()" title="Owner Console">
+      <!-- Discrete Wrench icon for Owner Login (Hidden when authenticated) -->
+      <button class="nav-btn" id="headerWrenchBtn" style="padding: 7px 9px;" onclick="promptOwnerLogin()" title="Owner Console">
         <i class="fa-solid fa-wrench"></i>
       </button>
 
@@ -842,12 +871,7 @@
 
   <!-- Catalog Grid -->
   <main>
-    <div class="products-grid" id="productsGrid">
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--primary); font-weight: 700; font-size: 0.9rem;">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.8rem; margin-bottom: 10px; display: block; color: var(--accent);"></i>
-        Loading collection...
-      </div>
-    </div>
+    <div class="products-grid" id="productsGrid"></div>
   </main>
 
   <!-- Welcome Popup Modal -->
@@ -1126,14 +1150,27 @@
     </div>
   </div>
 
-  <!-- Delivery Modal -->
-  <div class="modal-overlay" id="deliveryModal">
-    <div class="modal-sheet">
+  <!-- Delivery Hub Modal (Starts from top of screen & Horizontally Swipable) -->
+  <div class="modal-overlay delivery-hub-overlay" id="deliveryModal">
+    <div class="modal-sheet delivery-hub-sheet">
       <div class="modal-head">
-        <h3><i class="fa-solid fa-truck" style="color:#0284c7; margin-right:6px;"></i> Delivery Hub</h3>
+        <h3><i class="fa-solid fa-truck" style="color:#0284c7; margin-right:6px;"></i> Delivery Hub (Van)</h3>
         <button class="close-btn" onclick="closeModal('deliveryModal')">&times;</button>
       </div>
-      <div id="deliveryGroupContainer"></div>
+      
+      <div style="display:flex; gap:6px; margin-bottom:10px;">
+        <button id="delivTabBtnPending" onclick="switchDeliveryPane(0)" style="flex:1; padding:9px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.78rem; cursor:pointer; background:var(--primary); color:#fff;">
+          Pending (<span id="countPendingTab">0</span>)
+        </button>
+        <button id="delivTabBtnDelivered" onclick="switchDeliveryPane(1)" style="flex:1; padding:9px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.78rem; cursor:pointer; background:#e2e8f0; color:var(--text);">
+          Delivered (<span id="countDeliveredTab">0</span>)
+        </button>
+      </div>
+
+      <div class="delivery-swipe-viewport" id="deliverySwipeViewport" onscroll="handleDeliverySwipeScroll()">
+        <div class="delivery-pane" id="deliveryPanePending"></div>
+        <div class="delivery-pane" id="deliveryPaneDelivered"></div>
+      </div>
     </div>
   </div>
 
@@ -1267,7 +1304,7 @@
     </div>
   </footer>
 
-  <!-- Firebase Logic -->
+  <!-- Firebase & Fast Pre-Warming Architecture -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -1287,22 +1324,26 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let allProducts = [];
-    let displayedProducts = [];
+    // Instant local cache recovery so the page loads in 0ms without waiting for network
+    let cachedGarments = [];
+    try { cachedGarments = JSON.parse(localStorage.getItem("ifp_cached_garments") || "[]"); } catch(e){}
+    let cachedBanners = [];
+    try { cachedBanners = JSON.parse(localStorage.getItem("ifp_cached_banners") || "[]"); } catch(e){}
+
+    let allProducts = cachedGarments;
+    let displayedProducts = [...allProducts];
     let cloudOrders = [];
     let cloudHistory = [];
-    let cloudBanners = [];
+    let cloudBanners = cachedBanners;
     let activeOrderData = null;
     let activeDetailGarment = null;
     let isMaintenanceActive = false;
     let currentAdminUser = null;
     let tapCount = 0;
     let tapTimer = null;
-    let currentDeliveryFilter = "pending"; 
     let currentAboutOrdersView = "history"; 
     let selectedCategory = "all";
 
-    // Default categories config (synced with Firestore or fallback)
     let categoriesList = [
       { id: "mens", label: "Men's", image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=150" },
       { id: "womens", label: "Women's", image: "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=150" },
@@ -1311,6 +1352,16 @@
       { id: "girls", label: "Girl's", image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=150" },
       { id: "others", label: "Others", image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=150" }
     ];
+
+    try {
+      const localCats = localStorage.getItem("ifp_categories");
+      if (localCats) categoriesList = JSON.parse(localCats);
+    } catch(e){}
+
+    // Pre-paint instantly from local storage cache
+    renderCategoriesBar();
+    renderBanners();
+    renderProducts();
 
     function formatOrderDateTime(ts) {
       if (!ts) return "";
@@ -1330,8 +1381,14 @@
 
     function updateAdminUI() {
       const isAuth = !!currentAdminUser;
+      
+      // Hide wrench button when logged in as admin
+      const wrenchBtn = document.getElementById("headerWrenchBtn");
+      if (wrenchBtn) wrenchBtn.style.display = isAuth ? "none" : "flex";
+
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
+      
       const aboutOrdersEl = document.getElementById("aboutOrdersWrapper");
       if (aboutOrdersEl) aboutOrdersEl.style.display = isAuth ? "block" : "none";
 
@@ -1374,9 +1431,7 @@
           promptOwnerLogin();
           return;
         }
-        tapTimer = setTimeout(() => {
-          tapCount = 0;
-        }, 500);
+        tapTimer = setTimeout(() => { tapCount = 0; }, 500);
       });
     }
 
@@ -1441,7 +1496,7 @@
     function renderBanners() {
       const track = document.getElementById("bannerTrack");
       if (!track) return;
-      if (cloudBanners.length === 0) {
+      if (!cloudBanners || cloudBanners.length === 0) {
         track.innerHTML = `
           <div class="banner-slide">
             <img class="hero-img" src="./banner1.jpg" alt="Special Collection" fetchpriority="high" />
@@ -1474,14 +1529,14 @@
       `).join('');
     }
 
-    /* EDITABLE CATEGORIES BAR */
+    /* CATEGORIES BAR */
     function renderCategoriesBar() {
       const bar = document.getElementById("categoriesBar");
       if (!bar) return;
       bar.innerHTML = categoriesList.map(cat => `
         <div class="category-item ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
           <div class="category-circle">
-            <img class="category-img" src="${cat.image}" alt="${cat.label}" onerror="this.src='./icon-192.png'" />
+            <img class="category-img" src="${cat.image}" alt="${cat.label}" onerror="this.src='./icon-192.png'" loading="lazy" />
           </div>
           <span class="category-label">${cat.label}</span>
           <button class="category-edit-btn" style="display:${currentAdminUser ? 'flex' : 'none'};" onclick="openEditCategoryModal(event, '${cat.id}')" title="Edit Category">
@@ -1543,17 +1598,11 @@
     };
 
     function initCloudSync() {
-      // Load saved categories if available
       onSnapshot(doc(db, "site_settings", "categories"), (snap) => {
         if (snap.exists() && Array.isArray(snap.data().list)) {
           categoriesList = snap.data().list;
+          localStorage.setItem("ifp_categories", JSON.stringify(categoriesList));
           renderCategoriesBar();
-        } else {
-          const localCats = localStorage.getItem("ifp_categories");
-          if (localCats) {
-            categoriesList = JSON.parse(localCats);
-            renderCategoriesBar();
-          }
         }
       });
 
@@ -1565,12 +1614,14 @@
 
       onSnapshot(collection(db, "banners"), (snap) => {
         cloudBanners = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        localStorage.setItem("ifp_cached_banners", JSON.stringify(cloudBanners));
         renderBanners();
         renderAdminBannerList();
       });
 
       onSnapshot(collection(db, "garments"), (snap) => {
         allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        localStorage.setItem("ifp_cached_garments", JSON.stringify(allProducts));
         applyFilters();
       });
 
@@ -1580,7 +1631,7 @@
         document.getElementById("activeDeliveryBadge").innerText = pendingCount;
         
         if (document.getElementById("deliveryModal")?.classList.contains("active")) {
-          openDeliveryDashboard();
+          renderDeliveryPanes();
         }
         if (document.getElementById("ordersPlacedModal")?.classList.contains("active")) {
           openOrdersPlacedModal();
@@ -1756,14 +1807,13 @@
         const card = document.createElement("div");
         card.className = "card";
         card.onclick = (e) => {
-          // Prevent opening detail modal when clicking action buttons
           if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
           openGarmentDetailModal(p.id);
         };
 
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img class="card-img" src="${img}" alt="${p.name}" loading="lazy" />
+            <img class="card-img" src="${img}" alt="${p.name}" loading="lazy" decoding="async" />
             <span class="cod-tag">COD</span>
             <span class="stock-badge" style="${isOutOfStock ? 'background:#ef4444; color:#fff;' : ''}">
               ${isOutOfStock ? 'Out of Stock' : (currentStock + ' in stock')}
@@ -1818,7 +1868,7 @@
       }
     };
 
-    /* GARMENT DETAIL VIEW (SWIPABLE MULTI-IMAGES & SINGULAR SPECS) */
+    /* GARMENT DETAIL VIEW */
     window.openGarmentDetailModal = (id) => {
       const p = allProducts.find(item => item.id === id);
       if (!p) return;
@@ -1864,7 +1914,6 @@
         orderBtn.innerText = "Place Order (COD)";
       }
 
-      // Populate swipable gallery & thumbnails
       const images = (p.images && p.images.length > 0) ? p.images : ["./icon-192.png"];
       const track = document.getElementById("detailGalleryTrack");
       const strip = document.getElementById("detailThumbStrip");
@@ -2044,7 +2093,7 @@
     };
 
     window.deleteOrderPermanently = async (firestoreId) => {
-      if (!confirm("Delete this delivered order from the active queue? (Permanent history will be kept)")) return;
+      if (!confirm("Delete this delivered order from active queue? (Delivered history is safe)")) return;
       try {
         await deleteDoc(doc(db, "orders", firestoreId));
       } catch (err) {
@@ -2052,136 +2101,166 @@
       }
     };
 
-    window.setDeliveryTab = (tab) => {
-      currentDeliveryFilter = tab;
-      openDeliveryDashboard();
+    /* DELIVERY HUB: SWIPABLE PANES & TOP ALIGNED */
+    window.openDeliveryDashboard = () => {
+      renderDeliveryPanes();
+      document.getElementById("deliveryModal").classList.add("active");
     };
 
-    window.openDeliveryDashboard = () => {
-      const container = document.getElementById("deliveryGroupContainer");
-      if (!container) return;
+    window.switchDeliveryPane = (tabIndex) => {
+      const vp = document.getElementById("deliverySwipeViewport");
+      if (!vp) return;
+      vp.scrollTo({ left: vp.clientWidth * tabIndex, behavior: "smooth" });
+      updateDeliveryTabs(tabIndex);
+    };
 
+    window.handleDeliverySwipeScroll = () => {
+      const vp = document.getElementById("deliverySwipeViewport");
+      if (!vp) return;
+      const index = Math.round(vp.scrollLeft / vp.clientWidth);
+      updateDeliveryTabs(index);
+    };
+
+    function updateDeliveryTabs(index) {
+      const btnPending = document.getElementById("delivTabBtnPending");
+      const btnDelivered = document.getElementById("delivTabBtnDelivered");
+      if (!btnPending || !btnDelivered) return;
+
+      if (index === 0) {
+        btnPending.style.background = "var(--primary)";
+        btnPending.style.color = "#fff";
+        btnDelivered.style.background = "#e2e8f0";
+        btnDelivered.style.color = "var(--text)";
+      } else {
+        btnDelivered.style.background = "var(--primary)";
+        btnDelivered.style.color = "#fff";
+        btnPending.style.background = "#e2e8f0";
+        btnPending.style.color = "var(--text)";
+      }
+    }
+
+    function renderDeliveryPanes() {
       const pendingOrders = cloudOrders.filter(o => o.status === "pending");
       const deliveredOrders = cloudOrders.filter(o => o.status === "delivered");
 
-      let html = `
-        <div style="display:flex; gap:6px; margin-bottom:10px;">
-          <button onclick="setDeliveryTab('pending')" style="flex:1; padding:7px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.75rem; cursor:pointer; background:${currentDeliveryFilter === 'pending' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'pending' ? '#fff' : 'var(--text)'};">
-            Pending (${pendingOrders.length})
-          </button>
-          <button onclick="setDeliveryTab('delivered')" style="flex:1; padding:7px 4px; border-radius:8px; border:none; font-weight:800; font-size:0.75rem; cursor:pointer; background:${currentDeliveryFilter === 'delivered' ? 'var(--primary)' : '#e2e8f0'}; color:${currentDeliveryFilter === 'delivered' ? '#fff' : 'var(--text)'};">
-            Delivered (${deliveredOrders.length})
-          </button>
-        </div>
-      `;
+      const countP = document.getElementById("countPendingTab");
+      const countD = document.getElementById("countDeliveredTab");
+      if (countP) countP.innerText = pendingOrders.length;
+      if (countD) countD.innerText = deliveredOrders.length;
 
-      let listToDisplay = (currentDeliveryFilter === 'pending') ? pendingOrders : deliveredOrders;
+      const paneP = document.getElementById("deliveryPanePending");
+      const paneD = document.getElementById("deliveryPaneDelivered");
 
-      if (listToDisplay.length === 0) {
-        html += `<p style="text-align:center; padding:20px; color:var(--muted); font-size:0.8rem;">No ${currentDeliveryFilter} orders.</p>`;
-      } else {
-        const groupedByLocation = {};
-        listToDisplay.forEach(o => {
-          const area = o.customerArea || "Other Location";
-          if (!groupedByLocation[area]) groupedByLocation[area] = [];
-          groupedByLocation[area].push(o);
-        });
+      if (paneP) paneP.innerHTML = buildOrdersGroupHtml(pendingOrders, "pending");
+      if (paneD) paneD.innerHTML = buildOrdersGroupHtml(deliveredOrders, "delivered");
+    }
 
-        Object.keys(groupedByLocation).sort().forEach(locationName => {
-          const ordersInLoc = groupedByLocation[locationName];
+    function buildOrdersGroupHtml(ordersList, filterMode) {
+      if (ordersList.length === 0) {
+        return `<p style="text-align:center; padding:30px 10px; color:var(--muted); font-size:0.8rem;">No ${filterMode} orders right now.</p>`;
+      }
+
+      const groupedByLocation = {};
+      ordersList.forEach(o => {
+        const area = o.customerArea || "Other Location";
+        if (!groupedByLocation[area]) groupedByLocation[area] = [];
+        groupedByLocation[area].push(o);
+      });
+
+      let html = "";
+      Object.keys(groupedByLocation).sort().forEach(locationName => {
+        const ordersInLoc = groupedByLocation[locationName];
+        html += `
+          <div style="margin-bottom:10px;">
+            <div style="font-size:0.74rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:4px 8px; border-radius:6px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+              <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
+              <span style="font-size:0.65rem; background:var(--primary); color:#fff; padding:1px 5px; border-radius:8px;">${ordersInLoc.length}</span>
+            </div>
+        `;
+
+        ordersInLoc.forEach(o => {
+          const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
+          const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
+          const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
+
+          const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
+          const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
+          
+          const cleanCustName = (o.customerName || 'Customer').trim();
+          const cleanItem = (o.item || 'Garment').trim();
+          
+          const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
+          const encodedMessage = encodeURIComponent(textForMessage);
+
+          const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
+          const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
+
           html += `
-            <div style="margin-bottom:8px;">
-              <div style="font-size:0.74rem; font-weight:800; color:var(--primary); background:#fdf2f8; border:1px solid #fbcfe8; padding:3px 8px; border-radius:6px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                <span><i class="fa-solid fa-map-location-dot" style="color:var(--accent-pink); margin-right:4px;"></i> ${locationName}</span>
-                <span style="font-size:0.65rem; background:var(--primary); color:#fff; padding:1px 5px; border-radius:8px;">${ordersInLoc.length}</span>
-              </div>
-          `;
-
-          ordersInLoc.forEach(o => {
-            const rawDigits = (o.customerPhone || "").replace(/[^0-9]/g, "");
-            const formattedSmsPhone = rawDigits.length === 10 ? `+91${rawDigits}` : (rawDigits.startsWith("91") ? `+${rawDigits}` : rawDigits);
-            const fullWaPhone = rawDigits.length === 10 ? `91${rawDigits}` : rawDigits;
-
-            const activeOtp = o.otp || (o.orderId ? o.orderId.replace(/[^0-9]/g, "").slice(-4) : "1234");
-            const garmentImg = o.image || (allProducts.find(p => p.name === o.item)?.images?.[0]) || "./icon-192.png";
-            
-            const cleanCustName = (o.customerName || 'Customer').trim();
-            const cleanItem = (o.item || 'Garment').trim();
-            
-            const textForMessage = `Hi ${cleanCustName}, your ${cleanItem} parcel from IBRAHIM FASHION PALACE (IFP) is arriving. Your secret code is ${activeOtp}. Please share this code with the delivery partner.`;
-            const encodedMessage = encodeURIComponent(textForMessage);
-
-            const waUrl = `https://api.whatsapp.com/send?phone=${fullWaPhone}&text=${encodedMessage}`;
-            const smsUrl = `sms:${formattedSmsPhone}?body=${encodedMessage}`;
-
-            html += `
-              <div style="padding:6px 8px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:5px; background:#fff;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <img src="${garmentImg}" alt="${o.item}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
-                  
-                  <div style="flex:1; min-width:0; line-height:1.2;">
-                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                      <span style="font-size:0.8rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
-                      <span style="color:#be123c; font-weight:800; font-size:0.84rem; margin-left:4px;">₹${o.price}</span>
-                    </div>
-
-                    <div style="font-size:0.7rem; color:#334155; margin-top:2px;">
-                      <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerStreet || locationName}</span>
-                    </div>
-
-                    <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
-                      <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
-                    </div>
+            <div style="padding:7px 8px; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:6px; background:#fff;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <img src="${garmentImg}" alt="${o.item}" style="width:46px; height:46px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid #cbd5e1;" />
+                
+                <div style="flex:1; min-width:0; line-height:1.2;">
+                  <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                    <span style="font-size:0.82rem; font-weight:800; color:var(--primary);">${o.customerName}</span>
+                    <span style="color:#be123c; font-weight:800; font-size:0.86rem; margin-left:4px;">₹${o.price}</span>
                   </div>
 
-                  <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-                    <a href="tel:${formattedSmsPhone}" style="width:26px; height:26px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.68rem;">
-                      <i class="fa-solid fa-phone"></i>
-                    </a>
+                  <div style="font-size:0.7rem; color:#334155; margin-top:2px;">
+                    <span style="font-weight:700;">${o.customerPhone || 'No Phone'}</span> • <span>${o.customerStreet || locationName}</span>
+                  </div>
+
+                  <div style="font-size:0.7rem; color:#64748b; margin-top:1px;">
+                    <b>${o.item}</b> (${o.size || 'Std'} / ${o.color || 'Std'})
                   </div>
                 </div>
 
-                ${currentDeliveryFilter === 'pending' ? `
-                  <div style="display:flex; align-items:center; justify-content:space-between; gap:4px; margin-top:5px; padding-top:4px; border-top:1px dashed #f1f5f9;">
-                    <div style="display:flex; align-items:center; gap:4px; background:#f8fafc; padding:2px 6px; border-radius:5px; border:1px solid #e2e8f0;">
-                      <span style="font-size:0.64rem; color:var(--muted); font-weight:700;">OTP:</span>
-                      <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.75rem; font-weight:900; letter-spacing:1px; color:var(--primary);">••••</span>
-                      <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.68rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
-                    </div>
-
-                    <div style="display:flex; gap:3px;">
-                      <a href="${waUrl}" target="_blank" rel="noopener" style="text-decoration:none; background:#25d366; color:#fff; padding:3px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;"><i class="fa-brands fa-whatsapp"></i></a>
-                      <a href="${smsUrl}" style="text-decoration:none; background:#0284c7; color:#fff; padding:3px 7px; border-radius:5px; font-size:0.65rem; font-weight:700;"><i class="fa-solid fa-comment-sms"></i></a>
-                    </div>
-
-                    <div style="display:flex; gap:3px;">
-                      <input type="number" id="otpInput_${o.firestoreId}" placeholder="OTP" style="width:50px; padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.72rem;" />
-                      <button style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">OK</button>
-                    </div>
-                  </div>
-                ` : ''}
-
-                ${currentDeliveryFilter === 'delivered' ? `
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px dashed #f1f5f9;">
-                    <span style="font-size:0.65rem; color:#047857; font-weight:700;">
-                      <i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}
-                    </span>
-                    <button style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
-                      <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                  </div>
-                ` : ''}
+                <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                  <a href="tel:${formattedSmsPhone}" style="width:26px; height:26px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:0.68rem;">
+                    <i class="fa-solid fa-phone"></i>
+                  </a>
+                </div>
               </div>
-            `;
-          });
 
-          html += `</div>`;
+              ${filterMode === 'pending' ? `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:4px; margin-top:5px; padding-top:4px; border-top:1px dashed #f1f5f9;">
+                  <div style="display:flex; align-items:center; gap:4px; background:#f8fafc; padding:2px 6px; border-radius:5px; border:1px solid #e2e8f0;">
+                    <span style="font-size:0.64rem; color:var(--muted); font-weight:700;">OTP:</span>
+                    <span id="otpText_${o.firestoreId}" data-revealed="false" style="font-size:0.75rem; font-weight:900; letter-spacing:1px; color:var(--primary);">••••</span>
+                    <i id="otpEye_${o.firestoreId}" class="fa-solid fa-eye" style="cursor:pointer; color:var(--muted); font-size:0.68rem;" onclick="toggleOtpMask('${o.firestoreId}', '${activeOtp}')"></i>
+                  </div>
+
+                  <div style="display:flex; gap:3px;">
+                    <a href="${waUrl}" target="_blank" rel="noopener" style="text-decoration:none; background:#25d366; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="${smsUrl}" style="text-decoration:none; background:#0284c7; color:#fff; padding:4px 7px; border-radius:5px; font-size:0.68rem; font-weight:700;"><i class="fa-solid fa-comment-sms"></i></a>
+                  </div>
+
+                  <div style="display:flex; gap:3px;">
+                    <input type="number" id="otpInput_${o.firestoreId}" placeholder="OTP" style="width:52px; padding:3px 4px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.72rem;" />
+                    <button style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; font-weight:700; font-size:0.68rem; cursor:pointer;" onclick="verifyCustomerOtp('${o.firestoreId}')">OK</button>
+                  </div>
+                </div>
+              ` : ''}
+
+              ${filterMode === 'delivered' ? `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px dashed #f1f5f9;">
+                  <span style="font-size:0.65rem; color:#047857; font-weight:700;">
+                    <i class="fa-solid fa-circle-check"></i> ${formatOrderDateTime(o.deliveredAt)}
+                  </span>
+                  <button style="background:#fee2e2; color:#b91c1c; border:none; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; cursor:pointer;" onclick="deleteOrderPermanently('${o.firestoreId}')">
+                    <i class="fa-solid fa-trash"></i> Delete
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          `;
         });
-      }
 
-      container.innerHTML = html;
-      document.getElementById("deliveryModal").classList.add("active");
-    };
+        html += `</div>`;
+      });
+
+      return html;
+    }
 
     window.openOrdersPlacedModal = () => {
       const container = document.getElementById("ordersPlacedContainer");
@@ -2329,9 +2408,7 @@
       const inputEl = document.getElementById(`otpInput_${firestoreId}`);
       const enteredOtp = inputEl ? inputEl.value.trim() : "";
       
-      if (!enteredOtp) {
-        return alert("Please enter the OTP.");
-      }
+      if (!enteredOtp) return alert("Please enter the OTP.");
 
       const targetOrder = cloudOrders.find(o => o.firestoreId === firestoreId);
       if (!targetOrder) return alert("Order not found.");
@@ -2370,8 +2447,7 @@
         }
 
         alert("OTP Verified! Order marked as Delivered.");
-        currentDeliveryFilter = "pending";
-        openDeliveryDashboard();
+        renderDeliveryPanes();
       } else {
         alert("Incorrect OTP! Delivery could not be confirmed.");
       }
@@ -2489,7 +2565,7 @@
     initCloudSync();
   </script>
 
-  <!-- Service Worker Registration Guard -->
+  <!-- Service Worker Cleanup -->
   <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
