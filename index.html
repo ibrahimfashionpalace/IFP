@@ -200,6 +200,8 @@
       border-radius: 10px;
       font-weight: 800;
     }
+
+    /* MANUAL BANNER CAROUSEL */
     .hero-container {
       position: relative;
       margin: 14px;
@@ -214,6 +216,7 @@
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
     .banner-track::-webkit-scrollbar { display: none; }
     .banner-slide {
@@ -250,6 +253,107 @@
       margin-bottom: 6px;
     }
     .hero-title { font-size: 1.18rem; font-weight: 800; color: #ffffff; }
+
+    .banner-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 0.8rem;
+    }
+    .banner-nav-btn.prev { left: 8px; }
+    .banner-nav-btn.next { right: 8px; }
+
+    /* EDITABLE CATEGORIES ROW */
+    .categories-bar-wrap {
+      margin: 4px 14px 14px;
+      position: relative;
+    }
+    .categories-bar-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .categories-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .categories-scroll::-webkit-scrollbar { display: none; }
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      flex: 0 0 64px;
+      text-align: center;
+      position: relative;
+    }
+    .category-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .category-item.active .category-circle {
+      border-color: var(--accent-pink);
+      transform: scale(1.06);
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+    }
+    .category-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .category-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 5px;
+      white-space: nowrap;
+    }
+    .category-edit-btn {
+      position: absolute;
+      top: -2px;
+      right: 0px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 0.55rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* SEARCH WRAP */
     .search-wrap { margin: 0 14px 14px; position: relative; }
     .search-input {
       width: 100%;
@@ -268,6 +372,7 @@
       color: var(--muted);
       font-size: 0.9rem;
     }
+
     .admin-bar {
       display: none;
       margin: 0 14px 12px;
@@ -306,13 +411,14 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      height: 420px; /* Exact uniform card height for all items */
+      min-height: 400px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
     }
     .card-img-wrap {
       position: relative;
       width: 100%;
-      height: 190px; /* Equal image box size */
+      height: 190px;
       flex-shrink: 0;
       background: #f8fafc;
     }
@@ -345,7 +451,35 @@
       font-weight: 800;
     }
 
-    /* CARD BODY - ROOMY, UNIFORM & CLEAN */
+    /* PRICING WITH STRIKETHROUGH & DISCOUNT */
+    .pricing-box {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 3px;
+      flex-wrap: wrap;
+    }
+    .original-price {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: line-through;
+      font-weight: 600;
+    }
+    .sale-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #be123c;
+    }
+    .discount-badge {
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* CARD BODY */
     .card-body {
       padding: 10px 10px 12px;
       display: flex;
@@ -368,64 +502,26 @@
       white-space: normal;
       word-break: break-word;
       line-height: 1.3;
-      height: 46px; /* Guaranteed fixed space fits 2-3 full lines */
-      overflow-y: auto; /* Scrollable if extraordinarily long */
+      height: 42px;
+      overflow-y: auto;
       scrollbar-width: none;
     }
     .item-name::-webkit-scrollbar { display: none; }
-    .item-price { 
-      font-size: 1.02rem; 
-      font-weight: 800; 
-      color: #be123c; 
-      line-height: 1.1; 
-      margin-top: 2px;
-    }
 
-    /* SIDE-BY-SIDE DROPDOWNS ON SAME LINE */
-    .variant-row {
-      display: flex !important;
-      flex-direction: row !important;
-      gap: 6px !important;
-      width: 100% !important;
-      margin: 4px 0 6px !important;
+    .singular-spec-preview {
+      font-size: 0.7rem;
+      color: #64748b;
+      margin: 4px 0 6px;
+      display: flex;
+      gap: 8px;
     }
-    .variant-col {
-      flex: 1 1 50% !important;
-      width: 50% !important;
-      min-width: 0 !important;
-    }
-    .variant-col label {
-      display: block;
-      font-size: 0.64rem;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 2px;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-    .variant-select {
-      display: block !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      padding: 4px 6px !important;
-      font-size: 0.74rem !important;
-      height: 30px !important;
-      line-height: 1.2 !important;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      outline: none;
-      background: #ffffff;
-      color: var(--primary);
+    .singular-spec-pill {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
       font-weight: 600;
-      cursor: pointer;
-      position: relative;
-      z-index: 5;
-      touch-action: manipulation;
-      -webkit-appearance: menulist;
-      appearance: menulist;
     }
 
-    /* BIGGER PLACE ORDER BUTTON */
     .order-btn {
       background: linear-gradient(135deg, #1e1b4b, #312e81);
       color: #fff;
@@ -440,9 +536,41 @@
       line-height: 1;
       box-shadow: 0 3px 8px rgba(30, 27, 75, 0.22);
       transition: transform 0.1s ease;
+      margin-top: 4px;
     }
-    .order-btn:active {
-      transform: scale(0.97);
+    .order-btn:active { transform: scale(0.97); }
+
+    /* REALTIME ADMIN STOCK/DISCOUNT ROW */
+    .admin-stock-control {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+    .stock-counter-btn {
+      background: #e2e8f0;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .admin-quick-edit-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
     }
     .delete-garment-btn {
       background: #fee2e2;
@@ -458,6 +586,68 @@
       line-height: 1;
     }
 
+    /* GARMENT DETAIL MODAL */
+    .detail-gallery-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      border-radius: 12px;
+      height: 280px;
+      background: #f8fafc;
+      position: relative;
+    }
+    .detail-gallery-track::-webkit-scrollbar { display: none; }
+    .detail-gallery-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      height: 100%;
+    }
+    .detail-gallery-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .thumb-strip {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .thumb-strip img {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .thumb-strip img.active {
+      border-color: var(--accent-pink);
+    }
+    .detail-singular-box {
+      background: #fdf2f8;
+      border: 1px solid #fbcfe8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 12px 0;
+    }
+    .detail-singular-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+    }
+    .detail-singular-row:last-child { margin-bottom: 0; }
+    .detail-desc-box {
+      font-size: 0.8rem;
+      color: #475569;
+      line-height: 1.5;
+      margin: 10px 0;
+    }
+
+    /* MODALS */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -488,7 +678,7 @@
     .close-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--muted); }
     .form-group { margin-bottom: 10px; }
     .form-group label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 9px;
       font-size: 0.85rem;
@@ -536,10 +726,14 @@
 
   <!-- Maintenance Mode Screen -->
   <div id="maintenanceScreen">
-    <div style="font-size:3rem; color:#fbbf24; margin-bottom:12px;"><i class="fa-solid fa-wrench"></i></div>
+    <div style="font-size:3rem; color:#fbbf24; margin-bottom:12px; cursor:pointer;" onclick="promptOwnerLogin()" title="Owner Login">
+      <i class="fa-solid fa-wrench"></i>
+    </div>
     <div style="font-size:1.3rem; font-weight:800; margin-bottom:8px;">Website Under Maintenance</div>
     <div style="font-size:0.9rem; color:#fbcfe8; margin-bottom:20px;">Updating our garment collection. Back shortly!</div>
-    <div style="font-size:0.75rem; text-decoration:underline; cursor:pointer;" onclick="promptOwnerLogin()">Owner Login</div>
+    <button style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.1rem; cursor:pointer;" onclick="promptOwnerLogin()" title="Admin Auth">
+      <i class="fa-solid fa-wrench"></i>
+    </button>
   </div>
 
   <!-- Header -->
@@ -574,6 +768,11 @@
     </div>
 
     <div class="header-actions">
+      <!-- Discrete Wrench icon for Owner Login -->
+      <button class="nav-btn" style="padding: 7px 9px;" onclick="promptOwnerLogin()" title="Owner Console">
+        <i class="fa-solid fa-wrench"></i>
+      </button>
+
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" title="Delivery Hub (Pending & Delivered)" onclick="openDeliveryDashboard()">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
@@ -609,9 +808,20 @@
     </div>
   </header>
 
-  <!-- Banner -->
+  <!-- Strictly Manual Swipable Banner (Not Automatic) -->
   <div class="hero-container">
+    <button class="banner-nav-btn prev" onclick="scrollBanner('left')"><i class="fa-solid fa-chevron-left"></i></button>
+    <button class="banner-nav-btn next" onclick="scrollBanner('right')"><i class="fa-solid fa-chevron-right"></i></button>
     <div class="banner-track" id="bannerTrack"></div>
+  </div>
+
+  <!-- Editable Categories Icon Bar -->
+  <div class="categories-bar-wrap">
+    <div class="categories-bar-title">
+      <span>Categories</span>
+      <span id="selectedCategoryNotice" style="font-size:0.7rem; color:var(--muted); font-weight:600;">Showing All</span>
+    </div>
+    <div class="categories-scroll" id="categoriesBar"></div>
   </div>
 
   <!-- Search -->
@@ -630,7 +840,7 @@
     <button class="lock-btn" onclick="lockAdmin()"><i class="fa-solid fa-lock"></i> Lock Admin</button>
   </div>
 
-  <!-- Catalog -->
+  <!-- Catalog Grid -->
   <main>
     <div class="products-grid" id="productsGrid">
       <div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--primary); font-weight: 700; font-size: 0.9rem;">
@@ -654,6 +864,113 @@
         Start Shopping
       </button>
       <div style="font-size: 0.68rem; color: var(--muted); margin-top: 14px;">developed by Aamir</div>
+    </div>
+  </div>
+
+  <!-- Single Garment Detail View Modal -->
+  <div class="modal-overlay" id="garmentDetailModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3 id="detailGarmentTitle" style="font-size:1.05rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Garment Details</h3>
+        <button class="close-btn" onclick="closeModal('garmentDetailModal')">&times;</button>
+      </div>
+
+      <div class="detail-gallery-track" id="detailGalleryTrack"></div>
+      <div class="thumb-strip" id="detailThumbStrip"></div>
+
+      <div class="pricing-box" style="margin-top:12px;">
+        <del class="original-price" id="detailOriginalPrice" style="font-size:0.95rem;"></del>
+        <span class="sale-price" id="detailSalePrice" style="font-size:1.4rem;"></span>
+        <span class="discount-badge" id="detailDiscountBadge" style="font-size:0.75rem;"></span>
+      </div>
+
+      <div class="detail-singular-box">
+        <div class="detail-singular-row">
+          <span style="color:var(--muted); font-weight:700;">Stock Available:</span>
+          <span id="detailStockText" style="font-weight:800; color:var(--primary);"></span>
+        </div>
+        <div class="detail-singular-row">
+          <span style="color:var(--muted); font-weight:700;">Size:</span>
+          <span id="detailSizeText" style="font-weight:800; color:var(--primary);"></span>
+        </div>
+        <div class="detail-singular-row">
+          <span style="color:var(--muted); font-weight:700;">Colour:</span>
+          <span id="detailColorText" style="font-weight:800; color:var(--primary);"></span>
+        </div>
+      </div>
+
+      <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Description &amp; Details</div>
+      <div class="detail-desc-box" id="detailDescriptionText">
+        Carefully stitched and inspected for premium fit and comfort. Available on Cash on Delivery with full door-step OTP security.
+      </div>
+
+      <button class="order-btn" id="detailOrderActionBtn" style="padding:12px; margin-top:8px;" onclick="proceedToOrderFromDetail()">
+        Place Order (COD)
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Category Modal (Admin Only) -->
+  <div class="modal-overlay" id="editCategoryModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>Edit Category</h3>
+        <button class="close-btn" onclick="closeModal('editCategoryModal')">&times;</button>
+      </div>
+      <form id="editCategoryForm" onsubmit="handleSaveCategory(event)">
+        <input type="hidden" id="editCategoryId" />
+        <div class="form-group">
+          <label>Category Label *</label>
+          <input type="text" id="editCategoryLabel" required />
+        </div>
+        <div class="form-group">
+          <label>Category Icon Image URL *</label>
+          <input type="text" id="editCategoryImageUrl" placeholder="https://..." required />
+        </div>
+        <div class="form-group">
+          <label>Or Upload New Image</label>
+          <input type="file" id="editCategoryFile" accept="image/*" />
+        </div>
+        <button type="submit" class="confirm-btn" style="background:var(--primary);">Save Category</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quick Edit Garment Details (Admin Only) -->
+  <div class="modal-overlay" id="quickEditModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h3>Edit Garment Specs</h3>
+        <button class="close-btn" onclick="closeModal('quickEditModal')">&times;</button>
+      </div>
+      <form id="quickEditForm" onsubmit="handleSaveQuickEdit(event)">
+        <input type="hidden" id="quickEditId" />
+        <div class="form-group">
+          <label>Original Price (₹)</label>
+          <input type="number" id="quickEditOriginalPrice" placeholder="e.g. 782" />
+        </div>
+        <div class="form-group">
+          <label>Offer Price (₹) *</label>
+          <input type="number" id="quickEditPrice" required placeholder="e.g. 289" />
+        </div>
+        <div class="form-group">
+          <label>Available Stock Count *</label>
+          <input type="number" id="quickEditStock" required />
+        </div>
+        <div class="form-group">
+          <label>Single Custom Size (Written by Owner) *</label>
+          <input type="text" id="quickEditSingleSize" required placeholder="e.g. Size 38 (Medium)" />
+        </div>
+        <div class="form-group">
+          <label>Single Custom Colour (Written by Owner) *</label>
+          <input type="text" id="quickEditSingleColor" required placeholder="e.g. Royal Navy Blue" />
+        </div>
+        <div class="form-group">
+          <label>Description / Garment Details</label>
+          <textarea id="quickEditDesc" rows="3"></textarea>
+        </div>
+        <button type="submit" class="confirm-btn" style="background:var(--primary);">Save Garment Changes</button>
+      </form>
     </div>
   </div>
 
@@ -723,7 +1040,22 @@
           <input type="text" id="newTitle" required />
         </div>
         <div class="form-group">
-          <label>Price (₹) *</label>
+          <label>Category *</label>
+          <select id="newCategory" required>
+            <option value="mens">Men's</option>
+            <option value="womens">Women's</option>
+            <option value="kids">Kid's</option>
+            <option value="boys">Boy's</option>
+            <option value="girls">Girl's</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Original Price (₹) (e.g. 782)</label>
+          <input type="number" id="newOriginalPrice" placeholder="Optional strikethrough price" />
+        </div>
+        <div class="form-group">
+          <label>Offer Price (₹) * (e.g. 289)</label>
           <input type="number" id="newPrice" required />
         </div>
         <div class="form-group">
@@ -731,15 +1063,19 @@
           <input type="number" id="newStock" required value="10" />
         </div>
         <div class="form-group">
-          <label>Available Sizes (comma separated) *</label>
-          <input type="text" id="newSizes" required value="S, M, L, XL" />
+          <label>Single Size (e.g. Standard, 40 / L) *</label>
+          <input type="text" id="newSingleSize" required value="Free Size (Standard)" />
         </div>
         <div class="form-group">
-          <label>Available Colors (comma separated) *</label>
-          <input type="text" id="newColors" required value="Red, Blue, Black, Green" />
+          <label>Single Colour (e.g. Midnight Blue) *</label>
+          <input type="text" id="newSingleColor" required value="Navy Blue" />
         </div>
         <div class="form-group">
-          <label>Garment Photos (Multiple allowed) *</label>
+          <label>Description</label>
+          <textarea id="newDescription" rows="2" placeholder="Garment fabric, fitting details..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Garment Photos (Multiple allowed, swipable) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save to Live Catalog</button>
@@ -957,13 +1293,24 @@
     let cloudHistory = [];
     let cloudBanners = [];
     let activeOrderData = null;
+    let activeDetailGarment = null;
     let isMaintenanceActive = false;
     let currentAdminUser = null;
     let tapCount = 0;
     let tapTimer = null;
-    let bannerInterval = null;
     let currentDeliveryFilter = "pending"; 
     let currentAboutOrdersView = "history"; 
+    let selectedCategory = "all";
+
+    // Default categories config (synced with Firestore or fallback)
+    let categoriesList = [
+      { id: "mens", label: "Men's", image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=150" },
+      { id: "womens", label: "Women's", image: "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=150" },
+      { id: "kids", label: "Kid's", image: "https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?w=150" },
+      { id: "boys", label: "Boy's", image: "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=150" },
+      { id: "girls", label: "Girl's", image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=150" },
+      { id: "others", label: "Others", image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=150" }
+    ];
 
     function formatOrderDateTime(ts) {
       if (!ts) return "";
@@ -977,6 +1324,7 @@
       updateAdminUI();
       evaluateMaintenanceScreen();
       renderProducts();
+      renderCategoriesBar();
       renderAdminBannerList();
     });
 
@@ -1001,6 +1349,10 @@
         maintBtn.innerHTML = isMaintenanceActive ? `<i class="fa-solid fa-circle-check"></i> Turn Maint OFF` : `<i class="fa-solid fa-triangle-exclamation"></i> Turn Maint ON`;
         maintBtn.style.background = isMaintenanceActive ? "#10b981" : "#f59e0b";
       }
+
+      document.querySelectorAll(".category-edit-btn").forEach(b => {
+        b.style.display = isAuth ? "flex" : "none";
+      });
     }
 
     window.toggleMoreMenu = (e) => { e?.stopPropagation(); document.getElementById("moreMenu")?.classList.toggle("active"); };
@@ -1056,6 +1408,7 @@
       updateAdminUI();
       evaluateMaintenanceScreen();
       renderProducts();
+      renderCategoriesBar();
       renderAdminBannerList();
     };
 
@@ -1073,7 +1426,137 @@
       if (screen) screen.classList.toggle("active", isMaintenanceActive && !currentAdminUser);
     }
 
+    /* MANUAL BANNER CAROUSEL LOGIC */
+    window.scrollBanner = (direction) => {
+      const track = document.getElementById("bannerTrack");
+      if (!track) return;
+      const step = track.clientWidth;
+      if (direction === 'left') {
+        track.scrollBy({ left: -step, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    };
+
+    function renderBanners() {
+      const track = document.getElementById("bannerTrack");
+      if (!track) return;
+      if (cloudBanners.length === 0) {
+        track.innerHTML = `
+          <div class="banner-slide">
+            <img class="hero-img" src="./banner1.jpg" alt="Special Collection" fetchpriority="high" />
+            <div class="hero-overlay">
+              <span class="hero-tag">New Arrivals</span>
+              <div class="hero-title">Special Collection</div>
+              <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional &amp; modern wear • Cash on Delivery</p>
+            </div>
+          </div>
+          <div class="banner-slide">
+            <img class="hero-img" src="./banner2.jpg" alt="Exclusive Garments" loading="lazy" />
+            <div class="hero-overlay">
+              <span class="hero-tag">Exclusive Fashion</span>
+              <div class="hero-title">IBRAHIM Fashion Palace</div>
+              <p style="font-size: 0.75rem; color: #fbcfe8;">Premium quality • Best prices</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      track.innerHTML = cloudBanners.map(b => `
+        <div class="banner-slide">
+          <img class="hero-img" src="${b.image}" alt="${b.title || 'Banner'}" />
+          <div class="hero-overlay">
+            ${b.tag ? `<span class="hero-tag">${b.tag}</span>` : ''}
+            <div class="hero-title">${b.title || ''}</div>
+            ${b.subtitle ? `<p style="font-size: 0.75rem; color: #fbcfe8;">${b.subtitle}</p>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* EDITABLE CATEGORIES BAR */
+    function renderCategoriesBar() {
+      const bar = document.getElementById("categoriesBar");
+      if (!bar) return;
+      bar.innerHTML = categoriesList.map(cat => `
+        <div class="category-item ${selectedCategory === cat.id ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+          <div class="category-circle">
+            <img class="category-img" src="${cat.image}" alt="${cat.label}" onerror="this.src='./icon-192.png'" />
+          </div>
+          <span class="category-label">${cat.label}</span>
+          <button class="category-edit-btn" style="display:${currentAdminUser ? 'flex' : 'none'};" onclick="openEditCategoryModal(event, '${cat.id}')" title="Edit Category">
+            <i class="fa-solid fa-pencil"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    window.selectCategory = (catId) => {
+      if (selectedCategory === catId) {
+        selectedCategory = "all";
+        document.getElementById("selectedCategoryNotice").innerText = "Showing All";
+      } else {
+        selectedCategory = catId;
+        const found = categoriesList.find(c => c.id === catId);
+        document.getElementById("selectedCategoryNotice").innerText = `Showing: ${found ? found.label : catId}`;
+      }
+      renderCategoriesBar();
+      applyFilters();
+    };
+
+    window.openEditCategoryModal = (e, catId) => {
+      e.stopPropagation();
+      const target = categoriesList.find(c => c.id === catId);
+      if (!target) return;
+      document.getElementById("editCategoryId").value = target.id;
+      document.getElementById("editCategoryLabel").value = target.label;
+      document.getElementById("editCategoryImageUrl").value = target.image || "";
+      document.getElementById("editCategoryFile").value = "";
+      document.getElementById("editCategoryModal").classList.add("active");
+    };
+
+    window.handleSaveCategory = async (e) => {
+      e.preventDefault();
+      const catId = document.getElementById("editCategoryId").value;
+      const label = document.getElementById("editCategoryLabel").value.trim();
+      let imgUrl = document.getElementById("editCategoryImageUrl").value.trim();
+
+      const fileInput = document.getElementById("editCategoryFile");
+      if (fileInput.files && fileInput.files[0]) {
+        imgUrl = await fileToBase64(fileInput.files[0], 250);
+      }
+
+      const idx = categoriesList.findIndex(c => c.id === catId);
+      if (idx !== -1) {
+        categoriesList[idx].label = label;
+        categoriesList[idx].image = imgUrl;
+        try {
+          await setDoc(doc(db, "site_settings", "categories"), { list: categoriesList }, { merge: true });
+        } catch (err) {
+          console.log("Category save local fallback", err);
+        }
+        localStorage.setItem("ifp_categories", JSON.stringify(categoriesList));
+      }
+      renderCategoriesBar();
+      closeModal("editCategoryModal");
+      alert("Category updated successfully!");
+    };
+
     function initCloudSync() {
+      // Load saved categories if available
+      onSnapshot(doc(db, "site_settings", "categories"), (snap) => {
+        if (snap.exists() && Array.isArray(snap.data().list)) {
+          categoriesList = snap.data().list;
+          renderCategoriesBar();
+        } else {
+          const localCats = localStorage.getItem("ifp_categories");
+          if (localCats) {
+            categoriesList = JSON.parse(localCats);
+            renderCategoriesBar();
+          }
+        }
+      });
+
       onSnapshot(doc(db, "site_settings", "maintenance"), (snap) => {
         isMaintenanceActive = snap.exists() && snap.data().active === true;
         evaluateMaintenanceScreen();
@@ -1088,8 +1571,7 @@
 
       onSnapshot(collection(db, "garments"), (snap) => {
         allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        displayedProducts = [...allProducts];
-        renderProducts();
+        applyFilters();
       });
 
       onSnapshot(collection(db, "orders"), (snap) => {
@@ -1119,7 +1601,7 @@
       });
     }
 
-    function fileToBase64(file, maxDim = 480) {
+    function fileToBase64(file, maxDim = 600) {
       return new Promise((res, rej) => {
         const r = new FileReader();
         r.onload = (e) => {
@@ -1131,7 +1613,7 @@
             const cvs = document.createElement("canvas");
             cvs.width = w; cvs.height = h;
             cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.55));
+            res(cvs.toDataURL("image/jpeg", 0.65));
           };
           img.onerror = rej;
           img.src = e.target.result;
@@ -1139,66 +1621,6 @@
         r.onerror = rej;
         r.readAsDataURL(file);
       });
-    }
-
-    function renderBanners() {
-      const track = document.getElementById("bannerTrack");
-      if (!track) return;
-      if (cloudBanners.length === 0) {
-        track.innerHTML = `
-          <div class="banner-slide">
-            <img class="hero-img" src="./banner1.jpg" alt="Special Collection" fetchpriority="high" />
-            <div class="hero-overlay">
-              <span class="hero-tag">New Arrivals</span>
-              <div class="hero-title">Special Collection</div>
-              <p style="font-size: 0.75rem; color: #fbcfe8;">Traditional &amp; modern wear • Cash on Delivery</p>
-            </div>
-          </div>
-          <div class="banner-slide">
-            <img class="hero-img" src="./banner2.jpg" alt="Exclusive Garments" loading="lazy" />
-            <div class="hero-overlay">
-              <span class="hero-tag">Exclusive Fashion</span>
-              <div class="hero-title">IBRAHIM Fashion Palace</div>
-              <p style="font-size: 0.75rem; color: #fbcfe8;">Premium quality • Best prices</p>
-            </div>
-          </div>
-        `;
-
-        clearInterval(bannerInterval);
-        bannerInterval = setInterval(() => {
-          if (!track) return;
-          const maxScroll = track.scrollWidth - track.clientWidth;
-          if (track.scrollLeft >= maxScroll - 5) {
-            track.scrollTo({ left: 0, behavior: 'smooth' });
-          } else {
-            track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
-          }
-        }, 4000);
-        return;
-      }
-      track.innerHTML = cloudBanners.map(b => `
-        <div class="banner-slide">
-          <img class="hero-img" src="${b.image}" alt="${b.title || 'Banner'}" />
-          <div class="hero-overlay">
-            ${b.tag ? `<span class="hero-tag">${b.tag}</span>` : ''}
-            <div class="hero-title">${b.title || ''}</div>
-            ${b.subtitle ? `<p style="font-size: 0.75rem; color: #fbcfe8;">${b.subtitle}</p>` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      clearInterval(bannerInterval);
-      if (cloudBanners.length > 1) {
-        bannerInterval = setInterval(() => {
-          if (!track) return;
-          const maxScroll = track.scrollWidth - track.clientWidth;
-          if (track.scrollLeft >= maxScroll - 5) {
-            track.scrollTo({ left: 0, behavior: 'smooth' });
-          } else {
-            track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
-          }
-        }, 4000);
-      }
     }
 
     function renderAdminBannerList() {
@@ -1265,21 +1687,22 @@
         const files = document.getElementById("newImgFiles").files;
         const photos = [];
         for (let i = 0; i < files.length; i++) {
-          photos.push(await fileToBase64(files[i]));
+          photos.push(await fileToBase64(files[i], 700));
         }
 
-        const rawSizes = document.getElementById("newSizes").value;
-        const parsedSizes = rawSizes.split(",").map(s => s.trim()).filter(Boolean);
-
-        const rawColors = document.getElementById("newColors").value;
-        const parsedColors = rawColors.split(",").map(c => c.trim()).filter(Boolean);
+        const price = Number(document.getElementById("newPrice").value);
+        const originalPriceVal = document.getElementById("newOriginalPrice").value;
+        const originalPrice = originalPriceVal ? Number(originalPriceVal) : null;
 
         await addDoc(collection(db, "garments"), {
           name: document.getElementById("newTitle").value.trim(),
-          price: Number(document.getElementById("newPrice").value),
+          category: document.getElementById("newCategory").value || "mens",
+          price: price,
+          originalPrice: originalPrice,
           stock: Number(document.getElementById("newStock").value),
-          sizes: parsedSizes.length > 0 ? parsedSizes : ["Standard"],
-          colors: parsedColors.length > 0 ? parsedColors : ["Standard"],
+          singleSize: document.getElementById("newSingleSize").value.trim() || "Free Size",
+          singleColor: document.getElementById("newSingleColor").value.trim() || "Standard",
+          description: document.getElementById("newDescription").value.trim() || "",
           images: photos,
           createdAt: Date.now()
         });
@@ -1295,36 +1718,49 @@
     };
 
     window.handleSearch = () => {
-      const q = document.getElementById("searchInput").value.toLowerCase().trim();
-      displayedProducts = q ? allProducts.filter(p => (p.name || "").toLowerCase().includes(q)) : [...allProducts];
-      renderProducts();
+      applyFilters();
     };
+
+    function applyFilters() {
+      const q = (document.getElementById("searchInput")?.value || "").toLowerCase().trim();
+      displayedProducts = allProducts.filter(p => {
+        const matchesQuery = !q || (p.name || "").toLowerCase().includes(q);
+        const matchesCategory = (selectedCategory === "all") || (p.category === selectedCategory);
+        return matchesQuery && matchesCategory;
+      });
+      renderProducts();
+    }
+
+    function calculateDiscountPercent(original, current) {
+      if (!original || original <= current) return 0;
+      return Math.round(((original - current) / original) * 100);
+    }
 
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       if (!grid) return;
       grid.innerHTML = "";
+
+      if (displayedProducts.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px 10px; color: var(--muted); font-size: 0.85rem;">No garments found in this category.</div>`;
+        return;
+      }
+
       displayedProducts.forEach((p) => {
-        const img = (p.images && p.images[0]) || "";
+        const img = (p.images && p.images[0]) || "./icon-192.png";
         const currentStock = Number(p.stock) || 0;
         const isOutOfStock = currentStock <= 0;
-        
-        let sizesList = ["Standard"];
-        if (Array.isArray(p.sizes) && p.sizes.length > 0) {
-          sizesList = p.sizes;
-        } else if (typeof p.sizes === "string" && p.sizes.trim()) {
-          sizesList = p.sizes.split(",").map(s => s.trim()).filter(Boolean);
-        }
-
-        let colorsList = ["Standard"];
-        if (Array.isArray(p.colors) && p.colors.length > 0) {
-          colorsList = p.colors;
-        } else if (typeof p.colors === "string" && p.colors.trim()) {
-          colorsList = p.colors.split(",").map(c => c.trim()).filter(Boolean);
-        }
+        const originalPrice = p.originalPrice ? Number(p.originalPrice) : null;
+        const discountPercent = calculateDiscountPercent(originalPrice, p.price);
 
         const card = document.createElement("div");
         card.className = "card";
+        card.onclick = (e) => {
+          // Prevent opening detail modal when clicking action buttons
+          if (e.target.closest("button") || e.target.closest("input") || e.target.closest("select")) return;
+          openGarmentDetailModal(p.id);
+        };
+
         card.innerHTML = `
           <div class="card-img-wrap">
             <img class="card-img" src="${img}" alt="${p.name}" loading="lazy" />
@@ -1336,35 +1772,166 @@
           <div class="card-body">
             <div class="card-title-row">
               <div class="item-name" title="${p.name}">${p.name}</div>
-              <div class="item-price">₹${p.price}</div>
-            </div>
-            
-            <div class="variant-row">
-              <div class="variant-col">
-                <label>Size</label>
-                <select class="variant-select" id="sizeSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
-                  ${sizesList.map(s => `<option value="${s}">${s}</option>`).join("")}
-                </select>
+              
+              <div class="pricing-box">
+                ${originalPrice && originalPrice > p.price ? `<del class="original-price">₹${originalPrice}</del>` : ''}
+                <span class="sale-price">₹${p.price}</span>
+                ${discountPercent > 0 ? `<span class="discount-badge">${discountPercent}% OFF</span>` : ''}
               </div>
 
-              <div class="variant-col">
-                <label>Color</label>
-                <select class="variant-select" id="colorSelect_${p.id}" ${isOutOfStock ? 'disabled' : ''}>
-                  ${colorsList.map(c => `<option value="${c}">${c}</option>`).join("")}
-                </select>
+              <div class="singular-spec-preview">
+                <span class="singular-spec-pill"><i class="fa-solid fa-ruler-horizontal"></i> ${p.singleSize || (Array.isArray(p.sizes) ? p.sizes[0] : 'Free Size')}</span>
+                <span class="singular-spec-pill"><i class="fa-solid fa-palette"></i> ${p.singleColor || (Array.isArray(p.colors) ? p.colors[0] : 'Std')}</span>
               </div>
             </div>
 
             <button class="order-btn" style="${isOutOfStock ? 'background:#94a3b8; cursor:not-allowed;' : ''}" 
-              ${isOutOfStock ? 'disabled' : `onclick="startOrder('${p.id}')"`}>
+              ${isOutOfStock ? 'disabled' : `onclick="event.stopPropagation(); startOrder('${p.id}')"`}>
               ${isOutOfStock ? 'Sold Out' : 'Place Order'}
             </button>
-            ${currentAdminUser ? `<button class="delete-garment-btn" onclick="deleteGarment('${p.id}')">Delete</button>` : ''}
+
+            ${currentAdminUser ? `
+              <div class="admin-stock-control" onclick="event.stopPropagation();">
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <button class="stock-counter-btn" onclick="updateStockRealtime('${p.id}', -1)">-</button>
+                  <span style="font-size:0.75rem; font-weight:800; min-width:20px; text-align:center;">${currentStock}</span>
+                  <button class="stock-counter-btn" onclick="updateStockRealtime('${p.id}', 1)">+</button>
+                </div>
+                <button class="admin-quick-edit-btn" onclick="openQuickEditModal('${p.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+              </div>
+              <button class="delete-garment-btn" onclick="event.stopPropagation(); deleteGarment('${p.id}')">Delete</button>
+            ` : ''}
           </div>
         `;
         grid.appendChild(card);
       });
     }
+
+    /* REALTIME STOCK ADJUSTMENT FOR ADMIN */
+    window.updateStockRealtime = async (garmentId, change) => {
+      try {
+        await updateDoc(doc(db, "garments", garmentId), {
+          stock: increment(change)
+        });
+      } catch (err) {
+        alert("Stock update failed: " + err.message);
+      }
+    };
+
+    /* GARMENT DETAIL VIEW (SWIPABLE MULTI-IMAGES & SINGULAR SPECS) */
+    window.openGarmentDetailModal = (id) => {
+      const p = allProducts.find(item => item.id === id);
+      if (!p) return;
+      activeDetailGarment = p;
+
+      document.getElementById("detailGarmentTitle").innerText = p.name;
+      
+      const originalPrice = p.originalPrice ? Number(p.originalPrice) : null;
+      const discountPercent = calculateDiscountPercent(originalPrice, p.price);
+
+      const delEl = document.getElementById("detailOriginalPrice");
+      if (originalPrice && originalPrice > p.price) {
+        delEl.style.display = "inline";
+        delEl.innerText = "₹" + originalPrice;
+      } else {
+        delEl.style.display = "none";
+      }
+
+      document.getElementById("detailSalePrice").innerText = "₹" + p.price;
+      
+      const badgeEl = document.getElementById("detailDiscountBadge");
+      if (discountPercent > 0) {
+        badgeEl.style.display = "inline-block";
+        badgeEl.innerText = `${discountPercent}% OFF`;
+      } else {
+        badgeEl.style.display = "none";
+      }
+
+      const stockCount = Number(p.stock) || 0;
+      document.getElementById("detailStockText").innerText = stockCount > 0 ? `${stockCount} Units Available` : `Sold Out`;
+      document.getElementById("detailSizeText").innerText = p.singleSize || (Array.isArray(p.sizes) ? p.sizes[0] : "Standard");
+      document.getElementById("detailColorText").innerText = p.singleColor || (Array.isArray(p.colors) ? p.colors[0] : "Standard");
+      document.getElementById("detailDescriptionText").innerText = p.description || "Premium fabric, standard stitching. COD available with doorstep verification.";
+
+      const orderBtn = document.getElementById("detailOrderActionBtn");
+      if (stockCount <= 0) {
+        orderBtn.disabled = true;
+        orderBtn.style.background = "#94a3b8";
+        orderBtn.innerText = "Sold Out";
+      } else {
+        orderBtn.disabled = false;
+        orderBtn.style.background = "linear-gradient(135deg, #1e1b4b, #312e81)";
+        orderBtn.innerText = "Place Order (COD)";
+      }
+
+      // Populate swipable gallery & thumbnails
+      const images = (p.images && p.images.length > 0) ? p.images : ["./icon-192.png"];
+      const track = document.getElementById("detailGalleryTrack");
+      const strip = document.getElementById("detailThumbStrip");
+
+      track.innerHTML = images.map(img => `
+        <div class="detail-gallery-slide">
+          <img src="${img}" alt="${p.name}" />
+        </div>
+      `).join('');
+
+      strip.innerHTML = images.map((img, i) => `
+        <img src="${img}" class="${i === 0 ? 'active' : ''}" onclick="jumpDetailSlide(${i})" alt="thumb" />
+      `).join('');
+
+      document.getElementById("garmentDetailModal").classList.add("active");
+    };
+
+    window.jumpDetailSlide = (index) => {
+      const track = document.getElementById("detailGalleryTrack");
+      if (!track) return;
+      const step = track.clientWidth;
+      track.scrollTo({ left: step * index, behavior: "smooth" });
+
+      const thumbs = document.querySelectorAll("#detailThumbStrip img");
+      thumbs.forEach((t, i) => t.classList.toggle("active", i === index));
+    };
+
+    window.proceedToOrderFromDetail = () => {
+      if (!activeDetailGarment) return;
+      closeModal("garmentDetailModal");
+      startOrder(activeDetailGarment.id);
+    };
+
+    /* QUICK EDIT MODAL FOR ADMIN */
+    window.openQuickEditModal = (id) => {
+      const p = allProducts.find(item => item.id === id);
+      if (!p) return;
+      document.getElementById("quickEditId").value = p.id;
+      document.getElementById("quickEditOriginalPrice").value = p.originalPrice || "";
+      document.getElementById("quickEditPrice").value = p.price || "";
+      document.getElementById("quickEditStock").value = p.stock || 0;
+      document.getElementById("quickEditSingleSize").value = p.singleSize || (Array.isArray(p.sizes) ? p.sizes[0] : "Free Size");
+      document.getElementById("quickEditSingleColor").value = p.singleColor || (Array.isArray(p.colors) ? p.colors[0] : "Standard");
+      document.getElementById("quickEditDesc").value = p.description || "";
+      document.getElementById("quickEditModal").classList.add("active");
+    };
+
+    window.handleSaveQuickEdit = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("quickEditId").value;
+      const origVal = document.getElementById("quickEditOriginalPrice").value;
+
+      try {
+        await updateDoc(doc(db, "garments", id), {
+          originalPrice: origVal ? Number(origVal) : null,
+          price: Number(document.getElementById("quickEditPrice").value),
+          stock: Number(document.getElementById("quickEditStock").value),
+          singleSize: document.getElementById("quickEditSingleSize").value.trim(),
+          singleColor: document.getElementById("quickEditSingleColor").value.trim(),
+          description: document.getElementById("quickEditDesc").value.trim()
+        });
+        closeModal("quickEditModal");
+        alert("Garment updated!");
+      } catch (err) {
+        alert("Update error: " + err.message);
+      }
+    };
 
     window.deleteGarment = async (id) => {
       if (confirm("Delete garment?")) await deleteDoc(doc(db, "garments", id));
@@ -1376,11 +1943,8 @@
       const product = allProducts.find(p => p.id === id);
       if (!product) return;
 
-      const sizeSelect = document.getElementById(`sizeSelect_${id}`);
-      const colorSelect = document.getElementById(`colorSelect_${id}`);
-
-      const size = sizeSelect ? sizeSelect.value : "Standard";
-      const color = colorSelect ? colorSelect.value : "Standard";
+      const size = product.singleSize || (Array.isArray(product.sizes) ? product.sizes[0] : "Standard");
+      const color = product.singleColor || (Array.isArray(product.colors) ? product.colors[0] : "Standard");
 
       activeOrderData = {
         id: product.id,
