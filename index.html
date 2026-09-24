@@ -484,7 +484,7 @@
       border-radius: 4px;
     }
 
-    /* CARD BODY - CLEAN & STREAMLINED */
+    /* CARD BODY */
     .card-body {
       padding: 9px 10px 11px;
       display: flex;
@@ -514,7 +514,6 @@
       -webkit-box-orient: vertical;
     }
 
-    /* REALTIME ADMIN STOCK/DISCOUNT ROW */
     .admin-stock-control {
       margin-top: 6px;
       padding-top: 6px;
@@ -560,7 +559,7 @@
       line-height: 1;
     }
 
-    /* COMPLETE NEW UPWARD-SCROLLABLE FULLSCREEN INTERFACE */
+    /* FULLSCREEN DETAIL VIEW */
     .detail-fullscreen-view {
       display: none;
       position: fixed;
@@ -729,7 +728,7 @@
       font-size: 0.95rem;
     }
 
-    /* FULLSCREEN TOP-ALIGNED DELIVERY HUB MODAL WITH SWIPE VIEW */
+    /* DELIVERY HUB MODAL */
     .modal-overlay.delivery-hub-overlay {
       align-items: flex-start !important;
     }
@@ -1033,14 +1032,14 @@
           <input type="text" id="editCategoryLabel" required />
         </div>
         <div class="form-group">
-          <label>Category Icon Image URL *</label>
-          <input type="text" id="editCategoryImageUrl" placeholder="https://..." required />
+          <label>Category Icon Image URL</label>
+          <input type="text" id="editCategoryImageUrl" placeholder="https://..." />
         </div>
         <div class="form-group">
-          <label>Or Upload New Image</label>
+          <label>Or Upload New Image (ImageKit)</label>
           <input type="file" id="editCategoryFile" accept="image/*" />
         </div>
-        <button type="submit" class="confirm-btn" style="background:var(--primary);">Save Category</button>
+        <button type="submit" id="saveCategoryBtn" class="confirm-btn" style="background:var(--primary);">Save Category</button>
       </form>
     </div>
   </div>
@@ -1092,7 +1091,7 @@
       </div>
       <form id="newBannerForm" onsubmit="handleNewBanner(event)">
         <div class="form-group">
-          <label>Banner Image *</label>
+          <label>Banner Image (ImageKit) *</label>
           <input type="file" id="bannerImgFile" accept="image/*" required />
         </div>
         <div class="form-group">
@@ -1184,7 +1183,7 @@
           <textarea id="newDescription" rows="2" placeholder="Garment fabric, fitting details..."></textarea>
         </div>
         <div class="form-group">
-          <label>Garment Photos (Max 3 compressed photos) *</label>
+          <label>Garment Photos (Multiple allowed, uploaded to ImageKit) *</label>
           <input type="file" id="newImgFiles" accept="image/*" multiple required />
         </div>
         <button type="submit" id="saveGarmentBtn" class="confirm-btn" style="background:var(--primary)">Save to Live Catalog</button>
@@ -1342,7 +1341,7 @@
         </div>
 
         <div id="ownerPhotoUploadBox" style="display: none; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; margin-bottom: 12px;">
-          <label style="font-size: 0.72rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px;">Choose New Profile Photo:</label>
+          <label style="font-size: 0.72rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px;">Choose New Profile Photo (ImageKit):</label>
           <input type="file" id="ownerPhotoInput" accept="image/*" style="font-size: 0.75rem; width: 100%; margin-bottom: 8px;" />
           <div style="display: flex; gap: 6px;">
             <button onclick="saveOwnerPhoto()" id="saveOwnerPhotoBtn" style="flex: 1; background: var(--primary); color: #fff; border: none; padding: 6px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Save Photo</button>
@@ -1387,11 +1386,43 @@
     <div style="font-size:0.72rem; color:var(--muted); margin-top:8px;">developed by aamir</div>
   </footer>
 
-  <!-- Firebase & Fast Pre-Warming Architecture -->
+  <!-- Firebase & ImageKit Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // ----------------------------------------------------
+    // IMAGEKIT CONFIGURATION (REPLACE WITH YOUR KEYS)
+    // ----------------------------------------------------
+    const IMAGEKIT_URL_ENDPOINT = "https://ik.imagekit.io/YOUR_IMAGEKIT_ID/"; // e.g. https://ik.imagekit.io/ifp123/
+    const IMAGEKIT_PUBLIC_KEY = "your_public_key_here"; // e.g. public_xyz...
+
+    // Direct ImageKit Upload Helper
+    async function uploadToImageKit(file, folder = "products") {
+      if (!IMAGEKIT_PUBLIC_KEY || IMAGEKIT_PUBLIC_KEY === "your_public_key_here") {
+        throw new Error("Please add your ImageKit Public Key in the script before uploading.");
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("fileName", file.name || `image_${Date.now()}.jpg`);
+      formData.append("publicKey", IMAGEKIT_PUBLIC_KEY);
+      formData.append("folder", `/ifp_store/${folder}`);
+
+      const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to upload image to ImageKit. Ensure Unsigned Uploads are enabled.");
+      }
+
+      const data = await response.json();
+      return data.url; // Returns CDN URL
+    }
 
     const firebaseConfig = {
       apiKey: "AIzaSyDS-bo_pHFSE6-cRInZmIMNNZNS5DnQ5QI",
@@ -1407,7 +1438,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // XSS Sanitizer to stop malicious code injection
     function escapeHtml(str) {
       if (typeof str !== "string") return str == null ? "" : String(str);
       return str.replace(/[&<>'"]/g, tag => ({
@@ -1468,7 +1498,6 @@
              d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     }
 
-    // Admin Auth State & Protected Orders Listener
     onAuthStateChanged(auth, (user) => {
       currentAdminUser = (user && user.email === "aamir757393@gmail.com") ? user : null;
       updateAdminUI();
@@ -1477,7 +1506,6 @@
       renderCategoriesBar();
       renderAdminBannerList();
 
-      // Only listen to customer orders if owner is verified
       if (currentAdminUser) {
         if (!ordersUnsubscribe) {
           ordersUnsubscribe = onSnapshot(collection(db, "orders"), (snap) => {
@@ -1676,22 +1704,33 @@
       const catId = document.getElementById("editCategoryId").value;
       const label = document.getElementById("editCategoryLabel").value.trim();
       let imgUrl = document.getElementById("editCategoryImageUrl").value.trim();
+      const saveBtn = document.getElementById("saveCategoryBtn");
 
       const fileInput = document.getElementById("editCategoryFile");
       if (fileInput.files && fileInput.files[0]) {
-        imgUrl = await fileToBase64(fileInput.files[0], 200, 0.6);
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Uploading to ImageKit...";
+        try {
+          imgUrl = await uploadToImageKit(fileInput.files[0], "categories");
+        } catch (err) {
+          saveBtn.disabled = false;
+          saveBtn.innerText = "Save Category";
+          return alert(err.message);
+        }
       }
 
       const idx = categoriesList.findIndex(c => c.id === catId);
       if (idx !== -1) {
         categoriesList[idx].label = label;
-        categoriesList[idx].image = imgUrl;
+        if (imgUrl) categoriesList[idx].image = imgUrl;
         try {
           await setDoc(doc(db, "site_settings", "categories"), { list: categoriesList }, { merge: true });
         } catch (err) { console.log(err); }
         localStorage.setItem("ifp_categories", JSON.stringify(categoriesList));
       }
       renderCategoriesBar();
+      saveBtn.disabled = false;
+      saveBtn.innerText = "Save Category";
       closeModal("editCategoryModal");
       alert("Category updated successfully!");
     };
@@ -1729,29 +1768,6 @@
       });
     }
 
-    // Compressed Base64 Converter to stay comfortably within the 1MB Firestore limit
-    function fileToBase64(file, maxDim = 500, quality = 0.6) {
-      return new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let w = img.width, h = img.height;
-            if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-            const cvs = document.createElement("canvas");
-            cvs.width = w; cvs.height = h;
-            cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", quality));
-          };
-          img.onerror = rej;
-          img.src = e.target.result;
-        };
-        r.onerror = rej;
-        r.readAsDataURL(file);
-      });
-    }
-
     function renderAdminBannerList() {
       const container = document.getElementById("bannerListAdmin");
       if (!container) return;
@@ -1778,12 +1794,13 @@
       if (!currentAdminUser) return alert("Owner only");
       const btn = document.getElementById("saveBannerBtn");
       btn.disabled = true;
-      btn.innerText = "Uploading banner...";
+      btn.innerText = "Uploading to ImageKit...";
       try {
         const file = document.getElementById("bannerImgFile").files[0];
-        const base64Img = await fileToBase64(file, 650, 0.65);
+        const cdnUrl = await uploadToImageKit(file, "banners");
+
         await addDoc(collection(db, "banners"), {
-          image: base64Img,
+          image: cdnUrl,
           tag: document.getElementById("bannerTag").value.trim(),
           title: document.getElementById("bannerTitle").value.trim(),
           subtitle: document.getElementById("bannerSubtitle").value.trim(),
@@ -1792,7 +1809,7 @@
         document.getElementById("newBannerForm").reset();
         alert("Banner added successfully!");
       } catch (err) {
-        alert("Error: " + err.message);
+        alert("Upload error: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerText = "Add Banner Slide";
@@ -1808,18 +1825,16 @@
       if (!currentAdminUser) return alert("Owner only");
       const btn = document.getElementById("saveGarmentBtn");
       btn.disabled = true;
-      btn.innerText = "Compressing photos...";
+      btn.innerText = "Uploading photos to ImageKit...";
 
       try {
         const files = document.getElementById("newImgFiles").files;
-        if (files.length > 3) {
-          btn.disabled = false;
-          btn.innerText = "Save to Live Catalog";
-          return alert("Please upload maximum 3 photos to maintain database performance.");
-        }
         const photos = [];
+
         for (let i = 0; i < files.length; i++) {
-          photos.push(await fileToBase64(files[i], 550, 0.6));
+          btn.innerText = `Uploading photo ${i + 1} of ${files.length}...`;
+          const cdnUrl = await uploadToImageKit(files[i], "garments");
+          photos.push(cdnUrl);
         }
 
         const price = Number(document.getElementById("newPrice").value);
@@ -2100,7 +2115,7 @@
         garmentId: activeOrderData.id || "",
         otp: generatedOtp,
         item: activeOrderData.name,
-        image: (activeOrderData.image && !activeOrderData.image.startsWith("data:")) ? activeOrderData.image : "",
+        image: activeOrderData.image || "",
         size: activeOrderData.selectedSize,
         color: activeOrderData.selectedColor,
         price: Number(activeOrderData.price),
@@ -2117,7 +2132,7 @@
       document.getElementById("orderSuccessMessage").style.display = "block";
 
       try {
-        const localOrder = { ...cloudOrder, image: activeOrderData.image || "" };
+        const localOrder = { ...cloudOrder };
         const existing = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
         existing.unshift(localOrder);
         localStorage.setItem("ifp_my_orders", JSON.stringify(existing));
@@ -2316,12 +2331,12 @@
 
       const btn = document.getElementById("saveOwnerPhotoBtn");
       btn.disabled = true;
-      btn.innerText = "Compressing & saving...";
+      btn.innerText = "Uploading to ImageKit...";
 
       try {
-        const compressedPhoto = await fileToBase64(input.files[0], 250, 0.65);
-        await setDoc(doc(db, "site_settings", "owner_profile"), { photo: compressedPhoto }, { merge: true });
-        applyOwnerPhoto(compressedPhoto);
+        const cdnUrl = await uploadToImageKit(input.files[0], "owner_profile");
+        await setDoc(doc(db, "site_settings", "owner_profile"), { photo: cdnUrl }, { merge: true });
+        applyOwnerPhoto(cdnUrl);
         window.toggleOwnerPhotoEditor();
         alert("Owner photo updated successfully!");
       } catch (err) {
