@@ -395,7 +395,7 @@
     .admin-bar button.maintenance-btn { background: #f59e0b; color: #fff; border: none; flex: 1 1 100%; }
     .admin-bar button.lock-btn { background: #fee2e2; color: #b91c1c; border: none; flex: 1 1 100%; }
     
-    /* PRODUCTS GRID & UNIFORM CARD STYLES */
+    /* PRODUCTS GRID & COMPACT CARD STYLES */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -411,11 +411,14 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      min-height: 400px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       cursor: pointer;
       content-visibility: auto;
-      contain-intrinsic-size: 400px;
+      contain-intrinsic-size: 300px;
+      transition: transform 0.15s ease;
+    }
+    .card:active {
+      transform: scale(0.985);
     }
     .card-img-wrap {
       position: relative;
@@ -458,7 +461,7 @@
       display: flex;
       align-items: baseline;
       gap: 6px;
-      margin-top: 3px;
+      margin-top: 4px;
       flex-wrap: wrap;
     }
     .original-price {
@@ -481,9 +484,9 @@
       border-radius: 4px;
     }
 
-    /* CARD BODY */
+    /* CARD BODY - CLEAN & STREAMLINED */
     .card-body {
-      padding: 10px 10px 12px;
+      padding: 9px 10px 11px;
       display: flex;
       flex-direction: column;
       flex: 1;
@@ -495,52 +498,21 @@
     .card-title-row {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
     .item-name { 
-      font-size: 0.88rem; 
+      font-size: 0.86rem; 
       font-weight: 800; 
       color: #111827; 
       white-space: normal;
       word-break: break-word;
-      line-height: 1.3;
-      height: 42px;
-      overflow-y: auto;
-      scrollbar-width: none;
+      line-height: 1.25;
+      height: 38px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
-    .item-name::-webkit-scrollbar { display: none; }
-
-    .singular-spec-preview {
-      font-size: 0.7rem;
-      color: #64748b;
-      margin: 4px 0 6px;
-      display: flex;
-      gap: 8px;
-    }
-    .singular-spec-pill {
-      background: #f1f5f9;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 600;
-    }
-
-    .order-btn {
-      background: linear-gradient(135deg, #1e1b4b, #312e81);
-      color: #fff;
-      border: none;
-      padding: 11px 0;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      cursor: pointer;
-      width: 100%;
-      line-height: 1;
-      box-shadow: 0 3px 8px rgba(30, 27, 75, 0.22);
-      transition: transform 0.1s ease;
-      margin-top: 4px;
-    }
-    .order-btn:active { transform: scale(0.97); }
 
     /* REALTIME ADMIN STOCK/DISCOUNT ROW */
     .admin-stock-control {
@@ -587,6 +559,25 @@
       width: 100%;
       line-height: 1;
     }
+
+    /* ORDER BUTTON (DETAIL VIEW) */
+    .order-btn {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      color: #fff;
+      border: none;
+      padding: 11px 0;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      width: 100%;
+      line-height: 1;
+      box-shadow: 0 3px 8px rgba(30, 27, 75, 0.22);
+      transition: transform 0.1s ease;
+      margin-top: 4px;
+    }
+    .order-btn:active { transform: scale(0.97); }
 
     /* GARMENT DETAIL MODAL */
     .detail-gallery-track {
@@ -797,9 +788,6 @@
     </div>
 
     <div class="header-actions">
-      <!-- Discrete Wrench icon for Owner Login (Hidden when authenticated) -->
-      
-
       <button class="nav-btn" id="headerDeliveryBtn" style="display:none;" title="Delivery Hub (Pending & Delivered)" onclick="openDeliveryDashboard()">
         <i class="fa-solid fa-truck"></i>
         <span id="activeDeliveryBadge" class="badge-count">0</span>
@@ -1238,19 +1226,40 @@
     </div>
   </div>
 
-  <!-- About Owner Modal -->
+  <!-- About Owner Modal (With Editable Photo) -->
   <div class="modal-overlay" id="aboutOwnerModal">
     <div class="modal-sheet" style="border-radius: 20px; text-align: center; padding: 22px 18px;">
       <div class="modal-head">
         <h3>About Owner</h3>
         <button class="close-btn" onclick="closeModal('aboutOwnerModal')">&times;</button>
       </div>
+      
       <div style="margin: 18px 0;">
-        <div style="width:68px; height:68px; margin: 0 auto 12px; border-radius:50%; background: linear-gradient(135deg, #312e81, #4c0519); display:flex; align-items:center; justify-content:center; color:#fbbf24; font-size:1.8rem; box-shadow: 0 4px 12px rgba(49, 46, 129, 0.25);">
-          <i class="fa-solid fa-user-tie"></i>
+        <!-- Profile Avatar Wrapper -->
+        <div style="position: relative; width: 84px; height: 84px; margin: 0 auto 12px;">
+          <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #312e81, #4c0519); display: flex; align-items: center; justify-content: center; color: #fbbf24; box-shadow: 0 4px 12px rgba(49, 46, 129, 0.25); border: 2px solid #fbcfe8;">
+            <img id="ownerDisplayPhoto" src="" alt="Aamir Rashid" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+            <i id="ownerDefaultIcon" class="fa-solid fa-user-tie" style="font-size: 2.2rem;"></i>
+          </div>
+
+          <!-- Camera button: visible to owner only -->
+          <button id="editOwnerPhotoBtn" onclick="toggleOwnerPhotoEditor()" style="display: none; position: absolute; bottom: 0; right: -4px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; border: 2px solid #fff; font-size: 0.7rem; cursor: pointer; align-items: center; justify-content: center;" title="Change Photo">
+            <i class="fa-solid fa-camera"></i>
+          </button>
         </div>
+
+        <!-- Quick photo upload drawer for owner -->
+        <div id="ownerPhotoUploadBox" style="display: none; background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+          <label style="font-size: 0.72rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 6px;">Choose New Profile Photo:</label>
+          <input type="file" id="ownerPhotoInput" accept="image/*" style="font-size: 0.75rem; width: 100%; margin-bottom: 8px;" />
+          <div style="display: flex; gap: 6px;">
+            <button onclick="saveOwnerPhoto()" id="saveOwnerPhotoBtn" style="flex: 1; background: var(--primary); color: #fff; border: none; padding: 6px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Save Photo</button>
+            <button onclick="toggleOwnerPhotoEditor()" style="background: #e2e8f0; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">Cancel</button>
+          </div>
+        </div>
+
         <h3 style="color: var(--primary); font-size: 1.18rem; font-weight: 800; margin-bottom: 2px;">Aamir Rashid</h3>
-        <p style="color: var(--muted); font-size: 0.8rem; font-weight:600; margin-bottom: 14px;">Proprietor &amp; Founder</p>
+        <p style="color: var(--muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 14px;">Proprietor &amp; Founder</p>
         
         <div style="background: #fdf2f8; border: 1px solid #fbcfe8; border-radius: 10px; padding: 12px; text-align: left; font-size: 0.82rem; color: #334155; display: flex; flex-direction: column; gap: 8px;">
           <div style="display:flex; align-items:center; gap:8px;">
@@ -1356,6 +1365,9 @@
       if (localCats) categoriesList = JSON.parse(localCats);
     } catch(e){}
 
+    const cachedOwnerPhoto = localStorage.getItem("ifp_owner_photo");
+    if (cachedOwnerPhoto) applyOwnerPhoto(cachedOwnerPhoto);
+
     // Pre-paint instantly from local storage cache
     renderCategoriesBar();
     renderBanners();
@@ -1380,13 +1392,12 @@
     function updateAdminUI() {
       const isAuth = !!currentAdminUser;
       
-      // Hide wrench button when logged in as admin
-      const wrenchBtn = document.getElementById("headerWrenchBtn");
-      if (wrenchBtn) wrenchBtn.style.display = isAuth ? "none" : "flex";
-
       document.getElementById("adminBar").style.display = isAuth ? "flex" : "none";
       document.getElementById("headerDeliveryBtn").style.display = isAuth ? "flex" : "none";
       
+      const photoEditBtn = document.getElementById("editOwnerPhotoBtn");
+      if (photoEditBtn) photoEditBtn.style.display = isAuth ? "flex" : "none";
+
       const aboutOrdersEl = document.getElementById("aboutOrdersWrapper");
       if (aboutOrdersEl) aboutOrdersEl.style.display = isAuth ? "block" : "none";
 
@@ -1417,6 +1428,7 @@
     window.toggleIfpDropdown = (e) => { e?.stopPropagation(); document.getElementById("ifpDropdown")?.classList.toggle("active"); };
     window.closeIfpDropdown = () => { document.getElementById("ifpDropdown")?.classList.remove("active"); };
 
+    // Secret 3-tap gesture on logo badge opens owner login
     const badgeEl = document.getElementById("ifpBadge");
     if (badgeEl) {
       badgeEl.addEventListener("click", (e) => {
@@ -1604,6 +1616,12 @@
         }
       });
 
+      onSnapshot(doc(db, "site_settings", "owner_profile"), (snap) => {
+        if (snap.exists() && snap.data().photo) {
+          applyOwnerPhoto(snap.data().photo);
+        }
+      });
+
       onSnapshot(doc(db, "site_settings", "maintenance"), (snap) => {
         isMaintenanceActive = snap.exists() && snap.data().active === true;
         evaluateMaintenanceScreen();
@@ -1785,6 +1803,7 @@
       return Math.round(((original - current) / original) * 100);
     }
 
+    /* MINIMAL & CLEAN PRODUCT CARDS IN STOREFRONT */
     function renderProducts() {
       const grid = document.getElementById("productsGrid");
       if (!grid) return;
@@ -1826,17 +1845,7 @@
                 <span class="sale-price">₹${p.price}</span>
                 ${discountPercent > 0 ? `<span class="discount-badge">${discountPercent}% OFF</span>` : ''}
               </div>
-
-              <div class="singular-spec-preview">
-                <span class="singular-spec-pill"><i class="fa-solid fa-ruler-horizontal"></i> ${p.singleSize || (Array.isArray(p.sizes) ? p.sizes[0] : 'Free Size')}</span>
-                <span class="singular-spec-pill"><i class="fa-solid fa-palette"></i> ${p.singleColor || (Array.isArray(p.colors) ? p.colors[0] : 'Std')}</span>
-              </div>
             </div>
-
-            <button class="order-btn" style="${isOutOfStock ? 'background:#94a3b8; cursor:not-allowed;' : ''}" 
-              ${isOutOfStock ? 'disabled' : `onclick="event.stopPropagation(); startOrder('${p.id}')"`}>
-              ${isOutOfStock ? 'Sold Out' : 'Place Order'}
-            </button>
 
             ${currentAdminUser ? `
               <div class="admin-stock-control" onclick="event.stopPropagation();">
@@ -1866,7 +1875,7 @@
       }
     };
 
-    /* GARMENT DETAIL VIEW */
+    /* GARMENT DETAIL VIEW (FULL DETAILS & ORDERING ON CLICK) */
     window.openGarmentDetailModal = (id) => {
       const p = allProducts.find(item => item.id === id);
       if (!p) return;
@@ -2259,6 +2268,54 @@
 
       return html;
     }
+
+    /* ABOUT OWNER PHOTO FUNCTIONS */
+    function applyOwnerPhoto(base64OrUrl) {
+      const imgEl = document.getElementById("ownerDisplayPhoto");
+      const iconEl = document.getElementById("ownerDefaultIcon");
+      if (!imgEl || !iconEl) return;
+      if (base64OrUrl) {
+        imgEl.src = base64OrUrl;
+        imgEl.style.display = "block";
+        iconEl.style.display = "none";
+        localStorage.setItem("ifp_owner_photo", base64OrUrl);
+      } else {
+        imgEl.style.display = "none";
+        iconEl.style.display = "block";
+      }
+    }
+
+    window.toggleOwnerPhotoEditor = () => {
+      const box = document.getElementById("ownerPhotoUploadBox");
+      if (box) {
+        box.style.display = (box.style.display === "none" || !box.style.display) ? "block" : "none";
+      }
+    };
+
+    window.saveOwnerPhoto = async () => {
+      if (!currentAdminUser) return alert("Owner access only.");
+      const input = document.getElementById("ownerPhotoInput");
+      if (!input.files || !input.files[0]) {
+        return alert("Please choose a photo from your gallery first.");
+      }
+
+      const btn = document.getElementById("saveOwnerPhotoBtn");
+      btn.disabled = true;
+      btn.innerText = "Compressing & saving...";
+
+      try {
+        const compressedPhoto = await fileToBase64(input.files[0], 350);
+        await setDoc(doc(db, "site_settings", "owner_profile"), { photo: compressedPhoto }, { merge: true });
+        applyOwnerPhoto(compressedPhoto);
+        window.toggleOwnerPhotoEditor();
+        alert("Owner photo updated successfully!");
+      } catch (err) {
+        alert("Photo upload error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Save Photo";
+      }
+    };
 
     window.openOrdersPlacedModal = () => {
       const container = document.getElementById("ordersPlacedContainer");
