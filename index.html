@@ -2021,23 +2021,21 @@
       document.getElementById("orderModal").classList.add("active");
     };
 
-    window.handleDirectOrderSubmit = async (e) => {
+    /* INSTANT ZERO-LATENCY ORDER SUBMIT (OPTIMISTIC + BACKGROUND PARALLEL SYNC) */
+    window.handleDirectOrderSubmit = (e) => {
       e.preventDefault();
       if (!activeOrderData) return;
-
-      const confirmBtn = document.getElementById("confirmOrderBtn");
-      confirmBtn.disabled = true;
-      confirmBtn.innerText = "Placing order...";
 
       const newOrderId = "IFP-" + Math.floor(1000 + Math.random() * 9000);
       const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
-      const newOrder = {
+      // Lightweight cloud order document (skips heavy megabyte base64 strings)
+      const cloudOrder = {
         orderId: newOrderId,
         garmentId: activeOrderData.id || "",
         otp: generatedOtp,
         item: activeOrderData.name,
-        image: activeOrderData.image || "",
+        image: (activeOrderData.image && !activeOrderData.image.startsWith("data:")) ? activeOrderData.image : "",
         size: activeOrderData.selectedSize,
         color: activeOrderData.selectedColor,
         price: Number(activeOrderData.price),
@@ -2049,28 +2047,28 @@
         createdAt: Date.now()
       };
 
+      // 1. INSTANT SCREEN UPDATE: 0ms delay for user
+      document.getElementById("orderFormWrapper").style.display = "none";
+      document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
+      document.getElementById("orderSuccessMessage").style.display = "block";
+
+      // 2. Save locally immediately with image reference for My Orders view
       try {
-        await addDoc(collection(db, "orders"), newOrder);
-
-        if (activeOrderData.id) {
-          await updateDoc(doc(db, "garments", activeOrderData.id), {
-            stock: increment(-1)
-          });
-        }
-
+        const localOrder = { ...cloudOrder, image: activeOrderData.image || "" };
         const existing = JSON.parse(localStorage.getItem("ifp_my_orders") || "[]");
-        existing.unshift(newOrder);
+        existing.unshift(localOrder);
         localStorage.setItem("ifp_my_orders", JSON.stringify(existing));
-
-        document.getElementById("orderFormWrapper").style.display = "none";
-        document.getElementById("confirmedOrderId").innerText = `Order ID: ${newOrderId} • ${activeOrderData.name} (${activeOrderData.selectedSize} / ${activeOrderData.selectedColor})`;
-        document.getElementById("orderSuccessMessage").style.display = "block";
       } catch (err) {
-        alert("Order error: " + err.message);
-      } finally {
-        confirmBtn.disabled = false;
-        confirmBtn.innerText = "Confirm Order (COD)";
+        console.warn("Local storage write error:", err);
       }
+
+      // 3. Background parallel sync to Firestore without blocking the UI
+      Promise.all([
+        addDoc(collection(db, "orders"), cloudOrder),
+        activeOrderData.id ? updateDoc(doc(db, "garments", activeOrderData.id), { stock: increment(-1) }) : Promise.resolve()
+      ]).catch(err => {
+        console.error("Background sync error:", err);
+      });
     };
 
     window.toggleOtpMask = (orderId, realOtp) => {
